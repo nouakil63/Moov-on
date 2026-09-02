@@ -268,34 +268,38 @@ svg{display:block}
 .mini p{font-size:11px;color:var(--ink-3);margin-top:3px}
 .mini .meter{margin-top:12px;height:4px}
 
-/* ================= IMPACT ================= */
-.impact-hero{background:var(--panel);color:var(--panel-ink);padding:24px 18px}
-.impact-hero .ih-label{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-mut)}
-.impact-hero .ih-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:74px;line-height:.9;margin-top:10px;color:var(--brand-panel)}
-.impact-hero .ih-sub{font-size:12.5px;margin-top:8px;color:var(--panel-mut)}
-.impact-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
-.istat{padding:16px 18px;border-top:1px solid var(--line)}
-.istat:nth-child(odd){border-right:1px solid var(--line)}
-.istat:nth-child(-n+2){border-top:0}
-.istat .ic{color:var(--brand);margin-bottom:10px}
-.istat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:36px;line-height:1}
-.istat .l{font-size:9.5px;color:var(--ink-3);font-weight:700;margin-top:4px;letter-spacing:.09em;text-transform:uppercase}
-.convert{padding:6px 18px 16px}
-.conv-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
-.conv-row:first-of-type{border-top:0}
-.conv-row .from{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:22px;width:80px}
-.conv-row .arrow{color:var(--ink-3)}
-.conv-row .to{font-weight:600;display:flex;align-items:center;gap:7px}
-.conv-row .to svg{color:var(--brand)}
-.conv-note{font-size:11px;color:var(--ink-3);padding:8px 0 0}
-.assoc{padding:0}
-.assoc-row{display:flex;align-items:center;gap:12px;padding:13px 18px;border-top:1px solid var(--line)}
-.assoc-row:first-child{border-top:0}
-.assoc-ic{width:38px;height:38px;display:grid;place-items:center;flex:none;background:var(--ink);color:var(--surface)}
-.assoc-body{flex:1;min-width:0}
-.assoc-name{font-weight:700;font-size:13.5px}
-.assoc-sub{font-size:11px;color:var(--ink-3);letter-spacing:.02em}
-.assoc-amt{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:21px;color:var(--brand)}
+/* ================= MISSIONS ================= */
+.bal-hero{background:var(--brand);color:var(--brand-ink);padding:18px;margin:0}
+.bal-hero .bh-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.bal-hero .bh-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:var(--w-num,700);font-size:56px;line-height:.95;margin-top:6px}
+.bal-hero .bh-sub{font-size:11.5px;margin-top:6px;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));font-weight:600}
+.mcard{margin:0 18px 14px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:15px;box-shadow:0 12px 28px -20px rgba(0,0,0,.3)}
+.mcard .m-top{display:flex;align-items:center;gap:11px}
+.mcard .m-ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.mcard .m-head{flex:1;min-width:0}
+.mcard .m-name{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.mcard .m-org{font-size:11px;color:var(--ink-3);font-weight:600}
+.mcard .m-mine{font-size:10.5px;font-weight:700;color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--card));border-radius:999px;padding:4px 9px;white-space:nowrap}
+.mcard .m-per{font-size:12px;font-weight:600;color:var(--ink-2);margin-top:10px;display:flex;align-items:center;gap:6px}
+.mcard .m-per svg{color:var(--brand)}
+.mcard .meter{height:8px;border-radius:99px;margin-top:10px}
+.mcard .meter>i{border-radius:99px}
+.mcard .m-give{margin-top:12px;width:100%;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);border-radius:12px;padding:11px;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}
+.mcard .m-panel{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+.mcard .m-panel input[type=range]{width:100%;accent-color:var(--brand);height:28px}
+.mcard .m-live{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;margin-top:2px}
+.mcard .m-live .eq{color:var(--brand)}
+.mcard .m-confirm{margin-top:10px;width:100%;background:var(--brand);color:var(--brand-ink);border-radius:12px;padding:12px;font-weight:800;font-size:13px}
+.mcard .m-confirm:disabled{opacity:.4}
+.m-note{font-size:10.5px;color:var(--ink-3);padding:2px 20px 8px}
+/* Profil — résumé impact */
+.mysum{margin:0 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.mysum .ms-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--line);font-size:12.5px;font-weight:600}
+.mysum .ms-row:first-child{border-top:0}
+.mysum .ms-row .m-ic{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.mysum .ms-row .n{flex:1;min-width:0}
+.mysum .ms-row .n small{display:block;font-weight:600;font-size:10.5px;color:var(--ink-3)}
+.mysum .ms-row .amt{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:17px;color:var(--brand);white-space:nowrap}
 
 /* ================= PROFILE ================= */
 .prof-head{display:flex;align-items:center;gap:14px;padding:26px 18px 14px}
@@ -485,12 +489,12 @@ svg{display:block}
           <div class="h5-big num"><span id="today-steps">4 320</span><small> PAS</small></div>
           <div class="h5-sub num">
             <span><b id="today-km">3,2</b> km</span>
-            <span><b id="today-meals">6</b> repas</span>
+            <span><b id="today-energy">3 200</b> ⚡ aujourd’hui</span>
             <span><b>6 j</b> de série</span>
           </div>
-          <button class="h5-ticket" id="btn-home-run" aria-label="Lancer une course">
-            <span><small>Prochaine récompense</small><span class="num" id="today-next-txt">7ᵉ repas dans 300 m</span></span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <button class="h5-ticket" id="go-missions" aria-label="Distribuer mon énergie sur les missions">
+            <span><small>Énergie à distribuer</small><span class="num" id="bal-ticket">6 750 ⚡ — choisir mes missions</span></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
           </button>
         </div>
 
@@ -500,8 +504,12 @@ svg{display:block}
             <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
           </div>
           <div class="c3-main">
-            <div class="c3-ring" id="corp-ring"><div><span class="v num" id="corp-pct">23 %</span><span class="l">du budget</span></div></div>
+            <div class="c3-ring" id="corp-ring"><div><span class="v num" id="corp-pct">72 %</span><span class="l">de l’objectif</span></div></div>
             <div class="c3-facts">
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+                <span class="num"><b id="corp-energy">14,4 M</b> ⚡ d’énergie collective</span>
+              </div>
               <div class="c3-fact">
                 <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg></span>
                 <span class="num"><b id="corp-trees">418</b> arbres plantés</span>
@@ -509,10 +517,6 @@ svg{display:block}
               <div class="c3-fact">
                 <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg></span>
                 <span class="num"><b id="corp-meals">3 120</b> repas financés</span>
-              </div>
-              <div class="c3-fact">
-                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A3.5 3.5 0 0 0 12 7.5c-2 0-3.5 2-3.5 4.5s1.5 4.5 3.5 4.5A3.5 3.5 0 0 0 14.8 15M7 10.5h5M7 13.5h5"/></svg></span>
-                <span class="num"><b id="corp-euros">23 460 €</b> débloqués</span>
               </div>
             </div>
           </div>
@@ -613,81 +617,21 @@ svg{display:block}
         </div>
       </section>
 
-      <!-- ============ IMPACT ============ -->
-      <section class="screen" id="scr-impact" aria-label="Impact">
+      <!-- ============ MISSIONS ============ -->
+      <section class="screen" id="scr-missions" aria-label="Missions">
         <div class="pagehead">
-          <h1>Impact</h1><div class="sub">Ce que vos pas ont financé</div>
+          <h1>Missions</h1><div class="sub">Distribuez votre énergie aux causes</div>
         </div>
 
-        <div class="impact-hero">
-          <div class="ih-label">Impact collectif · Banque Corélis</div>
-          <div class="ih-big num" id="impact-euros">23 460 €</div>
-          <div class="ih-sub">débloqués sur le budget solidaire de <span class="num">100 000 €</span></div>
+        <div class="bal-hero">
+          <div class="bh-label">Votre énergie disponible</div>
+          <div class="bh-big num"><span id="bal-big">6 750</span> ⚡</div>
+          <div class="bh-sub">1 mètre parcouru = 1 ⚡ · répartissez-la librement ci-dessous</div>
         </div>
 
-        <div class="impact-grid">
-          <div class="istat">
-            <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/><path d="M5 22a7 7 0 0 1 14 0"/></svg></div>
-            <div class="v num" id="impact-trees">418</div><div class="l">arbres plantés</div>
-          </div>
-          <div class="istat">
-            <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg></div>
-            <div class="v num" id="impact-meals">3 120</div><div class="l">repas financés</div>
-          </div>
-          <div class="istat">
-            <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 0-16 0"/><path d="M12 12 8 8"/><path d="M2 20h20"/></svg></div>
-            <div class="v num">14 380</div><div class="l">km parcourus</div>
-          </div>
-          <div class="istat">
-            <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="v num">642</div><div class="l">collègues actifs</div>
-          </div>
-        </div>
-
-        <div class="section-label">La conversion</div>
-        <div class="convert">
-          <div class="conv-row">
-            <span class="from num">500 m</span>
-            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-            <span class="to"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>1 repas chaud</span>
-          </div>
-          <div class="conv-row">
-            <span class="from num">5 km</span>
-            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-            <span class="to"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg>1 arbre planté</span>
-          </div>
-          <div class="conv-row">
-            <span class="from num">1 000 m</span>
-            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-            <span class="to num">1,60 € reversé</span>
-          </div>
-          <div class="conv-note">Barème fixé par l’entreprise dans son espace administrateur. Valeurs de démonstration.</div>
-        </div>
-
-        <div class="section-label">Associations soutenues</div>
-        <div class="assoc">
-          <div class="assoc-row">
-            <div class="assoc-ic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
-            </div>
-            <div class="assoc-body"><div class="assoc-name">Canopée Demain</div><div class="assoc-sub">Reforestation · Massif central</div></div>
-            <div class="assoc-amt num">9 840 €</div>
-          </div>
-          <div class="assoc-row">
-            <div class="assoc-ic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>
-            </div>
-            <div class="assoc-body"><div class="assoc-name">Table Ouverte</div><div class="assoc-sub">Aide alimentaire · Île-de-France</div></div>
-            <div class="assoc-amt num">8 210 €</div>
-          </div>
-          <div class="assoc-row">
-            <div class="assoc-ic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
-            </div>
-            <div class="assoc-body"><div class="assoc-name">Sport & Santé pour Tous</div><div class="assoc-sub">Activité adaptée · National</div></div>
-            <div class="assoc-amt num">5 410 €</div>
-          </div>
-        </div>
+        <div class="section-label">Missions ouvertes</div>
+        <div id="missions-list"></div>
+        <p class="m-note">Associations de démonstration — les partenaires réels seront intégrés une fois les conventions signées. Barème fixé par l’entreprise.</p>
       </section>
 
       <!-- ============ PROFIL ============ -->
@@ -705,9 +649,12 @@ svg{display:block}
 
         <div class="prof-stats">
           <div class="prof-stat"><div class="v num" id="me-km">86,4</div><div class="l">km ce mois</div></div>
-          <div class="prof-stat"><div class="v num" id="me-meals">72</div><div class="l">repas offerts</div></div>
-          <div class="prof-stat"><div class="v num" id="me-trees">17</div><div class="l">arbres</div></div>
+          <div class="prof-stat"><div class="v num" id="me-given">0</div><div class="l">⚡ distribuées</div></div>
+          <div class="prof-stat"><div class="v num" id="me-bal">6 750</div><div class="l">⚡ disponibles</div></div>
         </div>
+
+        <div class="section-label">Votre impact</div>
+        <div class="mysum" id="mysum"></div>
 
         <div class="section-label">Cette semaine</div>
         <div class="week">
@@ -747,8 +694,8 @@ svg{display:block}
           <span class="gps-chip num" id="run-clock-chip">GPS simulé</span>
         </div>
         <div class="milestone" id="milestone">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>
-          <span id="milestone-txt">+1 repas financé</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          <span id="milestone-txt">+500 ⚡</span>
         </div>
       </div>
       <div class="run-panel">
@@ -760,9 +707,9 @@ svg{display:block}
         </div>
         <div class="run-impact">
           <div class="ric">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
           </div>
-          <div class="txt" id="run-impact-txt"><b class="num">0,00 €</b> débloqués — prochain repas dans <b class="num">500 m</b></div>
+          <div class="txt" id="run-impact-txt"><b class="num">⚡ 0</b> énergie récoltée — à distribuer sur vos missions après la course</div>
         </div>
         <div class="run-ctrl">
           <button class="btn ghost" id="btn-pause" style="flex:1">Pause</button>
@@ -793,9 +740,9 @@ svg{display:block}
       </div>
       <div class="sum-impact">
         <div class="ric">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
         </div>
-        <div><div class="v" id="sum-impact-line">+2 repas · +3,20 €</div><p>ajoutés au budget solidaire débloqué par Banque Corélis</p></div>
+        <div><div class="v num" id="sum-impact-line">+5 200 ⚡ récoltés</div><p>ajoutés à votre réserve d’énergie — direction l’onglet Missions</p></div>
       </div>
       <div class="sum-form">
         <input type="text" id="sum-title" value="Course du midi" aria-label="Titre de la publication">
@@ -844,7 +791,7 @@ svg{display:block}
     <div class="fanmenu" id="fanmenu">
       <button class="fan-item" data-fan="run">
         <span class="fic brand"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-        <span>Lancer une course<small>GPS et conversion en direct</small></span>
+        <span>Lancer une course<small>GPS et récolte d’énergie en direct</small></span>
       </button>
       <button class="fan-item" data-fan="result">
         <span class="fic dark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
@@ -871,9 +818,9 @@ svg{display:block}
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           </button>
         </div>
-        <button class="navbtn" data-nav="scr-impact">
-          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg></span>
-          Impact
+        <button class="navbtn" data-nav="scr-missions">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+          Missions
         </button>
         <button class="navbtn" data-nav="scr-profile">
           <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
@@ -898,18 +845,19 @@ svg{display:block}
 
 <script>
 'use strict';
-/* ========= BARÈME DE CONVERSION (démo — sera configurable côté entreprise) ========= */
+/* ========= BARÈME (démo — sera configurable côté entreprise) =========
+   1 mètre parcouru = 1 point d'énergie (⚡), à distribuer sur les missions. */
 const RATE = {
-  eurosPerMeter: 0.0016,   // 1 000 m = 1,60 €
-  metersPerMeal: 500,      // 500 m  = 1 repas
-  metersPerTree: 5000,     // 5 km   = 1 arbre
+  energyPerMeter: 1,
   stepsPerMeter: 1.35
 };
 const SIM_SPEED = 55;      // m/s simulés — accéléré pour la démo (≈5 km en 90 s)
 
 const $ = id => document.getElementById(id);
 const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
-const fmtEur = n => n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const fmtE = n => n >= 1e6 ? (n/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' M'
+              : n >= 1e4 ? Math.round(n/1000).toLocaleString('fr-FR') + ' k'
+              : fmtInt(n);
 const store = {
   get(k,f){ try{ const v = localStorage.getItem('moovon:'+k); return v===null?f:JSON.parse(v);}catch(e){return f} },
   set(k,v){ try{ localStorage.setItem('moovon:'+k, JSON.stringify(v)); }catch(e){} }
@@ -923,10 +871,27 @@ const STORIES = [
   {n:'Inès', t:'Marketing', seen:true}, {n:'Hugo', t:'Juridique', seen:true}, {n:'Awa', t:'Direction', seen:true}
 ];
 const BASE_FEED = [
-  {id:'p1', n:'Sofiane B.', team:'Finance', when:'il y a 25 min', title:'Fractionné avant la réunion budget', dist:6200, time:'32:10', pace:'5:11', meals:12, euros:9.92, bravos:14, comments:3, route:'M30 150 C 90 110, 70 60, 150 70 S 240 130, 300 80 S 360 40, 372 35'},
-  {id:'p2', n:'Léa Fontaine', team:'RH', when:'il y a 2 h', title:'Marche du déjeuner avec l’équipe recrutement', dist:3400, time:'41:05', pace:'12:05', meals:6, euros:5.44, bravos:22, comments:5, route:'M40 40 C 80 90, 160 60, 190 110 S 150 160, 240 150 S 340 120, 370 145'},
-  {id:'p3', n:'Marc Delattre', team:'IT & Data', when:'hier', title:'10 km — objectif arbre atteint 🎯', dist:10100, time:'52:48', pace:'5:14', meals:20, euros:16.16, trees:2, bravos:41, comments:9, route:'M30 90 C 110 40, 150 140, 220 100 S 280 30, 330 70 S 365 130, 375 140'}
+  {id:'p1', n:'Sofiane B.', team:'Finance', when:'il y a 25 min', title:'Fractionné avant la réunion budget', dist:6200, time:'32:10', pace:'5:11', give:'Urgence & Secours', bravos:14, comments:3, route:'M30 150 C 90 110, 70 60, 150 70 S 240 130, 300 80 S 360 40, 372 35'},
+  {id:'p2', n:'Léa Fontaine', team:'RH', when:'il y a 2 h', title:'Marche du déjeuner avec l’équipe recrutement', dist:3400, time:'41:05', pace:'12:05', give:'Refuge animalier', bravos:22, comments:5, route:'M40 40 C 80 90, 160 60, 190 110 S 150 160, 240 150 S 340 120, 370 145'},
+  {id:'p3', n:'Marc Delattre', team:'IT & Data', when:'hier', title:'10 km — plein d’énergie pour la forêt 🎯', dist:10100, time:'52:48', pace:'5:14', give:'La forêt Corélis', bravos:41, comments:9, route:'M30 90 C 110 40, 150 140, 220 100 S 280 30, 330 70 S 365 130, 375 140'}
 ];
+
+/* Missions (associations fictives — les vraies seront branchées après signature des partenariats) */
+const MISSIONS_DEF = [
+  {id:'secours', name:'Urgence & Secours', org:'Premiers Secours Solidaires', per:500,  unit:'kit de secours distribué', goal:2000000, got:1240000, icon:'cross'},
+  {id:'animaux', name:'Refuge animalier', org:'Les Quatre Pattes',            per:300,  unit:'repas pour un animal',     goal:1500000, got:890000,  icon:'paw'},
+  {id:'enfants', name:'Enfants à l’hôpital', org:'Cœur d’Enfants',            per:1000, unit:'heure d’animation offerte', goal:3000000, got:2210000, icon:'heart'},
+  {id:'arbres',  name:'La forêt Corélis', org:'Canopée Demain',               per:5000, unit:'arbre planté',             goal:2500000, got:2090000, icon:'tree'},
+  {id:'repas',   name:'Repas chauds', org:'Table Ouverte',                    per:500,  unit:'repas chaud servi',        goal:2000000, got:1560000, icon:'bowl'},
+];
+const MICON = {
+  cross:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>',
+  paw:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="8" r="2.2"/><circle cx="12" cy="5.5" r="2.2"/><circle cx="17" cy="8" r="2.2"/><path d="M12 10c3 0 6 2.6 6 5.4 0 2-1.5 3.1-3.2 2.8-1.1-.2-1.9-.7-2.8-.7s-1.7.5-2.8.7C7.5 18.5 6 17.4 6 15.4 6 12.6 9 10 12 10Z"/></svg>',
+  heart:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3.4 1-4.5 2.5C10.9 4 9.3 3 7.5 3A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg>',
+  tree:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg>',
+  bowl:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>',
+  bolt:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>'
+};
 const LEADERBOARD = [
   {team:'IT & Data', km:312}, {team:'Marketing', km:236, me:true}, {team:'Finance', km:224},
   {team:'RH', km:187}, {team:'Juridique', km:141}, {team:'Direction', km:96}
@@ -938,15 +903,21 @@ const WEEK = [
 
 /* ================= ÉTAT ================= */
 const state = {
-  corpEuros: store.get('corpEuros', 23460),
-  corpMeals: store.get('corpMeals', 3120),
-  corpTrees: store.get('corpTrees', 418),
-  posts: store.get('posts', []),          // publications de l'utilisateur, en tête de fil
+  corpEnergy: store.get('corpEnergy', 14380000),   // énergie collective (1 ⚡ = 1 m)
+  posts: store.get('posts', []),                    // publications de l'utilisateur, en tête de fil
   meKm: store.get('meKm', 86.4),
-  meMeals: store.get('meMeals', 72),
-  meTrees: store.get('meTrees', 17),
+  energyBal: store.get('energyBal', 6750),          // énergie perso à distribuer
   todaySteps: store.get('todaySteps', 4320),
+  missions: store.get('missions', {}),              // {id:{got,my}} — deltas persistés
 };
+const MONTH_GOAL = 20000000;                         // objectif collectif du mois en ⚡
+const missions = MISSIONS_DEF.map(m => ({...m, ...(state.missions[m.id]||{my:0})}));
+function saveMissions(){
+  state.missions = Object.fromEntries(missions.map(m=>[m.id,{got:m.got,my:m.my}]));
+  store.set('missions', state.missions);
+}
+const missionTrees = () => Math.floor((missions.find(m=>m.id==='arbres').got)/5000);
+const missionMeals = () => Math.floor((missions.find(m=>m.id==='repas').got)/500);
 WEEK[6].steps = Math.round(state.todaySteps);
 
 /* ================= RENDU ================= */
@@ -961,14 +932,12 @@ function renderStories(){
 }
 
 function postCard(p){
-  const impactBits = [];
-  if(p.trees) impactBits.push(`🌳 +${p.trees} arbre${p.trees>1?'s':''}`);
-  impactBits.push(`🍲 +${p.meals} repas`);
+  const energy = Math.round(p.dist * RATE.energyPerMeter);
   const manual = p.time === '—';
   const stats = manual
     ? `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
-       <div class="pstat"><div class="v num">+${p.meals}</div><div class="l">repas</div></div>
-       <div class="pstat"><div class="v num">${fmtEur(p.euros)}</div><div class="l">débloqués</div></div>`
+       <div class="pstat"><div class="v num">+${fmtE(energy)}</div><div class="l">énergie ⚡</div></div>
+       <div class="pstat"><div class="v num">${fmtInt(p.dist*RATE.stepsPerMeter)}</div><div class="l">pas</div></div>`
     : `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
        <div class="pstat"><div class="v num">${p.time}</div><div class="l">durée</div></div>
        <div class="pstat"><div class="v num">${p.pace}</div><div class="l">min / km</div></div>`;
@@ -989,7 +958,7 @@ function postCard(p){
       </div>
       <div class="pbody">
         <div class="ptitle">${p.title}</div>
-        <span class="pimpact num">${impactBits.join(' · ')} · ${fmtEur(p.euros)}</span>
+        <span class="pimpact num">⚡ +${fmtInt(energy)} énergie récoltée${p.give?` · → ${p.give}`:''}</span>
       </div>
       <div class="post-actions">
         <button class="pact bravo" aria-pressed="false">
@@ -1017,34 +986,96 @@ function renderToday(){
   const d = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   $('greet-date').textContent = d.charAt(0).toUpperCase()+d.slice(1) + ' · Équipe Marketing';
   const meters = state.todaySteps / RATE.stepsPerMeter;
-  const meals = Math.floor(meters / RATE.metersPerMeal);
-  const rest = Math.ceil(RATE.metersPerMeal - (meters % RATE.metersPerMeal));
   $('today-steps').textContent = fmtInt(state.todaySteps);
   $('today-km').textContent = (meters/1000).toLocaleString('fr-FR',{maximumFractionDigits:1});
-  $('today-meals').textContent = fmtInt(meals);
-  $('today-next-txt').textContent = `${meals+1}ᵉ repas dans ${fmtInt(rest)} m`;
+  $('today-energy').textContent = fmtInt(meters * RATE.energyPerMeter);
+  $('bal-ticket').textContent = `${fmtInt(state.energyBal)} ⚡ — choisir mes missions`;
 }
 
 function renderCorp(){
-  $('corp-euros').textContent = fmtInt(state.corpEuros) + ' €';
-  $('corp-meals').textContent = fmtInt(state.corpMeals);
-  $('corp-trees').textContent = fmtInt(state.corpTrees);
-  const pct = Math.min(100, state.corpEuros/100000*100);
+  $('corp-energy').textContent = fmtE(state.corpEnergy);
+  $('corp-trees').textContent = fmtInt(missionTrees());
+  $('corp-meals').textContent = fmtInt(missionMeals());
+  const pct = Math.min(100, state.corpEnergy/MONTH_GOAL*100);
   $('corp-ring').style.background = `conic-gradient(var(--brand) 0 ${pct.toFixed(1)}%, var(--sunken) ${pct.toFixed(1)}% 100%)`;
   $('corp-pct').textContent = Math.round(pct) + ' %';
-  const goal = 500, rest = Math.max(0, goal - state.corpTrees);
-  const dfPct = Math.min(100, state.corpTrees/goal*100);
+  const goal = 500, trees = missionTrees(), rest = Math.max(0, goal - trees);
+  const dfPct = Math.min(100, trees/goal*100);
   $('df-title').textContent = rest > 0 ? `Plus que ${rest} arbre${rest>1?'s':''} à planter !` : 'Objectif atteint — 500 arbres plantés !';
-  $('df-cnt').textContent = `${fmtInt(Math.min(state.corpTrees, goal))} / ${goal}`;
+  $('df-cnt').textContent = `${fmtInt(Math.min(trees, goal))} / ${goal}`;
   $('df-pct').textContent = Math.round(dfPct) + ' %';
   $('df-bar').style.width = dfPct.toFixed(1) + '%';
   $('df-dot').style.left = dfPct.toFixed(1) + '%';
-  $('impact-euros').textContent = fmtInt(state.corpEuros) + ' €';
-  $('impact-meals').textContent = fmtInt(state.corpMeals);
-  $('impact-trees').textContent = fmtInt(state.corpTrees);
   $('me-km').textContent = state.meKm.toLocaleString('fr-FR',{maximumFractionDigits:1});
-  $('me-meals').textContent = fmtInt(state.meMeals);
-  $('me-trees').textContent = fmtInt(state.meTrees);
+  const given = missions.reduce((s,m)=>s+m.my,0);
+  $('me-given').textContent = fmtInt(given);
+  $('me-bal').textContent = fmtInt(state.energyBal);
+}
+
+/* ================= MISSIONS ================= */
+function renderMissions(){
+  $('bal-big').textContent = fmtInt(state.energyBal);
+  $('missions-list').innerHTML = missions.map(m=>{
+    const pct = Math.min(100, m.got/m.goal*100);
+    return `
+    <div class="mcard" data-m="${m.id}">
+      <div class="m-top">
+        <span class="m-ic">${MICON[m.icon]}</span>
+        <div class="m-head"><div class="m-name">${m.name}</div><div class="m-org">avec ${m.org}</div></div>
+        ${m.my>0?`<span class="m-mine num">Vous : ${fmtE(m.my)} ⚡</span>`:''}
+      </div>
+      <div class="m-per num">${MICON.bolt} ${fmtInt(m.per)} ⚡ = 1 ${m.unit}</div>
+      <div class="meter"><i style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="meter-cap num"><span>${fmtE(m.got)} / ${fmtE(m.goal)} ⚡</span><span>${Math.round(pct)} %</span></div>
+      <button class="m-give" data-give="${m.id}">${MICON.bolt} Donner de l’énergie</button>
+      <div class="m-panel" hidden>
+        <input type="range" min="0" max="${Math.min(state.energyBal, m.goal-m.got)}" step="50" value="${Math.min(500,state.energyBal)}" aria-label="Quantité d’énergie à donner">
+        <div class="m-live num"><span class="amt">500 ⚡</span><span class="eq">= 1 ${m.unit}</span></div>
+        <button class="m-confirm">Confirmer le don</button>
+      </div>
+    </div>`;
+  }).join('');
+  $('missions-list').querySelectorAll('.mcard').forEach(card=>{
+    const m = missions.find(x=>x.id===card.dataset.m);
+    const panel = card.querySelector('.m-panel');
+    const range = card.querySelector('input[type=range]');
+    const amt = card.querySelector('.m-live .amt');
+    const eq = card.querySelector('.m-live .eq');
+    const confirm = card.querySelector('.m-confirm');
+    const update = ()=>{
+      const v = +range.value;
+      amt.textContent = `${fmtInt(v)} ⚡`;
+      const units = Math.floor(v/m.per);
+      eq.textContent = units>0 ? `= ${fmtInt(units)} ${m.unit}${units>1?'s':''}` : `1 ${m.unit} à ${fmtInt(m.per)} ⚡`;
+      confirm.disabled = v<=0;
+    };
+    card.querySelector('.m-give').addEventListener('click',()=>{
+      if(state.energyBal<=0){ toast('Plus d’énergie disponible — bougez pour en récolter !'); return; }
+      panel.hidden = !panel.hidden; update();
+    });
+    range.addEventListener('input',update);
+    confirm.addEventListener('click',()=>{
+      const v = Math.min(+range.value, state.energyBal);
+      if(v<=0) return;
+      m.got += v; m.my += v;
+      state.energyBal -= v;
+      store.set('energyBal', state.energyBal);
+      saveMissions();
+      renderMissions(); renderCorp(); renderToday(); renderMySum();
+      const units = Math.floor(v/m.per);
+      toast(`⚡ ${fmtInt(v)} donnés à « ${m.name} »${units>0?` — ${fmtInt(units)} ${m.unit}${units>1?'s':''}`:''}`);
+    });
+  });
+}
+function renderMySum(){
+  const rows = missions.filter(m=>m.my>0).map(m=>`
+    <div class="ms-row">
+      <span class="m-ic">${MICON[m.icon]}</span>
+      <span class="n">${m.name}<small>${fmtInt(Math.floor(m.my/m.per))} × ${m.unit}</small></span>
+      <span class="amt num">${fmtE(m.my)} ⚡</span>
+    </div>`).join('');
+  $('mysum').innerHTML = rows || `
+    <div class="ms-row"><span class="m-ic">${MICON.bolt}</span><span class="n">Aucune énergie distribuée pour l’instant<small>Rendez-vous dans l’onglet Missions pour donner vos ⚡</small></span></div>`;
 }
 
 function renderLeaderboard(){
@@ -1074,7 +1105,7 @@ function renderWeek(){
       const d = WEEK[+col.dataset.i];
       $('wk-tip').textContent = d.today && d.steps===0
         ? 'Aujourd’hui : rien pour l’instant — lancez une course avec le bouton +'
-        : `${d.steps.toLocaleString('fr-FR')} pas ≈ ${Math.floor(d.steps/RATE.stepsPerMeter/RATE.metersPerMeal)} repas financés`;
+        : `${d.steps.toLocaleString('fr-FR')} pas ≈ ⚡ ${fmtInt(d.steps/RATE.stepsPerMeter)} d’énergie`;
     });
   });
 }
@@ -1119,11 +1150,11 @@ function toast(msg){
 }
 
 /* ================= COURSE EN DIRECT ================= */
-const run = {active:false, paused:false, dist:0, t:0, raf:null, last:0, meals:0, trees:0, pathLen:0};
+const run = {active:false, paused:false, dist:0, t:0, raf:null, last:0, marks:0, pathLen:0};
 const runPath = $('run-path'), runDot = $('run-dot');
 
 function startRun(){
-  run.active = true; run.paused = false; run.dist = 0; run.t = 0; run.meals = 0; run.trees = 0; run.last = 0;
+  run.active = true; run.paused = false; run.dist = 0; run.t = 0; run.marks = 0; run.last = 0;
   run.pathLen = runPath.getTotalLength();
   runPath.style.strokeDasharray = run.pathLen;
   runPath.style.strokeDashoffset = run.pathLen;
@@ -1141,10 +1172,8 @@ function tick(ts){
   if(!run.paused){
     run.t += dt;
     run.dist += SIM_SPEED * dt;
-    const meals = Math.floor(run.dist / RATE.metersPerMeal);
-    const trees = Math.floor(run.dist / RATE.metersPerTree);
-    if(meals > run.meals){ run.meals = meals; milestone(`+1 repas financé — ${meals} au total`); }
-    if(trees > run.trees){ run.trees = trees; milestone(`Un arbre planté ! 5 km parcourus`); }
+    const marks = Math.floor(run.dist / 500);
+    if(marks > run.marks){ run.marks = marks; milestone(`+500 ⚡ — ${fmtInt(marks*500)} récoltés`); }
     updateRunUI();
   }
   run.raf = requestAnimationFrame(tick);
@@ -1156,9 +1185,8 @@ function updateRunUI(){
   $('run-steps').textContent = fmtInt(run.dist * RATE.stepsPerMeter);
   const paceSec = run.dist > 30 ? (run.t / (run.dist/1000)) : 0;
   $('run-pace').textContent = paceSec ? `${Math.floor(paceSec/60)}:${String(Math.floor(paceSec%60)).padStart(2,'0')}` : '–:––';
-  const nextMeal = RATE.metersPerMeal - (run.dist % RATE.metersPerMeal);
   $('run-impact-txt').innerHTML =
-    `<b class="num">${fmtEur(run.dist*RATE.eurosPerMeter)}</b> débloqués · ${run.meals} repas${run.trees?` · ${run.trees} arbre${run.trees>1?'s':''}`:''} — prochain repas dans <b class="num">${fmtInt(nextMeal)} m</b>`;
+    `<b class="num">⚡ ${fmtInt(run.dist*RATE.energyPerMeter)}</b> énergie récoltée — à distribuer sur vos missions après la course`;
   const prog = Math.min(run.dist/5000, 1);
   runPath.style.strokeDashoffset = run.pathLen * (1-prog);
   const pt = runPath.getPointAtLength(run.pathLen * prog);
@@ -1181,54 +1209,49 @@ $('btn-finish').addEventListener('click',()=>{
   $('sum-dist').textContent = run.dist>=1000 ? (run.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:2})+' km' : fmtInt(run.dist)+' m';
   $('sum-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   $('sum-pace').textContent = $('run-pace').textContent;
-  const bits = [];
-  if(run.trees) bits.push(`+${run.trees} arbre${run.trees>1?'s':''}`);
-  bits.push(`+${run.meals} repas`, `+${fmtEur(run.dist*RATE.eurosPerMeter)}`);
-  $('sum-impact-line').textContent = bits.join(' · ');
+  $('sum-impact-line').textContent = `+${fmtInt(run.dist*RATE.energyPerMeter)} ⚡ récoltés`;
   $('sum-title').value = new Date().getHours() < 12 ? 'Course du matin' : (new Date().getHours() < 18 ? 'Course du midi' : 'Course du soir');
   $('run-overlay').classList.remove('open');
   $('sum-overlay').classList.add('open');
 });
 
 /* ================= PUBLICATION ================= */
-function creditImpact(dist){
-  const euros = dist*RATE.eurosPerMeter;
-  const meals = Math.floor(dist/RATE.metersPerMeal);
-  const trees = Math.floor(dist/RATE.metersPerTree);
-  state.corpEuros += euros; state.corpMeals += meals; state.corpTrees += trees;
-  state.meKm += dist/1000; state.meMeals += meals; state.meTrees += trees;
+function earnEnergy(dist){
+  const energy = Math.round(dist * RATE.energyPerMeter);
+  state.energyBal += energy;
+  state.corpEnergy += energy;
+  state.meKm += dist/1000;
   state.todaySteps += Math.round(dist * RATE.stepsPerMeter);
   WEEK[6].steps = Math.round(state.todaySteps);
+  store.set('energyBal', state.energyBal);
+  store.set('corpEnergy', state.corpEnergy);
   store.set('todaySteps', state.todaySteps);
-  store.set('corpEuros', Math.round(state.corpEuros));
-  store.set('corpMeals', state.corpMeals); store.set('corpTrees', state.corpTrees);
   store.set('meKm', Math.round(state.meKm*10)/10);
-  store.set('meMeals', state.meMeals); store.set('meTrees', state.meTrees);
-  return {euros, meals, trees};
+  return energy;
 }
-function publishPost({title, dist, time, pace, euros, meals, trees}){
+function publishPost({title, dist, time, pace}){
   const post = {
     id:'u'+Date.now(), n:'Camille Roux', team:'Marketing', when:'à l’instant',
-    title, dist, time, pace, meals, trees: trees||0, euros:Math.round(euros*100)/100,
+    title, dist, time, pace,
     bravos:0, comments:0,
     route:'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35'
   };
   state.posts.unshift(post);
   store.set('posts', state.posts.slice(0,10));
-  renderFeed(); renderCorp(); renderToday(); renderWeek();
+  renderFeed(); renderCorp(); renderToday(); renderWeek(); renderMissions();
 }
 $('btn-publish').addEventListener('click',()=>{
-  const {euros, meals, trees} = creditImpact(run.dist);
+  const energy = earnEnergy(run.dist);
   const m = Math.floor(run.t/60), s = Math.floor(run.t%60);
   publishPost({
     title: $('sum-title').value.trim() || 'Ma course', dist: Math.round(run.dist),
     time: `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`,
-    pace: $('sum-pace').textContent, euros, meals, trees
+    pace: $('sum-pace').textContent
   });
   $('sum-overlay').classList.remove('open');
   goHome();
   confetti();
-  toast(`Publié ! ${meals} repas${trees?` et ${trees} arbre${trees>1?'s':''}`:''} ajoutés à l’impact Corélis`);
+  toast(`Publié ! ⚡ ${fmtInt(energy)} ajoutés à votre réserve — à distribuer dans Missions`);
 });
 $('btn-discard').addEventListener('click',()=>{
   $('sum-overlay').classList.remove('open');
@@ -1238,13 +1261,13 @@ $('btn-res-publish').addEventListener('click',()=>{
   const km = parseFloat(String($('res-dist').value).replace(',','.')) || 0;
   if(km<=0){ toast('Indiquez une distance'); return; }
   const dist = Math.round(km*1000);
-  const {euros, meals, trees} = creditImpact(dist);
+  const energy = earnEnergy(dist);
   publishPost({
     title: $('res-title').value.trim() || $('res-type').value,
-    dist, time:'—', pace:'—', euros, meals, trees
+    dist, time:'—', pace:'—'
   });
   closeSheets(); goHome();
-  toast(`Résultat ajouté : +${meals} repas pour l’impact collectif`);
+  toast(`Résultat ajouté : ⚡ ${fmtInt(energy)} d’énergie récoltée`);
 });
 $('btn-ch-send').addEventListener('click',()=>{
   closeSheets();
@@ -1329,13 +1352,14 @@ function renderTypoRows(){
 $('typo-btn').addEventListener('click',()=>{ closeFan(); $('sheet-typo').classList.add('open'); scrim.classList.add('open'); });
 
 /* ================= RACCOURCIS ACCUEIL ================= */
-$('btn-home-run').addEventListener('click', startRun);
-$('go-impact').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-impact"]').click());
+const goMissions = ()=>document.querySelector('.navbtn[data-nav="scr-missions"]').click();
+$('go-missions').addEventListener('click', goMissions);
+$('go-impact').addEventListener('click', goMissions);
 $('go-challenges').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
 $('go-duel').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
 
 /* ================= INIT ================= */
-renderStories(); renderFeed(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
+renderStories(); renderFeed(); renderMissions(); renderMySum(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
 renderTypoRows(); applyTypo(store.get('typo','act'));
 </script>
 </body>
