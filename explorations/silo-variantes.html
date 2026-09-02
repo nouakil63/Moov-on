@@ -1,4 +1,4 @@
-<title>Le silo — 3 déclinaisons</title>
+<title>Le silo — 7 déclinaisons</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Archivo:wght@400;600;700;800;900&display=swap">
 <style>
@@ -38,6 +38,69 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-
 .mcard .bar{height:7px;border-radius:99px;background:#F0F0F0;margin-top:11px}
 .mcard .bar i{display:block;height:100%;width:62%;background:var(--brand);border-radius:99px}
 .sec{margin-top:14px}
+
+/* ========= H4 — LE SABLIER ========= */
+.h4x{margin:0 16px;display:flex;gap:18px;align-items:center}
+.h4x .glass{width:96px;height:150px;flex:none;position:relative}
+.h4x .bulb{position:absolute;left:0;right:0;height:66px;border:2.5px solid #0A0A0A;overflow:hidden;background:#FAFAFA}
+.h4x .bulb.top{top:0;clip-path:polygon(0 0,100% 0,58% 100%,42% 100%);border-radius:10px 10px 0 0}
+.h4x .bulb.bot{bottom:0;clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);border-radius:0 0 10px 10px}
+.h4x .bulb.top .sand{position:absolute;left:0;right:0;bottom:0;height:62%;background:var(--brand)}
+.h4x .bulb.bot .sand{position:absolute;left:0;right:0;bottom:0;height:38%;background:#0A0A0A}
+.h4x .stream{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:2.5px;height:24px;background:repeating-linear-gradient(180deg,var(--brand) 0 4px,transparent 4px 7px)}
+.h4x .cap-t{position:absolute;top:-3px;left:8%;right:8%;height:5px;background:#0A0A0A;border-radius:3px}
+.h4x .cap-b{position:absolute;bottom:-3px;left:8%;right:8%;height:5px;background:#0A0A0A;border-radius:3px}
+.h4x .body{flex:1}
+.h4x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.h4x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:46px;line-height:.95;margin-top:4px}
+.h4x .rows{margin-top:9px;font-size:11.5px;font-weight:700;line-height:1.7}
+.h4x .rows .k{color:#8A8A8A;font-weight:600}
+.h4x .rows .down{color:#0A0A0A}
+
+/* ========= H5 — LA TOUR ========= */
+.h5x{margin:0 16px;display:flex;gap:18px;align-items:flex-end}
+.h5x .tower{width:74px;flex:none;position:relative;padding-top:12px}
+.h5x .ant{position:absolute;top:0;left:50%;transform:translateX(-50%);width:2.5px;height:14px;background:#0A0A0A}
+.h5x .floors{display:flex;flex-direction:column-reverse;gap:3px;border:2.5px solid #0A0A0A;border-radius:6px 6px 0 0;padding:4px;background:#FAFAFA}
+.h5x .fl{height:11px;border-radius:2px;background:#ECECEC;position:relative}
+.h5x .fl.on{background:var(--brand)}
+.h5x .fl.on::after{content:"";position:absolute;inset:2.5px 4px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.55) 0 4px,transparent 4px 9px);border-radius:1px}
+.h5x .fl.part{background:linear-gradient(90deg,var(--brand) 62%,#ECECEC 62%)}
+.h5x .ground{height:3px;background:#0A0A0A;margin-top:0}
+.h5x .body{flex:1;padding-bottom:6px}
+.h5x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.h5x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:46px;line-height:.95;margin-top:4px}
+.h5x .sub{font-size:11.5px;font-weight:700;color:#4A4A4A;margin-top:8px;line-height:1.5}
+.h5x .sub b{color:var(--brand)}
+
+/* ========= H6 — LE THERMOMÈTRE ========= */
+.h6x{margin:0 16px;border:1px solid #ECECEC;border-radius:16px;padding:16px;display:flex;gap:20px;align-items:center;background:linear-gradient(180deg,#FCFBF8,#fff)}
+.h6x .thermo{width:38px;height:158px;flex:none;position:relative;display:flex;justify-content:center}
+.h6x .tube{width:14px;height:124px;border:2px solid #0A0A0A;border-radius:8px 8px 0 0;position:relative;overflow:hidden;background:#fff}
+.h6x .mercury{position:absolute;left:0;right:0;bottom:0;height:67%;background:var(--brand)}
+.h6x .bulbT{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:34px;height:34px;border-radius:50%;background:var(--brand);border:2px solid #0A0A0A;display:grid;place-items:center;color:#fff;font-size:14px}
+.h6x .ticks{position:absolute;left:-9px;top:6px;bottom:40px;display:flex;flex-direction:column;justify-content:space-between}
+.h6x .ticks i{width:7px;height:1.5px;background:#0A0A0A;display:block}
+.h6x .body{flex:1}
+.h6x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.h6x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:46px;line-height:.95;margin-top:4px}
+.h6x .scale{margin-top:8px;font-size:11px;font-weight:700;color:#8A8A8A;line-height:1.7}
+.h6x .scale b{color:#0A0A0A}
+
+/* ========= H7 — L'ÉCLUSE ========= */
+.h7x{margin:0 16px;border:1px solid #ECECEC;border-radius:18px;padding:16px;display:flex;gap:18px;align-items:center}
+.h7x .lock{width:92px;height:150px;flex:none;position:relative}
+.h7x .tank{position:absolute;top:0;left:0;right:14px;bottom:22px;border:2.5px solid #0A0A0A;border-radius:8px;overflow:hidden;background:#FAFAFA}
+.h7x .water{position:absolute;left:0;right:0;bottom:0;height:67%;background:var(--brand)}
+.h7x .gate{position:absolute;right:0;bottom:22px;width:20px;height:34px;border:2.5px solid #0A0A0A;border-left:0;background:#fff;border-radius:0 6px 6px 0}
+.h7x .wheel{position:absolute;right:-6px;bottom:60px;width:26px;height:26px;border-radius:50%;border:2.5px solid #0A0A0A;background:#fff;display:grid;place-items:center}
+.h7x .wheel::after{content:"";width:12px;height:2.5px;background:#0A0A0A;transform:rotate(45deg)}
+.h7x .spout{position:absolute;right:-4px;bottom:6px;width:26px;height:12px;color:var(--brand);font-weight:800;font-size:13px}
+.h7x .body{flex:1}
+.h7x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.h7x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:46px;line-height:.95;margin-top:4px}
+.h7x .sub{font-size:11.5px;font-weight:600;color:#4A4A4A;margin-top:7px;line-height:1.45}
+.h7x .cta{margin-top:11px;background:var(--brand);color:#fff;border-radius:10px;padding:10px 14px;display:inline-block;font-weight:800;font-size:12.5px}
 
 /* ========= H1 — LE SILO TECHNIQUE ========= */
 .h1x{margin:0 16px;display:flex;gap:18px;align-items:stretch}
@@ -86,8 +149,8 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-
 </style>
 
 <div class="head">
-  <h1>Le silo — 3 déclinaisons</h1>
-  <p>La direction retenue : un réservoir vertical qui monte quand on bouge et descend quand on donne. Trois exécutions, du plus technique au plus narratif.</p>
+  <h1>Le silo — 7 déclinaisons</h1>
+  <p>La direction retenue : un réservoir vertical qui monte quand on bouge et descend quand on donne. Sept exécutions, du plus technique au plus narratif.</p>
 </div>
 
 <div class="grid">
@@ -179,6 +242,107 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-
       <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
     </div>
     <p class="slot-desc">La version pédagogique : la cuve au centre, le flux entrant (vos pas) à gauche, le flux sortant (vos dons) à droite. Explique le modèle économique du produit en un seul dessin.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H4</span><div><h2>Le sablier</h2><small>Réserve en haut, dons accomplis en bas</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h4x">
+          <div class="glass">
+            <span class="cap-t"></span>
+            <div class="bulb top"><div class="sand"></div></div>
+            <span class="stream"></span>
+            <div class="bulb bot"><div class="sand"></div></div>
+            <span class="cap-b"></span>
+          </div>
+          <div class="body">
+            <div class="lbl">Votre énergie</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="rows num">
+              <div><span class="k">En haut, à distribuer :</span> 6 750</div>
+              <div><span class="k">Déjà versé aux missions :</span> <span class="down">84 k depuis janvier</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Deux réservoirs en un : la réserve au-dessus, le cumul donné en dessous, le filet de grains qui coule entre les deux quand tu donnes. Ton historique de générosité devient visible en permanence.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H5</span><div><h2>La tour</h2><small>Un étage allumé par tranche de 1 000 ⚡</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h5x">
+          <div class="tower">
+            <span class="ant"></span>
+            <div class="floors">
+              <span class="fl on"></span><span class="fl on"></span><span class="fl on"></span><span class="fl on"></span><span class="fl on"></span><span class="fl on"></span><span class="fl part"></span><span class="fl"></span><span class="fl"></span><span class="fl"></span>
+            </div>
+            <div class="ground"></div>
+          </div>
+          <div class="body">
+            <div class="lbl">Votre énergie</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="sub num"><b>6 étages</b> allumés sur 10 · chaque étage = 1 000 ⚡.<br>La tour s’éteint en donnant — et se rallume en marchant.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Le réservoir devient un immeuble dont les étages s'illuminent — clin d'œil au siège de l'entreprise. Les fenêtres éclairées donnent un niveau lisible de loin, très gamifié sans jauge classique.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H6</span><div><h2>Le thermomètre</h2><small>Instrument fin, bulbe ⚡, graduations</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h6x">
+          <div class="thermo">
+            <div class="tube"><div class="mercury"></div></div>
+            <span class="bulbT">⚡</span>
+            <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="body">
+            <div class="lbl">Température solidaire</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="scale num">Palier <b>« Généreux »</b> atteint à 5 000<br>Prochain palier <b>« En feu »</b> à 10 000</div>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Le fin thermomètre au bulbe éclair, avec des paliers nommés (« Généreux », « En feu ») plutôt que des pourcentages. Instrument délicat, presque cabinet de curiosités.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H7</span><div><h2>L'écluse</h2><small>Une vanne à ouvrir vers les missions</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h7x">
+          <div class="lock">
+            <div class="tank"><div class="water"></div></div>
+            <span class="wheel"></span>
+            <span class="gate"></span>
+            <span class="spout">≋</span>
+          </div>
+          <div class="body">
+            <div class="lbl">Votre réserve</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="sub">Le bassin se remplit à chaque pas.<br>Tournez la vanne pour irriguer une mission.</div>
+            <span class="cta">Ouvrir la vanne</span>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Le bassin avec sa vanne à volant : « ouvrir la vanne » devient le geste du don, l'eau s'écoule vers la mission choisie. La métaphore de l'irrigation — on arrose les causes.</p>
   </div>
 
 </div>
