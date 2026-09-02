@@ -82,6 +82,61 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-
 .vD svg{width:100%;height:44px;margin-top:10px}
 .vD .cap{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#8A8A8A;margin-top:5px;font-family:"IBM Plex Mono",monospace}
 
+/* F — L'AFFICHE TYPO */
+.vF{margin:0 16px;padding:6px 0 2px}
+.vF .lbl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8A8A8A}
+.vF .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:92px;line-height:.85;letter-spacing:-.01em;white-space:nowrap;margin-top:6px}
+.vF .v .bolt{color:var(--brand)}
+.vF .rule{height:3px;background:#0A0A0A;margin-top:10px}
+.vF .cap{display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-top:8px}
+.vF .cap span:last-child{color:var(--brand)}
+
+/* G — LES JETONS */
+.vG{margin:0 16px;border:1px solid #ECECEC;border-radius:18px;padding:16px}
+.vG .top{display:flex;justify-content:space-between;align-items:baseline}
+.vG .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.vG .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px}
+.vG .tokens{display:flex;align-items:center;margin-top:14px;height:56px}
+.vG .tok{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3E67D6,var(--brand) 60%,#082567);border:3px solid #fff;box-shadow:0 4px 10px -3px rgba(8,37,103,.5);display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;margin-left:-14px;font-family:"Barlow Condensed",sans-serif}
+.vG .tok:first-child{margin-left:0}
+.vG .tok.small{width:40px;height:40px;font-size:10px;opacity:.95}
+.vG .hint{font-size:11.5px;color:#8A8A8A;font-weight:600;margin-top:10px}
+.vG .hint b{color:var(--brand)}
+
+/* H — LE SILO */
+.vH{margin:0 16px;display:flex;gap:16px;align-items:stretch}
+.vH .gauge{width:56px;border:2px solid #0A0A0A;border-radius:10px;position:relative;overflow:hidden;height:128px;flex:none}
+.vH .gauge .fill{position:absolute;left:0;right:0;bottom:0;height:67%;background:linear-gradient(180deg,#3E67D6,var(--brand))}
+.vH .gauge .g{position:absolute;left:0;right:0;height:1px;background:rgba(10,10,10,.25)}
+.vH .gauge .pcx{position:absolute;left:0;right:0;bottom:69%;text-align:center;font-weight:800;font-size:10px;color:#0A0A0A}
+.vH .body{flex:1;display:flex;flex-direction:column;justify-content:center}
+.vH .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.vH .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:46px;line-height:.95;margin-top:4px}
+.vH .sub{font-size:11.5px;font-weight:600;color:#4A4A4A;margin-top:6px;line-height:1.45}
+.vH .sub b{color:var(--brand)}
+
+/* I — L'AURA */
+.vI{margin:0 16px;border-radius:20px;background:linear-gradient(180deg,#F6F8FF,#fff);border:1px solid #E4E9F7;padding:16px;display:flex;gap:16px;align-items:center}
+.vI .auraw{position:relative;width:92px;height:92px;flex:none;display:grid;place-items:center}
+.vI .aura{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--brand) 0 25%,#C9D6F5 25% 27%,var(--brand) 27% 48%,#C9D6F5 48% 50%,var(--brand) 50% 65%,#C9D6F5 65% 100%);mask:radial-gradient(circle,transparent 58%,#000 60%);animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.vI .aura{animation:none}}
+.vI .ava{width:64px;height:64px;border-radius:50%;background:#B3541E;color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px}
+.vI .lvl{position:absolute;bottom:-2px;right:-4px;background:var(--brand);color:#fff;font-weight:800;font-size:10px;border-radius:999px;padding:3px 8px;border:2px solid #fff}
+.vI h4{font-weight:900;font-size:15.5px;line-height:1.25}
+.vI h4 b{color:var(--brand)}
+.vI p{font-size:11.5px;color:#8A8A8A;font-weight:600;margin-top:3px}
+
+/* J — LE TABLEAU D'AFFICHAGE */
+.vJ{margin:0 16px;background:#101014;border-radius:14px;padding:16px;color:#EDEDED}
+.vJ .lbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#8F8F96;display:flex;justify-content:space-between}
+.vJ .flaps{display:flex;gap:5px;margin-top:12px}
+.vJ .flap{flex:1;aspect-ratio:.72;background:linear-gradient(180deg,#26262C 48%,#1B1B20 52%);border-radius:6px;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:44px;color:#fff;position:relative;overflow:hidden}
+.vJ .flap::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.5px;background:#101014}
+.vJ .flap.bolt{background:var(--brand);color:#fff;font-size:30px}
+.vJ .cap{display:flex;justify-content:space-between;font-size:10.5px;color:#8F8F96;font-weight:600;margin-top:10px;letter-spacing:.04em}
+.vJ .cap b{color:#fff}
+
 /* E — LA BULLE GÉNÉREUSE */
 .vE{margin:0 16px;background:var(--tint);border-radius:24px;padding:18px;font-family:"Nunito","Archivo",sans-serif}
 .vE .row{display:flex;gap:12px;align-items:center}
@@ -200,6 +255,103 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-
       <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
     </div>
     <p class="slot-desc">La bulle teintée arrondie déjà utilisée sur l'accueil (défi du mois) : phrase complice, gros bouton rond. Cohérence maximale avec l'existant.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">F</span><div><h2>L'affiche typo</h2><small>Aucun conteneur — juste le chiffre</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vF">
+          <div class="lbl">Votre énergie</div>
+          <div class="v num">6 750<span class="bolt">⚡</span></div>
+          <div class="rule"></div>
+          <div class="cap num"><span>+3 200 aujourd’hui</span><span>répartir ↓</span></div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Zéro carte, zéro fond : le solde en typographie géante, un trait noir, deux légendes. Le plus radical et le plus léger — le contenu devient l'interface.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">G</span><div><h2>Les jetons</h2><small>L'énergie comme monnaie physique</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vG">
+          <div class="top"><span class="lbl">Votre énergie</span><span class="v num">6 750 ⚡</span></div>
+          <div class="tokens">
+            <span class="tok num">1 000</span><span class="tok num">1 000</span><span class="tok num">1 000</span><span class="tok num">1 000</span><span class="tok num">1 000</span><span class="tok num">1 000</span><span class="tok small num">750</span>
+          </div>
+          <div class="hint">Glissez un jeton sur une mission pour le donner — ou touchez <b>Répartir</b>.</div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Le solde devient une pile de jetons frappés ⚡ qu'on fait glisser vers les missions. Tactile et très gamifié — le geste de donner devient physique.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H</span><div><h2>Le silo</h2><small>Réservoir vertical gradué</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vH">
+          <div class="gauge">
+            <div class="fill"></div>
+            <div class="g" style="bottom:25%"></div><div class="g" style="bottom:50%"></div><div class="g" style="bottom:75%"></div>
+          </div>
+          <div class="body">
+            <div class="lbl">Réserve d’énergie</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="sub num">Remplie à <b>67 %</b> · +3 200 récoltés aujourd’hui.<br>Chaque don fait baisser le niveau — chaque pas le remonte.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Une cuve graduée qui monte quand tu bouges et descend quand tu donnes. Le cycle récolter/donner devient visible dans un seul objet.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">I</span><div><h2>L'aura</h2><small>Ton personnage chargé d'énergie</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vI">
+          <div class="auraw">
+            <div class="aura"></div>
+            <span class="ava">CR</span>
+            <span class="lvl num">niv. 8</span>
+          </div>
+          <div>
+            <h4>Camille, vous rayonnez à <b>6 750 ⚡</b></h4>
+            <p>+3 200 aujourd’hui · niveau 9 à 10 000 ⚡ distribués</p>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Code RPG : ton avatar entouré d'une aura qui tourne, un niveau qui monte en donnant. La gamification la plus assumée — l'énergie devient un attribut du personnage.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">J</span><div><h2>Le tableau d'affichage</h2><small>Split-flap de gare, chiffres à volets</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vJ">
+          <div class="lbl"><span>Énergie disponible</span><span>MOOV’ON</span></div>
+          <div class="flaps num">
+            <span class="flap">0</span><span class="flap">6</span><span class="flap">7</span><span class="flap">5</span><span class="flap">0</span><span class="flap bolt">⚡</span>
+          </div>
+          <div class="cap num"><span>Gagné auj. <b>+3 200</b></span><span>Donné cette sem. <b>−2 400</b></span></div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Les chiffres en volets mécaniques façon tableau des départs — et à chaque énergie gagnée, un volet claque. Rétro, sonore, très mémorable en démo.</p>
   </div>
 
 </div>
