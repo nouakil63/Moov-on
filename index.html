@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moov'On</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Albert+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* ================= TOKENS ================= */
+:root{
+  --paper:#F2F5F1;          /* ground behind the phone */
+  --surface:#FDFEFD;        /* app background */
+  --card:#FFFFFF;
+  --sunken:#EAF0EA;
+  --line:#DCE5DC;
+  --ink:#101E17;
+  --ink-2:#43544A;
+  --ink-3:#75857B;
+  --coral:#E8482B;          /* effort / action */
+  --coral-ink:#FFFFFF;
+  --coral-soft:#FBE3DD;
+  --green:#177A44;          /* impact / dons */
+  --green-ink:#FFFFFF;
+  --green-soft:#DDEEE2;
+  --gold:#A97717;           /* badges — toujours icône + libellé */
+  --gold-soft:#F3E7CE;
+  --chart:#1E8A4F;
+  --focus:#0E63C4;
+  --shadow:0 18px 50px -18px rgba(16,30,23,.35);
+  --nav-h:76px;
+  color-scheme:light dark;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --paper:#0B110D;
+    --surface:#121A15;
+    --card:#1A241E;
+    --sunken:#0E1611;
+    --line:#2A362E;
+    --ink:#EDF3EE;
+    --ink-2:#B3C2B8;
+    --ink-3:#7E8F84;
+    --coral:#FF5C3D;
+    --coral-ink:#2A0D06;
+    --coral-soft:#3A1D15;
+    --green:#3FA96F;
+    --green-ink:#06130B;
+    --green-soft:#1C3226;
+    --gold:#D9A845;
+    --gold-soft:#33290F;
+    --chart:#3FA96F;
+    --shadow:0 18px 50px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B110D;
+  --surface:#121A15;
+  --card:#1A241E;
+  --sunken:#0E1611;
+  --line:#2A362E;
+  --ink:#EDF3EE;
+  --ink-2:#B3C2B8;
+  --ink-3:#7E8F84;
+  --coral:#FF5C3D;
+  --coral-ink:#2A0D06;
+  --coral-soft:#3A1D15;
+  --green:#3FA96F;
+  --green-ink:#06130B;
+  --green-soft:#1C3226;
+  --gold:#D9A845;
+  --gold-soft:#33290F;
+  --chart:#3FA96F;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.7);
+}
+
+/* ================= BASE ================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Albert Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100dvh;padding:24px 12px;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:8px}
+svg{display:block}
+.num{font-variant-numeric:tabular-nums}
+.disp{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+
+/* ================= DEVICE FRAME ================= */
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.stage-note{color:var(--ink-3);font-size:12.5px;letter-spacing:.02em;text-align:center}
+.device{
+  position:relative;width:min(412px,100%);height:min(880px,calc(100dvh - 76px));
+  min-height:600px;background:var(--surface);border-radius:34px;overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid var(--line);
+  display:flex;flex-direction:column;
+}
+@media (max-width:460px){
+  body{padding:0}
+  .device{width:100%;height:100dvh;min-height:100dvh;border-radius:0;border:0}
+  .stage-note{display:none}
+}
+
+/* ================= SCREENS ================= */
+.screens{position:relative;flex:1;overflow:hidden}
+.screen{
+  position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
+  padding-bottom:calc(var(--nav-h) + 28px);
+  opacity:0;transform:translateX(14px);pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+  scrollbar-width:none;
+}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;transform:none;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){
+  .screen{transition:none;transform:none}
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* ================= COMMON ================= */
+.pagehead{padding:22px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pagehead h1{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1;letter-spacing:.01em;text-transform:uppercase}
+.pagehead .sub{color:var(--ink-3);font-size:12.5px;margin-top:3px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--sunken);display:grid;place-items:center;color:var(--ink-2);flex:none}
+.section-label{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding:14px 18px 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.coral{background:var(--coral-soft);color:var(--coral)}
+.chip.gold{background:var(--gold-soft);color:var(--gold)}
+.chip.plain{background:var(--sunken);color:var(--ink-2)}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;flex:none;letter-spacing:.02em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;border-radius:14px;padding:13px 18px;transition:transform .12s ease,opacity .12s ease}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--coral);color:var(--coral-ink)}
+.btn.impact{background:var(--green);color:var(--green-ink)}
+.btn.ghost{background:var(--sunken);color:var(--ink)}
+.btn.block{width:100%}
+
+/* ================= HOME ================= */
+.brandbar{display:flex;align-items:center;justify-content:space-between;padding:20px 18px 6px}
+.brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:baseline;gap:2px}
+.brand .on{color:var(--coral)}
+.brand .tick{color:var(--green)}
+.corpcard{margin:10px 16px 4px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;position:relative;overflow:hidden}
+.corpcard .corp-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.corpcard .corp-name{font-weight:700;font-size:13.5px}
+.corpcard .corp-prog{font-size:11.5px;color:var(--ink-3)}
+.corp-figures{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.corp-fig .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:.95;color:var(--green);white-space:nowrap}
+.corp-fig .l{font-size:11px;color:var(--ink-3);margin-top:3px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.corp-fig.money .v{color:var(--ink)}
+.meter{height:8px;background:var(--sunken);border-radius:99px;overflow:hidden}
+.meter>i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.meter-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:6px}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:14px 18px 6px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;width:60px;background:none}
+.story .ring{width:56px;height:56px;border-radius:50%;padding:3px;background:conic-gradient(var(--coral),var(--green),var(--coral))}
+.story .ring.seen{background:var(--line)}
+.story .ring>span{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:15px;border:2.5px solid var(--card)}
+.story small{font-size:10.5px;color:var(--ink-2);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed{display:flex;flex-direction:column;gap:14px;padding:8px 16px 0}
+.post{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.post-head{display:flex;align-items:center;gap:10px;padding:13px 14px 10px}
+.post-head .who{flex:1;min-width:0}
+.post-head .name{font-weight:700;font-size:14px}
+.post-head .meta{font-size:11.5px;color:var(--ink-3);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.post-title{padding:0 14px 8px;font-weight:600;font-size:14.5px}
+.routebox{margin:0 14px;border-radius:14px;overflow:hidden;background:var(--sunken);position:relative}
+.routebox svg{width:100%;height:auto}
+.post-stats{display:flex;padding:12px 14px 4px}
+.pstat{flex:1}
+.pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1}
+.pstat .l{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.post-impact{margin:8px 14px 0;padding:9px 12px;background:var(--green-soft);color:var(--green);border-radius:12px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.post-actions{display:flex;align-items:center;gap:4px;padding:8px 8px 10px}
+.pact{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;color:var(--ink-2);font-weight:600;font-size:13px}
+.pact:hover{background:var(--sunken)}
+.pact.bravoed{color:var(--coral)}
+.pact.bravoed svg{fill:var(--coral)}
+
+/* ================= CHALLENGES ================= */
+.hero-challenge{margin:8px 16px 0;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#12351F,#0C2415);color:#EAF6EC;padding:18px;position:relative;border:1px solid var(--line)}
+.hero-challenge .hc-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8FD3A5;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.hero-challenge h2{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:28px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em;max-width:240px}
+.hero-challenge .hc-sub{font-size:12.5px;color:#B9D9C2;margin-top:8px}
+.hero-challenge .hc-days{position:absolute;top:16px;right:16px;text-align:center;background:rgba(255,255,255,.1);border-radius:12px;padding:7px 11px}
+.hero-challenge .hc-days .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1}
+.hero-challenge .hc-days .l{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#8FD3A5}
+.hero-challenge .meter{background:rgba(255,255,255,.14);margin-top:14px}
+.hero-challenge .meter>i{background:#5AC183}
+.hero-challenge .meter-cap{color:#B9D9C2}
+.lb{margin:0 16px;padding:6px 0 4px}
+.lb-row{display:flex;align-items:center;gap:11px;padding:10px 14px}
+.lb-row.me{background:var(--green-soft);border-radius:14px}
+.lb-rank{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;width:22px;text-align:center;color:var(--ink-3)}
+.lb-row:nth-child(1) .lb-rank,.lb-row:nth-child(2) .lb-rank,.lb-row:nth-child(3) .lb-rank{color:var(--gold)}
+.lb-body{flex:1;min-width:0}
+.lb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lb-name{font-weight:700;font-size:13.5px}
+.lb-val{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:16px;color:var(--ink-2)}
+.lb-bar{height:6px;background:var(--sunken);border-radius:99px;margin-top:5px;overflow:hidden}
+.lb-bar>i{display:block;height:100%;background:var(--chart);border-radius:99px}
+.duel{margin:0 16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.duel-head{display:flex;justify-content:space-between;align-items:center}
+.duel-title{font-weight:700;font-size:14px}
+.duel-track{display:flex;height:34px;border-radius:12px;overflow:hidden;font-weight:700;font-size:12.5px;border:2px solid var(--surface);outline:1px solid var(--line)}
+.duel-a{background:var(--coral);color:var(--coral-ink);display:flex;align-items:center;padding:0 12px;min-width:70px}
+.duel-b{background:var(--sunken);color:var(--ink-2);display:flex;align-items:center;justify-content:flex-end;padding:0 12px;flex:1}
+.minis{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 8px;scrollbar-width:none}
+.minis::-webkit-scrollbar{display:none}
+.mini{flex:none;width:160px;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
+.mini .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;margin-bottom:10px}
+.mini h4{font-size:13.5px;font-weight:700;line-height:1.2}
+.mini p{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.mini .meter{margin-top:10px;height:6px}
+
+/* ================= IMPACT ================= */
+.impact-hero{margin:8px 16px 0;padding:20px 18px;border-radius:22px;background:var(--green);color:var(--green-ink);position:relative;overflow:hidden}
+.impact-hero .ih-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.impact-hero .ih-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:56px;line-height:.95;margin-top:6px}
+.impact-hero .ih-sub{font-size:13px;margin-top:4px;opacity:.9}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px 0}
+.istat{padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
+.istat .ic{width:34px;height:34px;border-radius:10px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;margin-bottom:9px}
+.istat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1}
+.istat .l{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:3px;letter-spacing:.03em;text-transform:uppercase}
+.convert{margin:14px 16px 0;padding:16px}
+.convert h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.conv-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed var(--line);font-size:13.5px}
+.conv-row:first-of-type{border-top:0}
+.conv-row .from{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;width:74px}
+.conv-row .arrow{color:var(--ink-3)}
+.conv-row .to{font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
+.assoc{margin:0 16px;padding:6px 0}
+.assoc-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line)}
+.assoc-row:first-child{border-top:0}
+.assoc-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.assoc-body{flex:1;min-width:0}
+.assoc-name{font-weight:700;font-size:13.5px}
+.assoc-sub{font-size:11.5px;color:var(--ink-3)}
+.assoc-amt{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;color:var(--green)}
+
+/* ================= PROFILE ================= */
+.prof-head{display:flex;align-items:center;gap:14px;padding:24px 18px 8px}
+.prof-head .avatar{width:64px;height:64px;font-size:22px}
+.prof-name{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:28px;line-height:1;text-transform:uppercase}
+.prof-sub{font-size:12.5px;color:var(--ink-3);margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.prof-stats{display:flex;padding:14px 18px 4px;gap:10px}
+.prof-stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.prof-stat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1}
+.prof-stat .l{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
+.week{margin:0 16px;padding:16px}
+.week h3{font-size:14px;font-weight:700}
+.week .wk-sub{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.wk-chart{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:16px}
+.wk-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;background:none;border-radius:8px;padding:2px}
+.wk-col .bar{width:100%;max-width:26px;background:var(--chart);border-radius:4px 4px 0 0;min-height:4px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.wk-col.today .bar{background:var(--coral)}
+.wk-col .d{font-size:10.5px;color:var(--ink-3);font-weight:600}
+.wk-col[aria-pressed="true"]{background:var(--sunken)}
+.wk-tip{margin-top:10px;font-size:12.5px;color:var(--ink-2);min-height:18px}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 16px 0}
+.badge{padding:13px 8px;border-radius:16px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.badge .bic{width:40px;height:40px;border-radius:50%;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center}
+.badge span{font-size:10.5px;font-weight:700;line-height:1.2}
+.badge.locked{opacity:.45}
+.badge.locked .bic{background:var(--sunken);color:var(--ink-3)}
+
+/* ================= BOTTOM NAV + FAB ================= */
+.navwrap{position:absolute;left:0;right:0;bottom:0;z-index:40;pointer-events:none}
+.bottomnav{
+  pointer-events:auto;display:flex;align-items:stretch;height:var(--nav-h);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding-bottom:10px;
+}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:10px;font-weight:700;letter-spacing:.03em}
+.navbtn.active{color:var(--ink)}
+.navbtn.active .nic{color:var(--coral)}
+.navbtn .nic{color:inherit}
+.fab-slot{flex:1;position:relative}
+.fab{
+  pointer-events:auto;position:absolute;left:50%;top:-24px;transform:translateX(-50%);
+  width:60px;height:60px;border-radius:20px;background:var(--coral);color:var(--coral-ink);
+  display:grid;place-items:center;box-shadow:0 10px 24px -8px color-mix(in srgb,var(--coral) 65%,transparent);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-radius .25s ease;z-index:60;
+}
+.fab svg{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.fab[aria-expanded="true"]{transform:translateX(-50%) rotate(0);border-radius:50%}
+.fab[aria-expanded="true"] svg{transform:rotate(135deg)}
+.scrim{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 45%,transparent);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:45}
+.scrim.open{opacity:1;pointer-events:auto}
+.fanmenu{position:absolute;left:0;right:0;bottom:calc(var(--nav-h) + 26px);z-index:50;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.fan-item{
+  pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:9px 18px 9px 9px;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.35);font-weight:700;font-size:14px;
+  opacity:0;transform:translateY(16px) scale(.9);
+  transition:opacity .22s ease,transform .28s cubic-bezier(.34,1.56,.64,1);
+}
+.fanmenu.open .fan-item{opacity:1;transform:none;}
+.fanmenu.open .fan-item:nth-child(1){transition-delay:.10s}
+.fanmenu.open .fan-item:nth-child(2){transition-delay:.05s}
+.fanmenu.open .fan-item:nth-child(3){transition-delay:0s}
+.fan-item .fic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none}
+.fan-item .fic.coral{background:var(--coral);color:var(--coral-ink)}
+.fan-item .fic.green{background:var(--green);color:var(--green-ink)}
+.fan-item .fic.plain{background:var(--sunken);color:var(--ink-2)}
+.fan-item small{display:block;font-weight:500;font-size:11px;color:var(--ink-3)}
+
+/* ================= LIVE RUN ================= */
+.overlay{
+  position:absolute;inset:0;z-index:80;background:var(--surface);
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,.25,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.overlay.open{transform:none}
+.run-map{position:relative;flex:1;min-height:0;background:var(--sunken);overflow:hidden}
+.run-map svg{position:absolute;inset:0;width:100%;height:100%}
+.run-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:16px;z-index:2}
+.run-live-chip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--coral);animation:pulse 1.2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--coral) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.run-panel{background:var(--card);border-top:1px solid var(--line);padding:18px 18px calc(18px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;margin-top:-20px;position:relative;z-index:3}
+.run-time{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:64px;line-height:.95;text-align:center;letter-spacing:.02em}
+.run-time small{font-size:22px;color:var(--ink-3);font-weight:600}
+.run-metrics{display:flex;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.rmet{flex:1;text-align:center}
+.rmet .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:28px;line-height:1}
+.rmet .l{font-size:10.5px;color:var(--ink-3);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.run-impact{margin-top:14px;background:var(--green-soft);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.run-impact .ric{width:38px;height:38px;border-radius:50%;background:var(--green);color:var(--green-ink);display:grid;place-items:center;flex:none}
+.run-impact .txt{flex:1;font-size:13px;color:var(--green);font-weight:600;line-height:1.35}
+.run-impact .txt b{font-size:15px}
+.run-ctrl{display:flex;gap:10px;margin-top:16px}
+.milestone{
+  position:absolute;left:50%;top:18%;transform:translate(-50%,10px);z-index:4;
+  background:var(--green);color:var(--green-ink);font-weight:700;font-size:14px;
+  padding:11px 18px;border-radius:999px;display:flex;align-items:center;gap:8px;
+  opacity:0;transition:opacity .3s ease,transform .3s ease;pointer-events:none;
+  box-shadow:0 14px 30px -10px color-mix(in srgb,var(--green) 60%,transparent);
+}
+.milestone.show{opacity:1;transform:translate(-50%,0)}
+
+/* ================= SUMMARY / SHEETS ================= */
+.sum-head{padding:26px 18px 6px;text-align:center}
+.sum-head .kicker{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--coral)}
+.sum-head h2{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:34px;text-transform:uppercase;line-height:1;margin-top:6px}
+.sum-route{margin:14px 16px;border-radius:18px;overflow:hidden;background:var(--sunken)}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 16px}
+.sum-cell{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center}
+.sum-cell .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1}
+.sum-cell .l{font-size:10px;color:var(--ink-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.sum-impact{margin:12px 16px;padding:14px;border-radius:16px;background:var(--green);color:var(--green-ink);display:flex;gap:12px;align-items:center}
+.sum-impact .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:22px;line-height:1.05}
+.sum-impact p{font-size:12px;opacity:.9;margin-top:2px}
+.sum-form{padding:0 16px}
+.sum-form input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;font:inherit;color:var(--ink);font-weight:600}
+.sum-form input:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+.sum-actions{display:flex;flex-direction:column;gap:10px;padding:14px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:85;background:var(--card);
+  border-radius:24px 24px 0 0;border-top:1px solid var(--line);
+  transform:translateY(105%);transition:transform .3s cubic-bezier(.32,.72,.25,1);
+  padding:14px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.4);
+}
+.sheet.open{transform:none}
+.sheet .grab{width:40px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 14px}
+.sheet h3{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;text-transform:uppercase}
+.sheet p.desc{font-size:13px;color:var(--ink-2);margin-top:6px}
+.sheet .fields{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.sheet .fields label{font-size:11.5px;font-weight:700;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+.sheet .fields input,.sheet .fields select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;color:var(--ink)}
+.sheet .btn{margin-top:16px}
+
+/* toast */
+.toast{
+  position:absolute;left:50%;bottom:calc(var(--nav-h) + 22px);transform:translate(-50%,14px);
+  background:var(--ink);color:var(--surface);font-weight:600;font-size:13px;
+  padding:11px 18px;border-radius:999px;opacity:0;transition:.3s ease;z-index:95;pointer-events:none;
+  max-width:88%;text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:90}
+</style>
+</head>
+<body data-palette="#1E8A4F">
+<div class="stage">
+  <div class="device" id="device">
+
+    <div class="screens">
+
+      <!-- ============ ACCUEIL ============ -->
+      <section class="screen active" id="scr-home" aria-label="Accueil">
+        <div class="brandbar">
+          <div class="brand">Moov<span class="tick">’</span><span class="on">On</span></div>
+          <button class="iconbtn" aria-label="Notifications">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          </button>
+        </div>
+
+        <div class="corpcard">
+          <div class="corp-top">
+            <div>
+              <div class="corp-name">Banque Corélis · Programme Élan</div>
+              <div class="corp-prog">Budget solidaire 2026 — données de démonstration</div>
+            </div>
+            <span class="chip green">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+              RSE
+            </span>
+          </div>
+          <div class="corp-figures">
+            <div class="corp-fig"><div class="v num" id="corp-trees">418</div><div class="l">arbres plantés</div></div>
+            <div class="corp-fig"><div class="v num" id="corp-meals">3 120</div><div class="l">repas financés</div></div>
+            <div class="corp-fig money"><div class="v num" id="corp-euros">23 460 €</div><div class="l">débloqués</div></div>
+          </div>
+          <div class="meter"><i id="corp-meter" style="width:23.4%"></i></div>
+          <div class="meter-cap"><span>Débloqué par vos pas</span><span class="num">100 000 €</span></div>
+        </div>
+
+        <div class="stories" id="stories" aria-label="Activité des équipes"></div>
+
+        <div class="section-label">Fil d’activité</div>
+        <div class="feed" id="feed"></div>
+      </section>
+
+      <!-- ============ DÉFIS ============ -->
+      <section class="screen" id="scr-challenges" aria-label="Défis">
+        <div class="pagehead">
+          <div><h1>Défis</h1><div class="sub">3 défis en cours · Banque Corélis</div></div>
+          <button class="iconbtn" aria-label="Historique des défis">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </button>
+        </div>
+
+        <div class="hero-challenge">
+          <div class="hc-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/><path d="M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-3.5 3.8M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 3.5 3.8"/></svg>
+            Défi du mois
+          </div>
+          <h2>La forêt Corélis — 500 arbres</h2>
+          <div class="hc-sub">Toute l’entreprise, du 1<sup>er</sup> au 30 septembre</div>
+          <div class="hc-days"><div class="v num">12</div><div class="l">jours</div></div>
+          <div class="meter"><i style="width:83.6%"></i></div>
+          <div class="meter-cap"><span class="num">418 / 500 arbres</span><span>83 %</span></div>
+        </div>
+
+        <div class="section-label">Classement des équipes · km cumulés</div>
+        <div class="card lb" id="leaderboard"></div>
+
+        <div class="section-label">Duel de la semaine</div>
+        <div class="card duel">
+          <div class="duel-head">
+            <div class="duel-title">Marketing vs Finance</div>
+            <span class="chip coral">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z" transform="scale(.9) translate(1.2 1.2)"/></svg>
+              +12 km d’écart
+            </span>
+          </div>
+          <div class="duel-track" role="img" aria-label="Marketing 236 kilomètres contre Finance 224 kilomètres">
+            <div class="duel-a" style="flex-basis:51.3%">Marketing · <span class="num">&nbsp;236 km</span></div>
+            <div class="duel-b"><span class="num">224 km&nbsp;</span> · Finance</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-3)">L’équipe gagnante choisit l’association du mois d’octobre.</div>
+        </div>
+
+        <div class="section-label">Mini-défis</div>
+        <div class="minis">
+          <div class="mini">
+            <div class="ic" style="background:var(--coral-soft);color:var(--coral)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l3-5"/><path d="M2 20h20"/></svg>
+            </div>
+            <h4>Sprint du midi</h4>
+            <p>2 km entre 12 h et 14 h</p>
+            <div class="meter"><i style="width:60%"></i></div>
+          </div>
+          <div class="mini">
+            <div class="ic" style="background:var(--green-soft);color:var(--green)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+            </div>
+            <h4>Semaine verte</h4>
+            <p>50 000 pas = 1 arbre bonus</p>
+            <div class="meter"><i style="width:78%"></i></div>
+          </div>
+          <div class="mini">
+            <div class="ic" style="background:var(--gold-soft);color:var(--gold)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg>
+            </div>
+            <h4>Assiduité</h4>
+            <p>5 sorties cette semaine</p>
+            <div class="meter"><i style="width:40%"></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ IMPACT ============ -->
+      <section class="screen" id="scr-impact" aria-label="Impact">
+        <div class="pagehead">
+          <div><h1>Impact</h1><div class="sub">Ce que vos pas ont financé</div></div>
+        </div>
+
+        <div class="impact-hero">
+          <div class="ih-label">Impact collectif · Banque Corélis</div>
+          <div class="ih-big num" id="impact-euros">23 460 €</div>
+          <div class="ih-sub">débloqués sur le budget solidaire de <span class="num">100 000 €</span></div>
+        </div>
+
+        <div class="impact-grid">
+          <div class="istat">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/><path d="M5 22a7 7 0 0 1 14 0"/></svg></div>
+            <div class="v num" id="impact-trees">418</div><div class="l">arbres plantés</div>
+          </div>
+          <div class="istat">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg></div>
+            <div class="v num" id="impact-meals">3 120</div><div class="l">repas financés</div>
+          </div>
+          <div class="istat">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 0-16 0"/><path d="M12 12 8 8"/><path d="M2 20h20"/></svg></div>
+            <div class="v num">14 380</div><div class="l">km parcourus</div>
+          </div>
+          <div class="istat">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="v num">642</div><div class="l">collègues actifs</div>
+          </div>
+        </div>
+
+        <div class="card convert">
+          <h3>Comment vos mètres se transforment</h3>
+          <div class="conv-row">
+            <span class="from num">500 m</span>
+            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="to"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>1 repas chaud</span>
+          </div>
+          <div class="conv-row">
+            <span class="from num">5 km</span>
+            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="to"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg>1 arbre planté</span>
+          </div>
+          <div class="conv-row">
+            <span class="from num">1 000 m</span>
+            <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <span class="to num">1,60 € reversé</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--ink-3);margin-top:10px">Barème fixé par l’entreprise dans son espace administrateur. Valeurs de démonstration.</p>
+        </div>
+
+        <div class="section-label">Associations soutenues</div>
+        <div class="card assoc">
+          <div class="assoc-row">
+            <div class="assoc-ic" style="background:var(--green-soft);color:var(--green)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+            </div>
+            <div class="assoc-body"><div class="assoc-name">Canopée Demain</div><div class="assoc-sub">Reforestation · Massif central</div></div>
+            <div class="assoc-amt num">9 840 €</div>
+          </div>
+          <div class="assoc-row">
+            <div class="assoc-ic" style="background:var(--coral-soft);color:var(--coral)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>
+            </div>
+            <div class="assoc-body"><div class="assoc-name">Table Ouverte</div><div class="assoc-sub">Aide alimentaire · Île-de-France</div></div>
+            <div class="assoc-amt num">8 210 €</div>
+          </div>
+          <div class="assoc-row">
+            <div class="assoc-ic" style="background:var(--gold-soft);color:var(--gold)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+            </div>
+            <div class="assoc-body"><div class="assoc-name">Sport & Santé pour Tous</div><div class="assoc-sub">Activité adaptée · National</div></div>
+            <div class="assoc-amt num">5 410 €</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PROFIL ============ -->
+      <section class="screen" id="scr-profile" aria-label="Profil">
+        <div class="prof-head">
+          <div class="avatar" style="background:#B3541E">CR</div>
+          <div>
+            <div class="prof-name">Camille Roux</div>
+            <div class="prof-sub">
+              <span class="chip coral">Équipe Marketing</span>
+              <span class="chip gold">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z" transform="scale(.85) translate(2 2)"/></svg>
+                Série · 6 jours
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prof-stats">
+          <div class="prof-stat"><div class="v num" id="me-km">86,4</div><div class="l">km ce mois</div></div>
+          <div class="prof-stat"><div class="v num" id="me-meals">72</div><div class="l">repas offerts</div></div>
+          <div class="prof-stat"><div class="v num" id="me-trees">17</div><div class="l">arbres</div></div>
+        </div>
+
+        <div class="section-label">Cette semaine</div>
+        <div class="card week">
+          <h3>Pas quotidiens</h3>
+          <div class="wk-sub num">Total : 61 240 pas · objectif 70 000</div>
+          <div class="wk-chart" id="wk-chart" role="img" aria-label="Pas par jour cette semaine, du lundi au dimanche"></div>
+          <div class="wk-tip num" id="wk-tip">Touchez un jour pour le détail.</div>
+        </div>
+
+        <div class="section-label">Badges</div>
+        <div class="badges">
+          <div class="badge"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg></div><span>Premier arbre</span></div>
+          <div class="badge"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l3-5"/><path d="M2 20h20"/></svg></div><span>10 km d’un coup</span></div>
+          <div class="badge"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span>Esprit d’équipe</span></div>
+          <div class="badge"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z"/></svg></div><span>Série de 5 jours</span></div>
+          <div class="badge locked"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg></div><span>100 repas</span></div>
+          <div class="badge locked"><div class="bic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg></div><span>Vainqueur de défi</span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ LIVE RUN OVERLAY ============ -->
+    <div class="overlay" id="run-overlay" role="dialog" aria-label="Course en direct" aria-modal="true">
+      <div class="run-map">
+        <svg viewBox="0 0 400 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="460" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="10" fill="none" opacity=".8">
+            <path d="M-20 90 L420 60"/><path d="M-20 210 L420 190"/><path d="M-20 340 L420 330"/>
+            <path d="M80 -20 L110 480"/><path d="M230 -20 L215 480"/><path d="M340 -20 L360 480"/>
+          </g>
+          <g fill="var(--green-soft)"><ellipse cx="320" cy="120" rx="70" ry="48"/><ellipse cx="60" cy="400" rx="80" ry="55"/></g>
+          <path id="run-path" d="M60 420 C 120 380, 90 320, 150 300 S 250 280, 250 220 S 180 160, 230 110 S 330 90, 340 60"
+                fill="none" stroke="var(--coral)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="run-dot" r="9" fill="var(--coral)" stroke="var(--card)" stroke-width="3"/>
+        </svg>
+        <div class="run-top">
+          <span class="run-live-chip"><span class="pulse"></span> En direct</span>
+          <span class="chip plain num" id="run-clock-chip">GPS simulé</span>
+        </div>
+        <div class="milestone" id="milestone">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>
+          <span id="milestone-txt">+1 repas financé</span>
+        </div>
+      </div>
+      <div class="run-panel">
+        <div class="run-time num" id="run-time">00:00<small>,0</small></div>
+        <div class="run-metrics">
+          <div class="rmet"><div class="v num" id="run-dist">0</div><div class="l">mètres</div></div>
+          <div class="rmet"><div class="v num" id="run-pace">–:––</div><div class="l">min / km</div></div>
+          <div class="rmet"><div class="v num" id="run-steps">0</div><div class="l">pas</div></div>
+        </div>
+        <div class="run-impact">
+          <div class="ric">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+          </div>
+          <div class="txt" id="run-impact-txt"><b class="num">0,00 €</b> débloqués — continuez, prochain repas dans <b class="num">500 m</b></div>
+        </div>
+        <div class="run-ctrl">
+          <button class="btn ghost" id="btn-pause" style="flex:1">Pause</button>
+          <button class="btn primary" id="btn-finish" style="flex:1.6">Terminer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SUMMARY OVERLAY ============ -->
+    <div class="overlay" id="sum-overlay" role="dialog" aria-label="Résumé de course" aria-modal="true" style="overflow-y:auto">
+      <div class="sum-head">
+        <div class="kicker">Course terminée</div>
+        <h2>Belle sortie, Camille</h2>
+      </div>
+      <div class="sum-route">
+        <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="180" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 50 L410 40"/><path d="M-10 130 L410 140"/><path d="M120 -10 L130 190"/><path d="M290 -10 L280 190"/></g>
+          <path d="M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35" fill="none" stroke="var(--coral)" stroke-width="5.5" stroke-linecap="round"/>
+          <circle cx="40" cy="150" r="7" fill="var(--card)" stroke="var(--coral)" stroke-width="4"/>
+          <circle cx="375" cy="35" r="7" fill="var(--coral)" stroke="var(--card)" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-cell"><div class="v num" id="sum-dist">0 m</div><div class="l">distance</div></div>
+        <div class="sum-cell"><div class="v num" id="sum-time">00:00</div><div class="l">durée</div></div>
+        <div class="sum-cell"><div class="v num" id="sum-pace">–:––</div><div class="l">min / km</div></div>
+      </div>
+      <div class="sum-impact">
+        <div class="ric" style="flex:none">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+        </div>
+        <div><div class="v" id="sum-impact-line">+2 repas · +3,20 €</div><p>ajoutés au budget solidaire débloqué par Banque Corélis</p></div>
+      </div>
+      <div class="sum-form">
+        <input type="text" id="sum-title" value="Course du midi" aria-label="Titre de la publication">
+      </div>
+      <div class="sum-actions">
+        <button class="btn impact block" id="btn-publish">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          Publier dans le fil
+        </button>
+        <button class="btn ghost block" id="btn-discard">Ne pas publier</button>
+      </div>
+    </div>
+
+    <!-- ============ SHEETS ============ -->
+    <div class="sheet" id="sheet-result" role="dialog" aria-label="Publier un résultat" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Publier un résultat</h3>
+      <p class="desc">Une activité faite hors de l’app ? Ajoutez-la, elle compte aussi pour l’impact.</p>
+      <div class="fields">
+        <div><label for="res-type">Activité</label>
+          <select id="res-type"><option>Marche</option><option selected>Course</option><option>Vélo</option><option>Randonnée</option></select>
+        </div>
+        <div><label for="res-dist">Distance (km)</label><input id="res-dist" type="number" inputmode="decimal" value="5,2" min="0" step="0.1"></div>
+        <div><label for="res-title">Titre</label><input id="res-title" type="text" value="Sortie du soir"></div>
+      </div>
+      <button class="btn impact block" id="btn-res-publish">Ajouter au fil</button>
+    </div>
+
+    <div class="sheet" id="sheet-challenge" role="dialog" aria-label="Créer un défi" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Lancer un défi</h3>
+      <p class="desc">Défiez une autre équipe — l’équipe gagnante oriente le don du mois.</p>
+      <div class="fields">
+        <div><label for="ch-target">Équipe adverse</label>
+          <select id="ch-target"><option>Finance</option><option>RH</option><option>IT & Data</option><option>Juridique</option></select>
+        </div>
+        <div><label for="ch-goal">Objectif</label>
+          <select id="ch-goal"><option>Le plus de km en 7 jours</option><option>Le plus de pas en 7 jours</option><option>Le plus de sorties</option></select>
+        </div>
+      </div>
+      <button class="btn primary block" id="btn-ch-send">Envoyer le défi</button>
+    </div>
+
+    <!-- ============ NAV ============ -->
+    <div class="scrim" id="scrim"></div>
+    <div class="fanmenu" id="fanmenu">
+      <button class="fan-item" data-fan="run">
+        <span class="fic coral"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span>Lancer une course<small>GPS et conversion en direct</small></span>
+      </button>
+      <button class="fan-item" data-fan="result">
+        <span class="fic green"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span>Publier un résultat<small>Activité faite hors de l’app</small></span>
+      </button>
+      <button class="fan-item" data-fan="challenge">
+        <span class="fic plain"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg></span>
+        <span>Créer un défi<small>Équipe contre équipe</small></span>
+      </button>
+    </div>
+
+    <nav class="navwrap" aria-label="Navigation principale">
+      <div class="bottomnav">
+        <button class="navbtn active" data-nav="scr-home">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+          Accueil
+        </button>
+        <button class="navbtn" data-nav="scr-challenges">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/><path d="M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-3.5 3.8M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 3.5 3.8"/></svg></span>
+          Défis
+        </button>
+        <div class="fab-slot">
+          <button class="fab" id="fab" aria-expanded="false" aria-label="Ajouter">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <button class="navbtn" data-nav="scr-impact">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg></span>
+          Impact
+        </button>
+        <button class="navbtn" data-nav="scr-profile">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
+          Profil
+        </button>
+      </div>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <canvas class="confetti" id="confetti"></canvas>
+  </div>
+  <div class="stage-note">Moov’On — maquette interactive · toutes les données sont fictives (entreprise, personnes, associations)</div>
+</div>
+
+<script>
+'use strict';
+/* ========= BARÈME DE CONVERSION (démo — sera configurable côté entreprise) ========= */
+const RATE = {
+  eurosPerMeter: 0.0016,   // 1 000 m = 1,60 €
+  metersPerMeal: 500,      // 500 m  = 1 repas
+  metersPerTree: 5000,     // 5 km   = 1 arbre
+  stepsPerMeter: 1.35
+};
+const SIM_SPEED = 55;      // m/s simulés — accéléré pour la démo (≈5 km en 90 s)
+
+const $ = id => document.getElementById(id);
+const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
+const fmtEur = n => n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const store = {
+  get(k,f){ try{ const v = localStorage.getItem('moovon:'+k); return v===null?f:JSON.parse(v);}catch(e){return f} },
+  set(k,v){ try{ localStorage.setItem('moovon:'+k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ================= DONNÉES DÉMO ================= */
+const TEAM_COLORS = {Marketing:'#B3541E', Finance:'#2C5F8A', RH:'#6E4B8E', 'IT & Data':'#1F7A6D', Juridique:'#8A2C4F', Direction:'#6B6B23'};
+const STORIES = [
+  {n:'Vous', t:'Marketing', me:true},
+  {n:'Sofiane', t:'Finance'}, {n:'Léa', t:'RH'}, {n:'Marc', t:'IT & Data'},
+  {n:'Inès', t:'Marketing', seen:true}, {n:'Hugo', t:'Juridique', seen:true}, {n:'Awa', t:'Direction', seen:true}
+];
+const BASE_FEED = [
+  {id:'p1', n:'Sofiane B.', team:'Finance', when:'il y a 25 min', title:'Fractionné avant la réunion budget', dist:6200, time:'32:10', pace:'5:11', meals:12, euros:9.92, bravos:14, comments:3, route:'M30 150 C 90 110, 70 60, 150 70 S 240 130, 300 80 S 360 40, 372 35'},
+  {id:'p2', n:'Léa Fontaine', team:'RH', when:'il y a 2 h', title:'Marche du déjeuner avec l’équipe recrutement', dist:3400, time:'41:05', pace:'12:05', meals:6, euros:5.44, bravos:22, comments:5, route:'M40 40 C 80 90, 160 60, 190 110 S 150 160, 240 150 S 340 120, 370 145'},
+  {id:'p3', n:'Marc Delattre', team:'IT & Data', when:'hier', title:'10 km — objectif arbre atteint 🎯', dist:10100, time:'52:48', pace:'5:14', meals:20, euros:16.16, trees:2, bravos:41, comments:9, route:'M30 90 C 110 40, 150 140, 220 100 S 280 30, 330 70 S 365 130, 375 140'}
+];
+const LEADERBOARD = [
+  {team:'IT & Data', km:312}, {team:'Marketing', km:236, me:true}, {team:'Finance', km:224},
+  {team:'RH', km:187}, {team:'Juridique', km:141}, {team:'Direction', km:96}
+];
+const WEEK = [
+  {d:'L', steps:9840},{d:'M', steps:11250},{d:'M', steps:7420},{d:'J', steps:12600},
+  {d:'V', steps:8930},{d:'S', steps:11200},{d:'D', steps:0, today:true}
+];
+
+/* ================= ÉTAT ================= */
+const state = {
+  corpEuros: store.get('corpEuros', 23460),
+  corpMeals: store.get('corpMeals', 3120),
+  corpTrees: store.get('corpTrees', 418),
+  posts: store.get('posts', []),          // publications de l'utilisateur, en tête de fil
+  meKm: store.get('meKm', 86.4),
+  meMeals: store.get('meMeals', 72),
+  meTrees: store.get('meTrees', 17),
+};
+
+/* ================= RENDU ================= */
+function initials(name){ return name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function renderStories(){
+  $('stories').innerHTML = STORIES.map(s=>`
+    <button class="story" aria-label="Activité de ${s.n}">
+      <span class="ring ${s.seen?'seen':''}"><span style="background:${TEAM_COLORS[s.t]||'#555'}">${s.me?'+':initials(s.n)}</span></span>
+      <small>${s.n}</small>
+    </button>`).join('');
+}
+
+function postCard(p){
+  const impactBits = [];
+  if(p.trees) impactBits.push(`${p.trees} arbre${p.trees>1?'s':''}`);
+  impactBits.push(`${p.meals} repas`);
+  return `
+  <article class="post" data-post="${p.id}">
+    <div class="post-head">
+      <span class="avatar" style="background:${TEAM_COLORS[p.team]||'#555'}">${initials(p.n)}</span>
+      <div class="who">
+        <div class="name">${p.n}</div>
+        <div class="meta"><span>${p.when}</span><span>·</span><span class="chip plain">${p.team}</span></div>
+      </div>
+    </div>
+    <div class="post-title">${p.title}</div>
+    <div class="routebox">
+      <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" aria-label="Tracé du parcours" role="img">
+        <rect width="400" height="180" fill="var(--sunken)"/>
+        <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 55 L410 45"/><path d="M-10 135 L410 140"/><path d="M100 -10 L112 190"/><path d="M300 -10 L290 190"/></g>
+        <path d="${p.route}" fill="none" stroke="var(--coral)" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="post-stats">
+      <div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
+      <div class="pstat"><div class="v num">${p.time}</div><div class="l">durée</div></div>
+      <div class="pstat"><div class="v num">${p.pace}</div><div class="l">min / km</div></div>
+    </div>
+    <div class="post-impact">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+      A débloqué ${impactBits.join(' + ')} <span style="opacity:.75">(${fmtEur(p.euros)})</span>
+    </div>
+    <div class="post-actions">
+      <button class="pact bravo" aria-pressed="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+        Bravo · <span class="num bravo-count">${p.bravos}</span>
+      </button>
+      <button class="pact">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12Z"/></svg>
+        <span class="num">${p.comments}</span>
+      </button>
+      <button class="pact" style="margin-left:auto">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+        Partager
+      </button>
+    </div>
+  </article>`;
+}
+
+function renderFeed(){
+  $('feed').innerHTML = [...state.posts, ...BASE_FEED].map(postCard).join('');
+}
+
+function renderCorp(){
+  $('corp-euros').textContent = fmtInt(state.corpEuros) + ' €';
+  $('corp-meals').textContent = fmtInt(state.corpMeals);
+  $('corp-trees').textContent = fmtInt(state.corpTrees);
+  $('corp-meter').style.width = Math.min(100, state.corpEuros/100000*100).toFixed(1) + '%';
+  $('impact-euros').textContent = fmtInt(state.corpEuros) + ' €';
+  $('impact-meals').textContent = fmtInt(state.corpMeals);
+  $('impact-trees').textContent = fmtInt(state.corpTrees);
+  $('me-km').textContent = state.meKm.toLocaleString('fr-FR',{maximumFractionDigits:1});
+  $('me-meals').textContent = fmtInt(state.meMeals);
+  $('me-trees').textContent = fmtInt(state.meTrees);
+}
+
+function renderLeaderboard(){
+  const max = Math.max(...LEADERBOARD.map(r=>r.km));
+  $('leaderboard').innerHTML = LEADERBOARD.map((r,i)=>`
+    <div class="lb-row ${r.me?'me':''}">
+      <div class="lb-rank num">${i+1}</div>
+      <span class="avatar" style="width:34px;height:34px;font-size:12px;background:${TEAM_COLORS[r.team]||'#555'}">${initials(r.team)}</span>
+      <div class="lb-body">
+        <div class="lb-top"><span class="lb-name">${r.team}${r.me?' — votre équipe':''}</span><span class="lb-val num">${r.km} km</span></div>
+        <div class="lb-bar"><i style="width:${(r.km/max*100).toFixed(0)}%"></i></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderWeek(){
+  const max = Math.max(...WEEK.map(d=>d.steps), 1);
+  $('wk-chart').innerHTML = WEEK.map((d,i)=>`
+    <button class="wk-col ${d.today?'today':''}" data-i="${i}" aria-pressed="false" aria-label="${d.steps.toLocaleString('fr-FR')} pas">
+      <span class="bar" style="height:${Math.max(4, d.steps/max*100)}%"></span>
+      <span class="d">${d.d}</span>
+    </button>`).join('');
+  $('wk-chart').querySelectorAll('.wk-col').forEach(col=>{
+    col.addEventListener('click',()=>{
+      $('wk-chart').querySelectorAll('.wk-col').forEach(c=>c.setAttribute('aria-pressed','false'));
+      col.setAttribute('aria-pressed','true');
+      const d = WEEK[+col.dataset.i];
+      $('wk-tip').textContent = d.today && d.steps===0
+        ? 'Aujourd’hui : rien pour l’instant — lancez une course avec le bouton +'
+        : `${d.steps.toLocaleString('fr-FR')} pas ≈ ${Math.floor(d.steps/RATE.stepsPerMeter/RATE.metersPerMeal)} repas financés`;
+    });
+  });
+}
+
+/* ================= NAVIGATION ================= */
+let currentScreen = 'scr-home';
+document.querySelectorAll('.navbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target = btn.dataset.nav;
+    if(target===currentScreen) return;
+    closeFan();
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===target));
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b===btn));
+    currentScreen = target;
+  });
+});
+
+/* ================= FAB / FAN MENU ================= */
+const fab = $('fab'), fan = $('fanmenu'), scrim = $('scrim');
+function openFan(){ fab.setAttribute('aria-expanded','true'); fan.classList.add('open'); scrim.classList.add('open'); }
+function closeFan(){ fab.setAttribute('aria-expanded','false'); fan.classList.remove('open'); scrim.classList.remove('open'); }
+fab.addEventListener('click',()=> fab.getAttribute('aria-expanded')==='true' ? closeFan() : openFan());
+scrim.addEventListener('click',()=>{ closeFan(); closeSheets(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeFan(); closeSheets(); }});
+
+fan.querySelectorAll('.fan-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    closeFan();
+    const act = item.dataset.fan;
+    if(act==='run') startRun();
+    if(act==='result'){ $('sheet-result').classList.add('open'); scrim.classList.add('open'); }
+    if(act==='challenge'){ $('sheet-challenge').classList.add('open'); scrim.classList.add('open'); }
+  });
+});
+function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); scrim.classList.remove('open'); }
+
+/* ================= TOAST ================= */
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= COURSE EN DIRECT ================= */
+const run = {active:false, paused:false, dist:0, t:0, raf:null, last:0, meals:0, trees:0, pathLen:0};
+const runPath = $('run-path'), runDot = $('run-dot');
+
+function startRun(){
+  run.active = true; run.paused = false; run.dist = 0; run.t = 0; run.meals = 0; run.trees = 0; run.last = 0;
+  run.pathLen = runPath.getTotalLength();
+  runPath.style.strokeDasharray = run.pathLen;
+  runPath.style.strokeDashoffset = run.pathLen;
+  $('btn-pause').textContent = 'Pause';
+  $('run-overlay').classList.add('open');
+  updateRunUI();
+  cancelAnimationFrame(run.raf);
+  run.raf = requestAnimationFrame(tick);
+}
+function tick(ts){
+  if(!run.active) return;
+  if(!run.last) run.last = ts;
+  const dt = Math.min((ts - run.last)/1000, .1);
+  run.last = ts;
+  if(!run.paused){
+    run.t += dt;
+    run.dist += SIM_SPEED * dt;
+    const meals = Math.floor(run.dist / RATE.metersPerMeal);
+    const trees = Math.floor(run.dist / RATE.metersPerTree);
+    if(meals > run.meals){ run.meals = meals; milestone(`+1 repas financé — ${meals} au total`); }
+    if(trees > run.trees){ run.trees = trees; milestone(`Un arbre planté ! 5 km parcourus`); }
+    updateRunUI();
+  }
+  run.raf = requestAnimationFrame(tick);
+}
+function updateRunUI(){
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60), d = Math.floor((run.t%1)*10);
+  $('run-time').innerHTML = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}<small>,${d}</small>`;
+  $('run-dist').textContent = fmtInt(run.dist);
+  $('run-steps').textContent = fmtInt(run.dist * RATE.stepsPerMeter);
+  const paceSec = run.dist > 30 ? (run.t / (run.dist/1000)) : 0;
+  $('run-pace').textContent = paceSec ? `${Math.floor(paceSec/60)}:${String(Math.floor(paceSec%60)).padStart(2,'0')}` : '–:––';
+  const nextMeal = RATE.metersPerMeal - (run.dist % RATE.metersPerMeal);
+  $('run-impact-txt').innerHTML =
+    `<b class="num">${fmtEur(run.dist*RATE.eurosPerMeter)}</b> débloqués · ${run.meals} repas${run.trees?` · ${run.trees} arbre${run.trees>1?'s':''}`:''} — prochain repas dans <b class="num">${fmtInt(nextMeal)} m</b>`;
+  const prog = Math.min(run.dist/5000, 1);
+  runPath.style.strokeDashoffset = run.pathLen * (1-prog);
+  const pt = runPath.getPointAtLength(run.pathLen * prog);
+  runDot.setAttribute('cx', pt.x); runDot.setAttribute('cy', pt.y);
+}
+let msTimer;
+function milestone(txt){
+  $('milestone-txt').textContent = txt;
+  $('milestone').classList.add('show');
+  clearTimeout(msTimer); msTimer = setTimeout(()=>$('milestone').classList.remove('show'), 2200);
+}
+$('btn-pause').addEventListener('click',()=>{
+  run.paused = !run.paused;
+  $('btn-pause').textContent = run.paused ? 'Reprendre' : 'Pause';
+});
+$('btn-finish').addEventListener('click',()=>{
+  run.active = false;
+  cancelAnimationFrame(run.raf);
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60);
+  $('sum-dist').textContent = run.dist>=1000 ? (run.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:2})+' km' : fmtInt(run.dist)+' m';
+  $('sum-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  $('sum-pace').textContent = $('run-pace').textContent;
+  const bits = [];
+  if(run.trees) bits.push(`+${run.trees} arbre${run.trees>1?'s':''}`);
+  bits.push(`+${run.meals} repas`, `+${fmtEur(run.dist*RATE.eurosPerMeter)}`);
+  $('sum-impact-line').textContent = bits.join(' · ');
+  $('sum-title').value = new Date().getHours() < 12 ? 'Course du matin' : (new Date().getHours() < 18 ? 'Course du midi' : 'Course du soir');
+  $('run-overlay').classList.remove('open');
+  $('sum-overlay').classList.add('open');
+});
+
+/* ================= PUBLICATION ================= */
+function creditImpact(dist){
+  const euros = dist*RATE.eurosPerMeter;
+  const meals = Math.floor(dist/RATE.metersPerMeal);
+  const trees = Math.floor(dist/RATE.metersPerTree);
+  state.corpEuros += euros; state.corpMeals += meals; state.corpTrees += trees;
+  state.meKm += dist/1000; state.meMeals += meals; state.meTrees += trees;
+  store.set('corpEuros', Math.round(state.corpEuros));
+  store.set('corpMeals', state.corpMeals); store.set('corpTrees', state.corpTrees);
+  store.set('meKm', Math.round(state.meKm*10)/10);
+  store.set('meMeals', state.meMeals); store.set('meTrees', state.meTrees);
+  return {euros, meals, trees};
+}
+function publishPost({title, dist, time, pace, euros, meals, trees}){
+  const post = {
+    id:'u'+Date.now(), n:'Camille Roux', team:'Marketing', when:'à l’instant',
+    title, dist, time, pace, meals, trees: trees||0, euros:Math.round(euros*100)/100,
+    bravos:0, comments:0,
+    route:'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35'
+  };
+  state.posts.unshift(post);
+  store.set('posts', state.posts.slice(0,10));
+  renderFeed(); renderCorp();
+}
+$('btn-publish').addEventListener('click',()=>{
+  const {euros, meals, trees} = creditImpact(run.dist);
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60);
+  publishPost({
+    title: $('sum-title').value.trim() || 'Ma course', dist: Math.round(run.dist),
+    time: `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`,
+    pace: $('sum-pace').textContent, euros, meals, trees
+  });
+  $('sum-overlay').classList.remove('open');
+  goHome();
+  confetti();
+  toast(`Publié ! ${meals} repas${trees?` et ${trees} arbre${trees>1?'s':''}`:''} ajoutés à l’impact Corélis`);
+});
+$('btn-discard').addEventListener('click',()=>{
+  $('sum-overlay').classList.remove('open');
+  toast('Course enregistrée sans publication');
+});
+$('btn-res-publish').addEventListener('click',()=>{
+  const km = parseFloat(String($('res-dist').value).replace(',','.')) || 0;
+  if(km<=0){ toast('Indiquez une distance'); return; }
+  const dist = Math.round(km*1000);
+  const {euros, meals, trees} = creditImpact(dist);
+  publishPost({
+    title: $('res-title').value.trim() || $('res-type').value,
+    dist, time:'—', pace:'—', euros, meals, trees
+  });
+  closeSheets(); goHome();
+  toast(`Résultat ajouté : +${meals} repas pour l’impact collectif`);
+});
+$('btn-ch-send').addEventListener('click',()=>{
+  closeSheets();
+  toast(`Défi envoyé à l’équipe ${$('ch-target').value} — en attente d’acceptation`);
+});
+function goHome(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id==='scr-home'));
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.nav==='scr-home'));
+  currentScreen = 'scr-home';
+  const scr = $('scr-home'); scr.scrollTop = 0;
+}
+
+/* ================= BRAVOS ================= */
+$('feed').addEventListener('click',e=>{
+  const btn = e.target.closest('.bravo');
+  if(!btn) return;
+  const count = btn.querySelector('.bravo-count');
+  const on = btn.classList.toggle('bravoed');
+  btn.setAttribute('aria-pressed', on);
+  count.textContent = +count.textContent + (on?1:-1);
+});
+
+/* ================= CONFETTI (léger) ================= */
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = $('confetti'), ctx = cv.getContext('2d');
+  const r = cv.getBoundingClientRect(); cv.width = r.width; cv.height = r.height;
+  const colors = ['#E8482B','#177A44','#C98F2D','#2C5F8A'];
+  const parts = Array.from({length:70},()=>({
+    x: cv.width/2 + (Math.random()-.5)*80, y: cv.height*.55,
+    vx:(Math.random()-.5)*7, vy:-(4+Math.random()*7),
+    s:4+Math.random()*4, c:colors[Math.floor(Math.random()*colors.length)], a:1, rot:Math.random()*Math.PI
+  }));
+  let frames = 0;
+  (function anim(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.22; p.a-=.011; p.rot+=.1;
+      if(p.a<=0) return;
+      ctx.save(); ctx.globalAlpha=Math.max(p.a,0); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); ctx.restore();
+    });
+    if(++frames<130) requestAnimationFrame(anim);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* ================= INIT ================= */
+renderStories(); renderFeed(); renderCorp(); renderLeaderboard(); renderWeek();
+</script>
+</body>
+</html>
