@@ -171,13 +171,27 @@ svg{display:block}
 .corp3 .c3-fact{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
 .corp3 .c3-fact .ic{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
 .corp3 .c3-fact b{font-weight:800}
-.teaser{margin:14px 18px 0;border:1px solid var(--line);padding:12px 14px;display:flex;gap:12px;align-items:center;width:calc(100% - 36px);text-align:left}
-.teaser .t-ic{width:36px;height:36px;background:var(--ink);color:var(--surface);display:grid;place-items:center;flex:none}
-.teaser .t-body{flex:1;min-width:0}
-.teaser .t-title{font-weight:700;font-size:13.5px}
-.teaser .t-sub{font-size:11px;color:var(--ink-3);margin-top:2px;letter-spacing:.02em}
-.teaser .meter{height:4px;margin-top:8px}
-.teaser .chev{color:var(--ink-3);flex:none}
+/* ================= HOME — section 3 : bulle défi du mois ================= */
+.defi3{margin:16px 18px 0;background:color-mix(in srgb,var(--brand) 12%,var(--card));border-radius:24px;padding:16px;width:calc(100% - 36px);text-align:left;display:block}
+.defi3 .d3-row{display:flex;gap:12px;align-items:center}
+.defi3 .d3-em{width:46px;height:46px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:22px;flex:none;box-shadow:0 6px 14px -8px color-mix(in srgb,var(--brand) 45%,transparent)}
+.defi3 h3{font-weight:800;font-size:16.5px;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.defi3 p{font-size:12px;font-weight:600;color:var(--brand);margin-top:1px}
+.defi3 .d3-bar{height:14px;border-radius:99px;background:var(--card);margin-top:14px;position:relative}
+.defi3 .d3-bar i{display:block;height:100%;border-radius:99px;background:var(--brand);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.defi3 .d3-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--card);border:4px solid var(--brand);display:grid;place-items:center;font-size:11px}
+.defi3 .d3-cap{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-top:10px}
+
+/* ================= HOME — section 4 : versus ================= */
+.duel4{margin:18px 0 0;display:block;width:100%;text-align:left}
+.duel4 .d4-k{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:0 18px 9px}
+.duel4 .d4-track{display:flex;height:76px;position:relative}
+.duel4 .d4-a{flex-basis:51.3%;background:var(--brand);color:var(--brand-ink);display:flex;flex-direction:column;justify-content:center;padding:0 18px;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+.duel4 .d4-b{flex:1;background:var(--ink);color:var(--surface);display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 18px;margin-left:-10px;clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}
+.duel4 .d4-t{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.duel4 .d4-s{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:31px;line-height:1;margin-top:2px}
+.duel4 .d4-vs{position:absolute;left:51.3%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:12px;color:var(--ink);z-index:2}
+.duel4 .d4-foot{font-size:11px;color:var(--ink-3);padding:9px 18px 0;font-weight:600}
 .corphero .meter-cap{color:var(--panel-mut)}
 .stories{display:flex;gap:16px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none}
 .stories::-webkit-scrollbar{display:none}
@@ -483,16 +497,29 @@ svg{display:block}
           </div>
         </button>
 
-        <button class="teaser" id="go-challenges" aria-label="Voir le défi du mois">
-          <span class="t-ic">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg>
-          </span>
-          <div class="t-body">
-            <div class="t-title">Défi du mois — La forêt Corélis</div>
-            <div class="t-sub num">418 / 500 arbres · 12 jours restants</div>
-            <div class="meter"><i style="width:83.6%"></i></div>
+        <button class="defi3" id="go-challenges" aria-label="Voir le défi du mois">
+          <div class="d3-row">
+            <span class="d3-em">🌳</span>
+            <div>
+              <h3 id="df-title">Plus que 82 arbres à planter !</h3>
+              <p>Défi du mois · il reste 12 jours</p>
+            </div>
           </div>
-          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          <div class="d3-bar">
+            <i id="df-bar" style="width:83.6%"></i>
+            <span class="d3-dot" id="df-dot" style="left:83.6%">🌱</span>
+          </div>
+          <div class="d3-cap num"><span id="df-cnt">418 / 500</span><span id="df-pct">83 %</span></div>
+        </button>
+
+        <button class="duel4" id="go-duel" aria-label="Voir le duel de la semaine">
+          <div class="d4-k">Duel de la semaine — votre équipe mène</div>
+          <div class="d4-track">
+            <div class="d4-a"><span class="d4-t">Marketing</span><span class="d4-s num">236 km</span></div>
+            <div class="d4-b"><span class="d4-t">Finance</span><span class="d4-s num">224 km</span></div>
+            <span class="d4-vs">VS</span>
+          </div>
+          <div class="d4-foot">L’équipe gagnante choisit l’association du mois d’octobre.</div>
         </button>
 
         <div class="section-label">Vos collègues</div>
@@ -974,6 +1001,13 @@ function renderCorp(){
   const pct = Math.min(100, state.corpEuros/100000*100);
   $('corp-ring').style.background = `conic-gradient(var(--brand) 0 ${pct.toFixed(1)}%, var(--sunken) ${pct.toFixed(1)}% 100%)`;
   $('corp-pct').textContent = Math.round(pct) + ' %';
+  const goal = 500, rest = Math.max(0, goal - state.corpTrees);
+  const dfPct = Math.min(100, state.corpTrees/goal*100);
+  $('df-title').textContent = rest > 0 ? `Plus que ${rest} arbre${rest>1?'s':''} à planter !` : 'Objectif atteint — 500 arbres plantés !';
+  $('df-cnt').textContent = `${fmtInt(Math.min(state.corpTrees, goal))} / ${goal}`;
+  $('df-pct').textContent = Math.round(dfPct) + ' %';
+  $('df-bar').style.width = dfPct.toFixed(1) + '%';
+  $('df-dot').style.left = dfPct.toFixed(1) + '%';
   $('impact-euros').textContent = fmtInt(state.corpEuros) + ' €';
   $('impact-meals').textContent = fmtInt(state.corpMeals);
   $('impact-trees').textContent = fmtInt(state.corpTrees);
@@ -1232,6 +1266,7 @@ function confetti(){
 $('btn-home-run').addEventListener('click', startRun);
 $('go-impact').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-impact"]').click());
 $('go-challenges').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
+$('go-duel').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
 
 /* ================= INIT ================= */
 renderStories(); renderFeed(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
