@@ -1,0 +1,205 @@
+<title>Solde d'énergie — 5 pistes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Archivo:wght@400;600;700;800;900&family=Nunito:wght@700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --ink:#141414; --mut:#6E6E6A; --line:#DEDEDA;
+  --brand:#0F3FA8; --brand-dim:#0B2F7E; --tint:#E7EDFA;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E;
+  }
+}
+:root[data-theme="dark"]{ --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;padding:40px 20px 72px}
+.head{max-width:960px;margin:0 auto 30px}
+.head h1{font-weight:900;font-size:clamp(26px,4.5vw,38px);text-transform:uppercase;letter-spacing:-.01em}
+.head p{color:var(--mut);margin-top:10px;max-width:64ch;font-size:14.5px;line-height:1.55}
+.grid{display:flex;flex-wrap:wrap;gap:34px 26px;justify-content:center;max-width:1400px;margin:0 auto}
+.slot{width:390px;max-width:100%}
+.slot-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slot-head .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;background:var(--ink);color:var(--bg);width:30px;height:30px;display:grid;place-items:center;flex:none}
+.slot-head h2{font-size:15px;font-weight:800}
+.slot-head small{color:var(--mut);font-size:12px;display:block;font-weight:500}
+.slot-desc{color:var(--mut);font-size:12.5px;line-height:1.5;margin:10px 2px 0}
+.frame{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#fff;color:#0A0A0A;padding-bottom:14px}
+.num{font-variant-numeric:tabular-nums}
+.dim{opacity:.4}
+.pagehead{padding:20px 18px 12px;border-bottom:1px solid #ECECEC}
+.pagehead h3{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:28px;text-transform:uppercase}
+.pagehead .sub{color:#8A8A8A;font-size:11px;margin-top:4px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.mcard{margin:14px 16px 0;border:1px solid #ECECEC;border-radius:20px;padding:14px}
+.mcard .t{display:flex;gap:10px;align-items:center}
+.mcard .ic{width:36px;height:36px;border-radius:12px;background:var(--tint);color:var(--brand);display:grid;place-items:center;font-size:16px}
+.mcard .nm{font-weight:800;font-size:13.5px}
+.mcard .og{font-size:10.5px;color:#8A8A8A;font-weight:600}
+.mcard .bar{height:7px;border-radius:99px;background:#F0F0F0;margin-top:11px}
+.mcard .bar i{display:block;height:100%;width:62%;background:var(--brand);border-radius:99px}
+.sec{margin-top:14px}
+
+/* A — LA BATTERIE */
+.vA{margin:0 16px;border:2px solid #0A0A0A;border-radius:14px;padding:14px}
+.vA .top{display:flex;justify-content:space-between;align-items:baseline}
+.vA .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.vA .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:44px;line-height:1}
+.vA .batt{display:flex;align-items:center;gap:5px;margin-top:12px}
+.vA .cells{flex:1;display:flex;gap:4px;height:26px}
+.vA .cells i{flex:1;background:#F0F0F0;border-radius:4px}
+.vA .cells i.on{background:var(--brand)}
+.vA .tip{width:6px;height:12px;background:#0A0A0A;border-radius:0 3px 3px 0}
+.vA .cap{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#8A8A8A;margin-top:8px}
+
+/* B — LE RÉACTEUR */
+.vB{background:#0B1220;color:#EAF0FA;padding:20px 18px;text-align:center;position:relative;overflow:hidden}
+.vB .halo{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(77,124,255,.45),transparent 65%)}
+.vB .ring{position:relative;width:150px;height:150px;border-radius:50%;margin:4px auto 0;background:conic-gradient(#4D7CFF 0 68%,rgba(255,255,255,.12) 68% 100%);display:grid;place-items:center}
+.vB .ring>div{width:122px;height:122px;border-radius:50%;background:#0B1220;display:grid;place-items:center;flex-direction:column}
+.vB .ring .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:38px;line-height:1;color:#fff}
+.vB .ring .l{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7C8BA8;margin-top:3px}
+.vB .lbl{position:relative;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8FB4FF}
+.vB .quick{position:relative;display:flex;gap:8px;margin-top:14px}
+.vB .quick button{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#EAF0FA;border-radius:10px;padding:9px;font-weight:700;font-size:11.5px;font-family:inherit}
+.vB .quick button.main{background:#4D7CFF;border-color:#4D7CFF;color:#fff}
+
+/* C — LE WALLET */
+.vC{margin:0 16px;background:linear-gradient(125deg,var(--brand),#082567);border-radius:18px;padding:16px;color:#fff;box-shadow:0 16px 34px -18px rgba(15,63,168,.65)}
+.vC .row1{display:flex;justify-content:space-between;align-items:center}
+.vC .lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A9BEF2}
+.vC .chip{width:34px;height:24px;border-radius:5px;background:linear-gradient(135deg,#D9C36A,#B89A3E)}
+.vC .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:52px;line-height:1;margin-top:10px}
+.vC .v small{font-size:20px;color:#A9BEF2}
+.vC .row2{display:flex;justify-content:space-between;margin-top:14px;font-size:11px;font-weight:600;color:#A9BEF2}
+.vC .row2 b{display:block;color:#fff;font-size:14px;font-family:"Barlow Condensed",sans-serif;font-weight:700;margin-top:1px}
+
+/* D — LE FLUX */
+.vD{margin:0 16px;border-bottom:2px solid #0A0A0A;padding:2px 0 12px}
+.vD .row{display:flex;justify-content:space-between;align-items:flex-end}
+.vD .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.vD .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:38px;line-height:1;margin-top:4px}
+.vD .delta{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--brand);font-weight:600;text-align:right}
+.vD svg{width:100%;height:44px;margin-top:10px}
+.vD .cap{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#8A8A8A;margin-top:5px;font-family:"IBM Plex Mono",monospace}
+
+/* E — LA BULLE GÉNÉREUSE */
+.vE{margin:0 16px;background:var(--tint);border-radius:24px;padding:18px;font-family:"Nunito","Archivo",sans-serif}
+.vE .row{display:flex;gap:12px;align-items:center}
+.vE .em{width:52px;height:52px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:24px;flex:none;box-shadow:0 6px 14px -8px rgba(15,63,168,.4)}
+.vE h4{font-weight:900;font-size:17px;color:#12295E;line-height:1.25}
+.vE h4 b{color:var(--brand)}
+.vE p{font-size:11.5px;font-weight:700;color:#5C79C4;margin-top:2px}
+.vE .cta{margin-top:14px;background:var(--brand);color:#fff;border-radius:999px;padding:13px;text-align:center;font-weight:900;font-size:14px}
+</style>
+
+<div class="head">
+  <h1>Onglet Missions · section 1 — 5 pistes</h1>
+  <p>Le bloc « Votre énergie disponible », en tête de l'onglet Missions. Autour, l'en-tête et la première carte mission sont grisés : seule la section en pleine couleur change. Solde : 6 750 ⚡, gagné aujourd'hui 3 200, donné cette semaine 2 400.</p>
+</div>
+
+<div class="grid">
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">A</span><div><h2>La batterie</h2><small>La métaphore énergie au sens propre</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vA">
+          <div class="top"><span class="lbl">Votre énergie</span><span class="v num">6 750 ⚡</span></div>
+          <div class="batt">
+            <div class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+            <span class="tip"></span>
+          </div>
+          <div class="cap num"><span>+3 200 aujourd’hui</span><span>capacité 10 000 ⚡</span></div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Une vraie batterie qui se charge en bougeant et se vide en donnant. Lisible instantanément, ludique sans être enfantin.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">B</span><div><h2>Le réacteur</h2><small>Cœur lumineux + actions rapides</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vB">
+          <div class="halo"></div>
+          <span class="lbl">Votre énergie</span>
+          <div class="ring"><div><span class="v num">6 750</span><span class="l">⚡ disponibles</span></div></div>
+          <div class="quick">
+            <button class="main">Répartir</button>
+            <button>Tout donner</button>
+            <button>Auto 50/50</button>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Panneau sombre, anneau qui irradie, et trois raccourcis (répartir, tout donner, répartition automatique). Le plus spectaculaire, ajoute des gestes utiles.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">C</span><div><h2>Le wallet</h2><small>Carte de paiement solidaire</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vC">
+          <div class="row1"><span class="lbl">Carte énergie · Camille R.</span><span class="chip"></span></div>
+          <div class="v num">6 750<small> ⚡</small></div>
+          <div class="row2 num">
+            <span>Gagné aujourd’hui<b>+3 200</b></span>
+            <span>Donné cette semaine<b>−2 400</b></span>
+            <span>Depuis janvier<b>84 k</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Une carte bancaire de la générosité : dégradé profond, puce dorée, trois compteurs (gagné/donné/cumul). Code fintech premium — naturel pour un client assureur.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">D</span><div><h2>Le flux</h2><small>Data sobre : solde + courbe 7 jours</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vD">
+          <div class="row">
+            <div><div class="lbl">Solde d’énergie</div><div class="v num">6 750 ⚡</div></div>
+            <div class="delta num">+3 200 aujourd’hui<br>−2 400 cette sem.</div>
+          </div>
+          <svg viewBox="0 0 340 44" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 34 L48 28 96 31 144 18 192 24 240 12 288 20 340 8" fill="none" stroke="var(--brand)" stroke-width="2.5"/>
+            <circle cx="340" cy="8" r="4" fill="var(--brand)"/>
+          </svg>
+          <div class="cap"><span>lun</span><span>mar</span><span>mer</span><span>jeu</span><span>ven</span><span>sam</span><span>auj.</span></div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">Relevé de compte minimaliste : solde en monospace, flux entrant/sortant, courbe de la semaine. Le plus sobre et « sérieux » des cinq.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">E</span><div><h2>La bulle généreuse</h2><small>Le langage chaleureux de l'accueil</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="vE">
+          <div class="row">
+            <span class="em">⚡</span>
+            <div>
+              <h4>Vous avez <b>6 750 ⚡</b> qui attendent une cause !</h4>
+              <p>Gagnés en marchant · à répartir comme vous voulez</p>
+            </div>
+          </div>
+          <div class="cta">Répartir mon énergie</div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">La bulle teintée arrondie déjà utilisée sur l'accueil (défi du mois) : phrase complice, gros bouton rond. Cohérence maximale avec l'existant.</p>
+  </div>
+
+</div>
