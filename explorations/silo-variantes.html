@@ -1,0 +1,184 @@
+<title>Le silo — 3 déclinaisons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Archivo:wght@400;600;700;800;900&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --ink:#141414; --mut:#6E6E6A; --line:#DEDEDA;
+  --brand:#0F3FA8; --brand-dim:#0B2F7E; --tint:#E7EDFA;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E;
+  }
+}
+:root[data-theme="dark"]{ --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;padding:40px 20px 72px}
+.head{max-width:960px;margin:0 auto 30px}
+.head h1{font-weight:900;font-size:clamp(26px,4.5vw,38px);text-transform:uppercase;letter-spacing:-.01em}
+.head p{color:var(--mut);margin-top:10px;max-width:64ch;font-size:14.5px;line-height:1.55}
+.grid{display:flex;flex-wrap:wrap;gap:34px 26px;justify-content:center;max-width:1400px;margin:0 auto}
+.slot{width:390px;max-width:100%}
+.slot-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slot-head .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;background:var(--ink);color:var(--bg);padding:4px 9px;flex:none}
+.slot-head h2{font-size:15px;font-weight:800}
+.slot-head small{color:var(--mut);font-size:12px;display:block;font-weight:500}
+.slot-desc{color:var(--mut);font-size:12.5px;line-height:1.5;margin:10px 2px 0}
+.frame{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#fff;color:#0A0A0A;padding-bottom:14px}
+.num{font-variant-numeric:tabular-nums}
+.dim{opacity:.4}
+.pagehead{padding:20px 18px 12px;border-bottom:1px solid #ECECEC}
+.pagehead h3{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:28px;text-transform:uppercase}
+.pagehead .sub{color:#8A8A8A;font-size:11px;margin-top:4px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.mcard{margin:14px 16px 0;border:1px solid #ECECEC;border-radius:20px;padding:14px}
+.mcard .t{display:flex;gap:10px;align-items:center}
+.mcard .ic{width:36px;height:36px;border-radius:12px;background:var(--tint);color:var(--brand);display:grid;place-items:center;font-size:16px}
+.mcard .nm{font-weight:800;font-size:13.5px}
+.mcard .og{font-size:10.5px;color:#8A8A8A;font-weight:600}
+.mcard .bar{height:7px;border-radius:99px;background:#F0F0F0;margin-top:11px}
+.mcard .bar i{display:block;height:100%;width:62%;background:var(--brand);border-radius:99px}
+.sec{margin-top:14px}
+
+/* ========= H1 — LE SILO TECHNIQUE ========= */
+.h1x{margin:0 16px;display:flex;gap:18px;align-items:stretch}
+.h1x .gauge{width:64px;border:2.5px solid #0A0A0A;border-radius:8px 8px 12px 12px;position:relative;height:150px;flex:none;background:#FAFAFA}
+.h1x .fill{position:absolute;left:0;right:0;bottom:0;height:67%;background:var(--brand)}
+.h1x .marker{position:absolute;right:-10px;bottom:67%;width:0;height:0;border:7px solid transparent;border-right-color:#0A0A0A;transform:translateY(50%)}
+.h1x .grad{position:absolute;left:0;width:10px;height:2px;background:#0A0A0A}
+.h1x .gradl{position:absolute;left:14px;font-size:8.5px;font-weight:800;color:#8A8A8A;transform:translateY(-50%);font-family:"Barlow Condensed",sans-serif;letter-spacing:.04em}
+.h1x .body{flex:1;display:flex;flex-direction:column;justify-content:center}
+.h1x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A}
+.h1x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:52px;line-height:.95;margin-top:5px}
+.h1x .rows{margin-top:10px;border-top:1px solid #ECECEC}
+.h1x .row{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;padding:6px 0;border-bottom:1px solid #ECECEC}
+.h1x .row .in{color:var(--brand)}
+.h1x .row .out{color:#0A0A0A}
+
+/* ========= H2 — LA FIOLE ========= */
+.h2x{margin:0 16px;background:linear-gradient(180deg,#F6F9FF,#fff);border:1px solid #E4E9F7;border-radius:24px;padding:16px;display:flex;gap:18px;align-items:center}
+.h2x .flask{width:86px;height:150px;flex:none;position:relative;border-radius:20px 20px 34px 34px;border:3px solid #12295E;overflow:hidden;background:#fff}
+.h2x .liquid{position:absolute;left:0;right:0;bottom:0;height:64%}
+.h2x .liquid .wave{position:absolute;left:-10%;right:-10%;top:-8px;height:16px}
+.h2x .liquid .fillb{position:absolute;inset:8px 0 0 0;background:linear-gradient(180deg,#3E67D6,var(--brand))}
+.h2x .bub{position:absolute;border-radius:50%;background:rgba(255,255,255,.5)}
+.h2x .neck{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:38px;height:8px;background:#12295E;border-radius:0 0 6px 6px}
+.h2x .body{flex:1}
+.h2x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5C79C4}
+.h2x .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:48px;line-height:1;margin-top:4px;color:#12295E}
+.h2x .sub{font-size:12px;font-weight:700;color:#5C79C4;margin-top:6px;line-height:1.45}
+.h2x .cta{margin-top:12px;background:var(--brand);color:#fff;border-radius:999px;padding:10px 16px;display:inline-block;font-weight:800;font-size:12.5px}
+
+/* ========= H3 — LE CIRCUIT ========= */
+.h3x{margin:0 16px;border:1px solid #ECECEC;border-radius:18px;padding:16px;position:relative}
+.h3x .grid3{display:grid;grid-template-columns:1fr 84px 1fr;gap:12px;align-items:center}
+.h3x .gauge{width:84px;height:150px;border:2.5px solid #0A0A0A;border-radius:10px;position:relative;background:#FAFAFA;overflow:hidden;justify-self:center}
+.h3x .fill{position:absolute;left:0;right:0;bottom:0;height:67%;background:var(--brand)}
+.h3x .pct{position:absolute;left:0;right:0;bottom:69%;text-align:center;font-weight:800;font-size:11px}
+.h3x .vfl{position:absolute;left:0;right:0;bottom:30%;text-align:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;color:#fff}
+.h3x .side{font-size:11px;font-weight:700;line-height:1.4}
+.h3x .side.in{text-align:right;color:var(--brand)}
+.h3x .side.out{color:#0A0A0A}
+.h3x .side .big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:22px;display:block}
+.h3x .side small{color:#8A8A8A;font-weight:600;display:block;font-size:10px}
+.h3x .arr{font-size:16px;display:block;margin-top:2px}
+.h3x .caption{text-align:center;font-size:11px;font-weight:700;color:#8A8A8A;margin-top:12px}
+.h3x .lbl{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A;margin-bottom:12px;text-align:center}
+</style>
+
+<div class="head">
+  <h1>Le silo — 3 déclinaisons</h1>
+  <p>La direction retenue : un réservoir vertical qui monte quand on bouge et descend quand on donne. Trois exécutions, du plus technique au plus narratif.</p>
+</div>
+
+<div class="grid">
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H1</span><div><h2>Le silo technique</h2><small>Cuve graduée, marqueur, relevé entrées/sorties</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h1x">
+          <div class="gauge">
+            <div class="fill"></div>
+            <div class="marker"></div>
+            <div class="grad" style="bottom:25%"></div><span class="gradl" style="bottom:25%">2 500</span>
+            <div class="grad" style="bottom:50%"></div><span class="gradl" style="bottom:50%">5 000</span>
+            <div class="grad" style="bottom:75%"></div><span class="gradl" style="bottom:75%">7 500</span>
+          </div>
+          <div class="body">
+            <div class="lbl">Réserve d’énergie</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="rows num">
+              <div class="row"><span>Récolté aujourd’hui</span><span class="in">+3 200</span></div>
+              <div class="row"><span>Donné cette semaine</span><span class="out">−2 400</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">La version instrument de mesure : graduations chiffrées, flèche de niveau, relevé entrées/sorties comme un compteur. Précis, crédible, sobre.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H2</span><div><h2>La fiole</h2><small>Liquide vivant, vague et bulles</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h2x">
+          <div class="flask">
+            <span class="neck"></span>
+            <div class="liquid">
+              <svg class="wave" viewBox="0 0 120 16" preserveAspectRatio="none"><path d="M0 10 Q 15 2, 30 10 T 60 10 T 90 10 T 120 10 L120 16 L0 16 Z" fill="#3E67D6"/></svg>
+              <div class="fillb"></div>
+              <span class="bub" style="width:8px;height:8px;left:22%;bottom:26%"></span>
+              <span class="bub" style="width:5px;height:5px;left:58%;bottom:44%"></span>
+              <span class="bub" style="width:6px;height:6px;left:40%;bottom:12%"></span>
+            </div>
+          </div>
+          <div class="body">
+            <div class="lbl">Votre énergie</div>
+            <div class="v num">6 750 ⚡</div>
+            <div class="sub num">La fiole se remplit à chaque pas<br>et se verse dans vos missions.</div>
+            <span class="cta">Verser dans une mission</span>
+          </div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">La version organique : une fiole au liquide ondulant (vague animée et bulles dans la vraie app), verbe « verser » pour le don. Chaleureuse, presque potion magique.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H3</span><div><h2>Le circuit</h2><small>La cuve au centre de son cycle</small></div></div>
+    <div class="frame">
+      <div class="dim"><div class="pagehead"><h3>Missions</h3><div class="sub">Distribuez votre énergie aux causes</div></div></div>
+      <div class="sec">
+        <div class="h3x">
+          <div class="lbl">Votre réserve d’énergie</div>
+          <div class="grid3">
+            <div class="side in num">
+              <small>Vos pas remplissent</small>
+              +3 200 <span class="big">aujourd’hui</span>
+              <span class="arr">⟶</span>
+            </div>
+            <div class="gauge">
+              <div class="fill"></div>
+              <div class="pct num">67 %</div>
+              <div class="vfl num">6 750</div>
+            </div>
+            <div class="side out num">
+              <span class="arr">⟶</span>
+              <small>Vos dons vident</small>
+              −2 400 <span class="big">cette semaine</span>
+            </div>
+          </div>
+          <div class="caption">1 mètre = 1 ⚡ · la réserve n’expire jamais</div>
+        </div>
+      </div>
+      <div class="dim"><div class="mcard"><div class="t"><span class="ic">⛑</span><div><div class="nm">Urgence & Secours</div><div class="og">avec Premiers Secours Solidaires</div></div></div><div class="bar"><i></i></div></div></div>
+    </div>
+    <p class="slot-desc">La version pédagogique : la cuve au centre, le flux entrant (vos pas) à gauche, le flux sortant (vos dons) à droite. Explique le modèle économique du produit en un seul dessin.</p>
+  </div>
+
+</div>
