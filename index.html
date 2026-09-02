@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Moov'On</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap">
 <style>
 /* ================= TOKENS =================
    --brand : PLACEHOLDER en attente des couleurs David Assurances.
@@ -142,33 +142,35 @@ svg{display:block}
 .meter>i{display:block;height:100%;background:var(--brand);transition:width .8s cubic-bezier(.2,.8,.2,1)}
 .meter-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:6px;letter-spacing:.03em}
 
-/* ================= HOME ================= */
-.home-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:24px 18px 16px}
-.greet .g-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-.greet h1{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:33px;line-height:1;letter-spacing:.01em;text-transform:uppercase;margin-top:7px}
-.greet h1 em{font-style:normal;color:var(--brand)}
-.home-ava{position:relative;flex:none;margin-top:2px}
-.home-ava .avatar{width:46px;height:46px;font-size:16px}
-.home-ava .streak{position:absolute;bottom:-6px;right:-8px;background:var(--ink);color:var(--surface);font-size:10px;font-weight:700;padding:2px 6px;display:flex;gap:3px;align-items:center}
-.today{margin:0 18px;border:1px solid var(--line);padding:14px 14px 16px}
-.today-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.today-label{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.today-figs{display:flex;align-items:flex-end;margin-top:12px}
-.tfig{flex:1;border-left:1px solid var(--line);padding-left:14px}
-.tfig:first-child{border-left:0;padding-left:0}
-.tfig .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:40px;line-height:.9;white-space:nowrap}
-.tfig .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
-.today-next{margin-top:14px}
-.today-next .meter{height:6px}
-.today .btn{margin-top:14px}
-.impact-strip{margin:14px 18px 0;background:var(--panel);color:var(--panel-ink);padding:13px 14px;display:flex;align-items:center;gap:12px;width:calc(100% - 36px);text-align:left}
-.impact-strip .is-body{flex:1;min-width:0}
-.impact-strip .is-name{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-mut)}
-.impact-strip .is-figs{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px;margin-top:5px;display:flex;gap:14px;flex-wrap:wrap;color:var(--panel-ink)}
-.impact-strip .is-figs .eur{color:var(--brand-panel)}
-.impact-strip .meter{background:#2B2B2B;margin-top:9px}
-.impact-strip .meter>i{background:var(--brand-panel)}
-.impact-strip .chev{color:var(--panel-mut);flex:none}
+/* ================= HOME — section 1 : bloc couleur / dossard ================= */
+.hero5{background:var(--brand);color:var(--brand-ink);padding:22px 18px 20px;position:relative;overflow:hidden}
+.hero5 .stripe{position:absolute;top:-40px;right:-52px;width:150px;height:300px;background:color-mix(in srgb,var(--brand-ink) 7%,transparent);transform:rotate(22deg);pointer-events:none}
+.hero5 .h5-row{display:flex;justify-content:space-between;align-items:center;position:relative}
+.hero5 .h5-date{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.hero5 .h5-bib{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:15px;background:var(--brand-ink);color:var(--brand);padding:3px 10px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);display:flex;align-items:center;gap:4px}
+.hero5 h1{font-family:"Archivo",sans-serif;font-weight:900;font-size:33px;letter-spacing:-.02em;line-height:1;margin-top:12px;text-transform:uppercase;position:relative}
+.hero5 .h5-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:96px;line-height:.82;margin:16px -2px 0;white-space:nowrap;position:relative}
+.hero5 .h5-big small{font-size:25px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));letter-spacing:.06em}
+.hero5 .h5-sub{display:flex;gap:18px;margin-top:12px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));position:relative}
+.hero5 .h5-sub b{color:var(--brand-ink);font-size:14px}
+.hero5 .h5-ticket{margin-top:16px;background:var(--surface);color:var(--brand-dim);clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px));padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13.5px;width:100%;text-align:left;position:relative}
+.hero5 .h5-ticket small{display:block;font-weight:600;color:color-mix(in srgb,var(--brand-dim) 60%,var(--surface));font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+:root:not([data-theme="light"]) .hero5 .h5-ticket{color:var(--brand-dim)}
+
+/* ================= HOME — section 2 : carte chaleureuse entreprise ================= */
+.corp3{margin:18px 18px 0;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 16px 34px -20px rgba(0,0,0,.3);width:calc(100% - 36px);text-align:left;display:block}
+.corp3 .c3-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.corp3 .c3-name{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.corp3 .chev{color:var(--ink-3);flex:none}
+.corp3 .c3-main{display:flex;gap:16px;align-items:center;margin-top:14px}
+.corp3 .c3-ring{width:96px;height:96px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--brand) 0 23%,var(--sunken) 23% 100%)}
+.corp3 .c3-ring>div{width:72px;height:72px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.corp3 .c3-ring .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:23px;line-height:1}
+.corp3 .c3-ring .l{font-size:8.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.corp3 .c3-facts{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0}
+.corp3 .c3-fact{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+.corp3 .c3-fact .ic{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.corp3 .c3-fact b{font-weight:800}
 .teaser{margin:14px 18px 0;border:1px solid var(--line);padding:12px 14px;display:flex;gap:12px;align-items:center;width:calc(100% - 36px);text-align:left}
 .teaser .t-ic{width:36px;height:36px;background:var(--ink);color:var(--surface);display:grid;place-items:center;flex:none}
 .teaser .t-body{flex:1;min-width:0}
@@ -435,44 +437,50 @@ svg{display:block}
 
       <!-- ============ ACCUEIL ============ -->
       <section class="screen active" id="scr-home" aria-label="Accueil">
-        <div class="home-top">
-          <div class="greet">
-            <div class="g-eyebrow" id="greet-date">Mardi 2 septembre · Équipe Marketing</div>
-            <h1>Bonjour <em>Camille</em></h1>
-          </div>
-          <div class="home-ava">
-            <span class="avatar" style="background:#B3541E">CR</span>
-            <span class="streak" aria-label="Série de 6 jours">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z"/></svg>
-              <span class="num">6</span>
+        <div class="hero5">
+          <div class="stripe"></div>
+          <div class="h5-row">
+            <span class="h5-date" id="greet-date">Mardi 2 septembre · Marketing</span>
+            <span class="h5-bib num" aria-label="Série de 6 jours">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z"/></svg>
+              6 J
             </span>
           </div>
+          <h1>Bonjour Camille</h1>
+          <div class="h5-big num"><span id="today-steps">4 320</span><small> PAS</small></div>
+          <div class="h5-sub num">
+            <span><b id="today-km">3,2</b> km</span>
+            <span><b id="today-meals">6</b> repas</span>
+            <span><b>6 j</b> de série</span>
+          </div>
+          <button class="h5-ticket" id="btn-home-run" aria-label="Lancer une course">
+            <span><small>Prochaine récompense</small><span class="num" id="today-next-txt">7ᵉ repas dans 300 m</span></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
         </div>
 
-        <div class="today">
-          <div class="today-top">
-            <span class="today-label">Aujourd’hui</span>
-            <span class="chip outline num">Objectif 10 000 pas</span>
+        <button class="corp3" id="go-impact" aria-label="Voir l’impact collectif">
+          <div class="c3-top">
+            <span class="c3-name">Banque Corélis · Programme Élan</span>
+            <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
           </div>
-          <div class="today-figs">
-            <div class="tfig"><div class="v num" id="today-steps">4 320</div><div class="l">pas</div></div>
-            <div class="tfig"><div class="v num" id="today-km">3,2</div><div class="l">km</div></div>
-            <div class="tfig"><div class="v num" id="today-meals">6</div><div class="l">repas offerts</div></div>
+          <div class="c3-main">
+            <div class="c3-ring" id="corp-ring"><div><span class="v num" id="corp-pct">23 %</span><span class="l">du budget</span></div></div>
+            <div class="c3-facts">
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg></span>
+                <span class="num"><b id="corp-trees">418</b> arbres plantés</span>
+              </div>
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg></span>
+                <span class="num"><b id="corp-meals">3 120</b> repas financés</span>
+              </div>
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A3.5 3.5 0 0 0 12 7.5c-2 0-3.5 2-3.5 4.5s1.5 4.5 3.5 4.5A3.5 3.5 0 0 0 14.8 15M7 10.5h5M7 13.5h5"/></svg></span>
+                <span class="num"><b id="corp-euros">23 460 €</b> débloqués</span>
+              </div>
+            </div>
           </div>
-          <div class="today-next">
-            <div class="meter"><i id="today-meter" style="width:40%"></i></div>
-            <div class="meter-cap"><span id="today-next-txt">Encore 300 m pour votre 7ᵉ repas</span><span class="num" id="today-pct">40 %</span></div>
-          </div>
-          <button class="btn impact block" id="btn-home-run">Lancer une course</button>
-        </div>
-
-        <button class="impact-strip" id="go-impact" aria-label="Voir l’impact collectif">
-          <div class="is-body">
-            <div class="is-name">Banque Corélis · Programme Élan</div>
-            <div class="is-figs num"><span class="eur" id="corp-euros">23 460 €</span><span><span id="corp-trees">418</span> arbres</span><span><span id="corp-meals">3 120</span> repas</span></div>
-            <div class="meter"><i id="corp-meter" style="width:23.4%"></i></div>
-          </div>
-          <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
         </button>
 
         <button class="teaser" id="go-challenges" aria-label="Voir le défi du mois">
@@ -953,20 +961,19 @@ function renderToday(){
   const meters = state.todaySteps / RATE.stepsPerMeter;
   const meals = Math.floor(meters / RATE.metersPerMeal);
   const rest = Math.ceil(RATE.metersPerMeal - (meters % RATE.metersPerMeal));
-  const pct = Math.round((meters % RATE.metersPerMeal) / RATE.metersPerMeal * 100);
   $('today-steps').textContent = fmtInt(state.todaySteps);
   $('today-km').textContent = (meters/1000).toLocaleString('fr-FR',{maximumFractionDigits:1});
   $('today-meals').textContent = fmtInt(meals);
-  $('today-meter').style.width = pct + '%';
-  $('today-pct').textContent = pct + ' %';
-  $('today-next-txt').textContent = `Encore ${fmtInt(rest)} m pour votre ${meals+1}ᵉ repas`;
+  $('today-next-txt').textContent = `${meals+1}ᵉ repas dans ${fmtInt(rest)} m`;
 }
 
 function renderCorp(){
   $('corp-euros').textContent = fmtInt(state.corpEuros) + ' €';
   $('corp-meals').textContent = fmtInt(state.corpMeals);
   $('corp-trees').textContent = fmtInt(state.corpTrees);
-  $('corp-meter').style.width = Math.min(100, state.corpEuros/100000*100).toFixed(1) + '%';
+  const pct = Math.min(100, state.corpEuros/100000*100);
+  $('corp-ring').style.background = `conic-gradient(var(--brand) 0 ${pct.toFixed(1)}%, var(--sunken) ${pct.toFixed(1)}% 100%)`;
+  $('corp-pct').textContent = Math.round(pct) + ' %';
   $('impact-euros').textContent = fmtInt(state.corpEuros) + ' €';
   $('impact-meals').textContent = fmtInt(state.corpMeals);
   $('impact-trees').textContent = fmtInt(state.corpTrees);
