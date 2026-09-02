@@ -6,11 +6,14 @@
 <title>Moov'On</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&family=Big+Shoulders:opsz,wght@10..72,600;10..72,700&family=Saira:wght@400;600;700;800&family=Saira+Extra+Condensed:wght@600;700&family=Saira+Condensed:wght@600;700&family=Saira+Stencil+One&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600&family=Exo+2:ital,wght@0,400;0,600;0,700;1,800;1,900&display=swap">
 <style>
 /* ================= TOKENS =================
    --brand : PLACEHOLDER en attente des couleurs David Assurances.
    Remplacer --brand / --brand-ink (et leurs variantes dark) uniquement. */
 :root{
+  --f-disp:"Anton";--f-hero:"Archivo";--f-num:"Barlow Condensed";--f-body:"Archivo";
+  --w-disp:400;--w-hero:900;--w-num:700;--s-big:96px;--s-name:33px;--fs-disp:normal;--fs-num:normal;
   --paper:#EFEFEF;          /* ground behind the phone */
   --surface:#FFFFFF;        /* app background */
   --card:#FFFFFF;
@@ -78,7 +81,7 @@ html,body{height:100%}
 body{
   background:var(--paper);
   color:var(--ink);
-  font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f-body),system-ui,-apple-system,"Segoe UI",sans-serif;
   font-size:15px;line-height:1.45;
   -webkit-font-smoothing:antialiased;
   display:flex;align-items:center;justify-content:center;
@@ -88,7 +91,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
 svg{display:block}
 .num{font-variant-numeric:tabular-nums}
-.disp{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+.disp{font-family:var(--f-num),"Arial Narrow",sans-serif}
 
 /* ================= DEVICE FRAME ================= */
 .stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
@@ -123,9 +126,9 @@ svg{display:block}
 
 /* ================= COMMON ================= */
 .pagehead{padding:24px 18px 12px;border-bottom:1px solid var(--line)}
-.pagehead h1{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:34px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+.pagehead h1{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:34px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .pagehead .sub{color:var(--ink-3);font-size:12px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
-.section-label{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:22px 18px 10px;display:flex;align-items:baseline;gap:8px}
+.section-label{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:22px 18px 10px;display:flex;align-items:baseline;gap:8px}
 .section-label::after{content:"";flex:1;height:1px;background:var(--line);align-self:center}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
 .chip.brand{background:var(--brand);color:var(--brand-ink)}
@@ -147,9 +150,9 @@ svg{display:block}
 .hero5 .stripe{position:absolute;top:-40px;right:-52px;width:150px;height:300px;background:color-mix(in srgb,var(--brand-ink) 7%,transparent);transform:rotate(22deg);pointer-events:none}
 .hero5 .h5-row{display:flex;justify-content:space-between;align-items:center;position:relative}
 .hero5 .h5-date{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
-.hero5 .h5-bib{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:15px;background:var(--brand-ink);color:var(--brand);padding:3px 10px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);display:flex;align-items:center;gap:4px}
-.hero5 h1{font-family:"Archivo",sans-serif;font-weight:900;font-size:33px;letter-spacing:-.02em;line-height:1;margin-top:12px;text-transform:uppercase;position:relative}
-.hero5 .h5-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:96px;line-height:.82;margin:16px -2px 0;white-space:nowrap;position:relative}
+.hero5 .h5-bib{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:15px;background:var(--brand-ink);color:var(--brand);padding:3px 10px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);display:flex;align-items:center;gap:4px}
+.hero5 h1{font-family:var(--f-hero),sans-serif;font-weight:var(--w-hero,900);font-style:var(--fs-disp,normal);font-size:var(--s-name,33px);letter-spacing:-.02em;line-height:1;margin-top:12px;text-transform:uppercase;position:relative}
+.hero5 .h5-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:var(--w-num,700);font-size:var(--s-big,96px);line-height:.82;margin:16px -2px 0;white-space:nowrap;position:relative}
 .hero5 .h5-big small{font-size:25px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));letter-spacing:.06em}
 .hero5 .h5-sub{display:flex;gap:18px;margin-top:12px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));position:relative}
 .hero5 .h5-sub b{color:var(--brand-ink);font-size:14px}
@@ -165,7 +168,7 @@ svg{display:block}
 .corp3 .c3-main{display:flex;gap:16px;align-items:center;margin-top:14px}
 .corp3 .c3-ring{width:96px;height:96px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--brand) 0 23%,var(--sunken) 23% 100%)}
 .corp3 .c3-ring>div{width:72px;height:72px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
-.corp3 .c3-ring .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:23px;line-height:1}
+.corp3 .c3-ring .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:23px;line-height:1}
 .corp3 .c3-ring .l{font-size:8.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
 .corp3 .c3-facts{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0}
 .corp3 .c3-fact{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
@@ -189,7 +192,7 @@ svg{display:block}
 .duel4 .d4-a{flex-basis:51.3%;background:var(--brand);color:var(--brand-ink);display:flex;flex-direction:column;justify-content:center;padding:0 18px;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
 .duel4 .d4-b{flex:1;background:var(--ink);color:var(--surface);display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 18px;margin-left:-10px;clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}
 .duel4 .d4-t{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
-.duel4 .d4-s{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:31px;line-height:1;margin-top:2px}
+.duel4 .d4-s{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:31px;line-height:1;margin-top:2px}
 .duel4 .d4-vs{position:absolute;left:51.3%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:12px;color:var(--ink);z-index:2}
 .duel4 .d4-foot{font-size:11px;color:var(--ink-3);padding:9px 18px 0;font-weight:600}
 .corphero .meter-cap{color:var(--panel-mut)}
@@ -215,7 +218,7 @@ svg{display:block}
 .pmap .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 32%,rgba(10,14,24,.78))}
 .pmap .pstats{position:absolute;left:14px;right:14px;bottom:10px;display:flex;color:#fff}
 .pmap .pstat{flex:1}
-.pmap .pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;white-space:nowrap}
+.pmap .pstat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:26px;line-height:1;white-space:nowrap}
 .pmap .pstat .l{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:2px}
 .pbody{padding:11px 14px 4px}
 .pbody .ptitle{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
@@ -228,10 +231,10 @@ svg{display:block}
 /* ================= CHALLENGES ================= */
 .hero-challenge{background:var(--panel);color:var(--panel-ink);padding:22px 18px;position:relative}
 .hero-challenge .hc-label{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-panel);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.hero-challenge h2{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:33px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em;max-width:250px}
+.hero-challenge h2{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:33px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em;max-width:250px}
 .hero-challenge .hc-sub{font-size:12px;color:var(--panel-mut);margin-top:8px;letter-spacing:.02em}
 .hero-challenge .hc-days{position:absolute;top:20px;right:18px;text-align:center;border:1px solid #333;padding:7px 12px}
-.hero-challenge .hc-days .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1}
+.hero-challenge .hc-days .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:26px;line-height:1}
 .hero-challenge .hc-days .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--panel-mut)}
 .hero-challenge .meter{background:#2B2B2B;margin-top:16px}
 .hero-challenge .meter>i{background:var(--brand-panel)}
@@ -240,12 +243,12 @@ svg{display:block}
 .lb-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line)}
 .lb-row:first-child{border-top:0}
 .lb-row.me{background:var(--sunken)}
-.lb-rank{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;width:22px;text-align:center;color:var(--ink-3)}
+.lb-rank{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:21px;width:22px;text-align:center;color:var(--ink-3)}
 .lb-row:nth-child(1) .lb-rank{color:var(--ink)}
 .lb-body{flex:1;min-width:0}
 .lb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .lb-name{font-weight:700;font-size:13.5px}
-.lb-val{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:17px;color:var(--ink-2)}
+.lb-val{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:600;font-size:17px;color:var(--ink-2)}
 .lb-bar{height:4px;background:var(--sunken);margin-top:6px;overflow:hidden}
 .lb-row.me .lb-bar{background:var(--line)}
 .lb-bar>i{display:block;height:100%;background:var(--brand)}
@@ -268,19 +271,19 @@ svg{display:block}
 /* ================= IMPACT ================= */
 .impact-hero{background:var(--panel);color:var(--panel-ink);padding:24px 18px}
 .impact-hero .ih-label{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-mut)}
-.impact-hero .ih-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:74px;line-height:.9;margin-top:10px;color:var(--brand-panel)}
+.impact-hero .ih-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:74px;line-height:.9;margin-top:10px;color:var(--brand-panel)}
 .impact-hero .ih-sub{font-size:12.5px;margin-top:8px;color:var(--panel-mut)}
 .impact-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
 .istat{padding:16px 18px;border-top:1px solid var(--line)}
 .istat:nth-child(odd){border-right:1px solid var(--line)}
 .istat:nth-child(-n+2){border-top:0}
 .istat .ic{color:var(--brand);margin-bottom:10px}
-.istat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:36px;line-height:1}
+.istat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:36px;line-height:1}
 .istat .l{font-size:9.5px;color:var(--ink-3);font-weight:700;margin-top:4px;letter-spacing:.09em;text-transform:uppercase}
 .convert{padding:6px 18px 16px}
 .conv-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
 .conv-row:first-of-type{border-top:0}
-.conv-row .from{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:22px;width:80px}
+.conv-row .from{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:22px;width:80px}
 .conv-row .arrow{color:var(--ink-3)}
 .conv-row .to{font-weight:600;display:flex;align-items:center;gap:7px}
 .conv-row .to svg{color:var(--brand)}
@@ -292,17 +295,17 @@ svg{display:block}
 .assoc-body{flex:1;min-width:0}
 .assoc-name{font-weight:700;font-size:13.5px}
 .assoc-sub{font-size:11px;color:var(--ink-3);letter-spacing:.02em}
-.assoc-amt{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:21px;color:var(--brand)}
+.assoc-amt{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:21px;color:var(--brand)}
 
 /* ================= PROFILE ================= */
 .prof-head{display:flex;align-items:center;gap:14px;padding:26px 18px 14px}
 .prof-head .avatar{width:62px;height:62px;font-size:21px}
-.prof-name{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.prof-name{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
 .prof-sub{font-size:12px;color:var(--ink-3);margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .prof-stats{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .prof-stat{flex:1;padding:14px 18px;border-left:1px solid var(--line)}
 .prof-stat:first-child{border-left:0}
-.prof-stat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1}
+.prof-stat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:30px;line-height:1}
 .prof-stat .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:4px}
 .week{padding:14px 18px 16px}
 .week h3{font-size:14px;font-weight:700}
@@ -380,12 +383,12 @@ svg{display:block}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
 .gps-chip{background:var(--surface);border:1px solid var(--line);padding:7px 11px;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .run-panel{background:var(--card);border-top:1px solid var(--line);padding:20px 18px calc(18px + env(safe-area-inset-bottom));position:relative;z-index:3}
-.run-time{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:80px;line-height:.9;text-align:center;letter-spacing:.01em}
+.run-time{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:80px;line-height:.9;text-align:center;letter-spacing:.01em}
 .run-time small{font-size:26px;color:var(--ink-3);font-weight:600}
 .run-metrics{display:flex;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
 .rmet{flex:1;text-align:center;border-left:1px solid var(--line)}
 .rmet:first-child{border-left:0}
-.rmet .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1}
+.rmet .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:30px;line-height:1}
 .rmet .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
 .run-impact{margin-top:16px;background:var(--panel);color:var(--panel-ink);padding:13px 15px;display:flex;align-items:center;gap:12px}
 .run-impact .ric{width:36px;height:36px;background:var(--brand-panel);color:#0A0F1E;display:grid;place-items:center;flex:none}
@@ -404,16 +407,16 @@ svg{display:block}
 /* ================= SUMMARY / SHEETS ================= */
 .sum-head{padding:28px 18px 8px;text-align:center}
 .sum-head .kicker{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--brand)}
-.sum-head h2{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:36px;text-transform:uppercase;line-height:1;margin-top:8px}
+.sum-head h2{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:36px;text-transform:uppercase;line-height:1;margin-top:8px}
 .sum-route{margin:16px 0;background:var(--sunken)}
 .sum-grid{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .sum-cell{flex:1;padding:13px;text-align:center;border-left:1px solid var(--line)}
 .sum-cell:first-child{border-left:0}
-.sum-cell .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:27px;line-height:1}
+.sum-cell .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:27px;line-height:1}
 .sum-cell .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
 .sum-impact{margin:14px 18px;padding:15px;background:var(--panel);color:var(--panel-ink);display:flex;gap:12px;align-items:center}
 .sum-impact .ric{width:44px;height:44px;background:var(--brand-panel);color:#0A0F1E;display:grid;place-items:center;flex:none}
-.sum-impact .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1.05}
+.sum-impact .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:24px;line-height:1.05}
 .sum-impact p{font-size:11.5px;color:var(--panel-mut);margin-top:3px}
 .sum-form{padding:0 18px}
 .sum-form input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-ui);padding:13px 14px;font:inherit;color:var(--ink);font-weight:600}
@@ -427,12 +430,28 @@ svg{display:block}
 }
 .sheet.open{transform:none}
 .sheet .grab{width:40px;height:4px;background:var(--line);margin:0 auto 16px}
-.sheet h3{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:26px;text-transform:uppercase;letter-spacing:.01em}
+.sheet h3{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:26px;text-transform:uppercase;letter-spacing:.01em}
 .sheet p.desc{font-size:13px;color:var(--ink-2);margin-top:6px}
 .sheet .fields{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .sheet .fields label{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
 .sheet .fields input,.sheet .fields select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-ui);padding:12px;font:inherit;color:var(--ink);margin-top:5px}
 .sheet .btn{margin-top:18px}
+
+/* ================= SÉLECTEUR DE TYPO (outil maquette) ================= */
+.typo-btn{
+  position:absolute;right:12px;bottom:calc(var(--nav-h) + 18px);z-index:42;
+  width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);
+  box-shadow:0 8px 20px -8px rgba(0,0,0,.35);display:grid;place-items:center;
+  font-weight:800;font-size:15px;color:var(--ink);
+}
+.typo-rows{display:flex;flex-direction:column;margin-top:12px;max-height:52vh;overflow-y:auto}
+.typo-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-top:1px solid var(--line);text-align:left;width:100%}
+.typo-row:first-child{border-top:0}
+.typo-row .tr-name{font-weight:700;font-size:13px}
+.typo-row .tr-name small{display:block;font-weight:500;font-size:10.5px;color:var(--ink-3)}
+.typo-row .tr-sample{font-size:19px;white-space:nowrap;color:var(--ink)}
+.typo-row[aria-pressed="true"]{background:color-mix(in srgb,var(--brand) 10%,var(--card));border-radius:10px;padding-left:10px;padding-right:10px}
+.typo-note{font-size:10.5px;color:var(--ink-3);margin-top:10px}
 
 /* toast */
 .toast{
@@ -863,6 +882,14 @@ svg{display:block}
       </div>
     </nav>
 
+    <button class="typo-btn" id="typo-btn" aria-label="Changer la typographie">Aa</button>
+    <div class="sheet" id="sheet-typo" role="dialog" aria-label="Choisir la typographie" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Typographie</h3>
+      <div class="typo-rows" id="typo-rows"></div>
+      <p class="typo-note">Outil de prévisualisation de la maquette — ne fera pas partie de l’application finale. Le choix est mémorisé sur cet appareil.</p>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <canvas class="confetti" id="confetti"></canvas>
   </div>
@@ -1266,6 +1293,41 @@ function confetti(){
   })();
 }
 
+/* ================= SÉLECTEUR DE TYPO (outil maquette) ================= */
+const TYPOS = {
+  act:{label:'Actuelle', sub:'Anton · Barlow Condensed · Archivo', disp:'"Anton"', hero:'"Archivo"', num:'"Barlow Condensed"', body:'"Archivo"', wDisp:400, wHero:900, wNum:700, sBig:'96px', sName:'33px', it:false},
+  A:{label:'A — Le stadier', sub:'Oswald · Source Sans', disp:'"Oswald"', hero:'"Oswald"', num:'"Oswald"', body:'"Source Sans 3"', wDisp:700, wHero:700, wNum:600, sBig:'82px', sName:'30px', it:false},
+  C:{label:'C — Le contemporain', sub:'Bricolage Grotesque · Figtree', disp:'"Bricolage Grotesque"', hero:'"Bricolage Grotesque"', num:'"Bricolage Grotesque"', body:'"Figtree"', wDisp:800, wHero:800, wNum:800, sBig:'72px', sName:'29px', it:false},
+  D:{label:'D — Le duo contrasté', sub:'Unbounded · Big Shoulders', disp:'"Unbounded"', hero:'"Unbounded"', num:'"Big Shoulders"', body:'"Archivo"', wDisp:700, wHero:700, wNum:700, sBig:'88px', sName:'23px', it:false},
+  F:{label:'F — Le motorsport', sub:'Saira · Saira Extra Condensed', disp:'"Saira"', hero:'"Saira"', num:'"Saira Extra Condensed"', body:'"Saira"', wDisp:800, wHero:800, wNum:700, sBig:'100px', sName:'30px', it:false},
+  G:{label:'G — Le chronométreur', sub:'Archivo Black · IBM Plex Mono', disp:'"Archivo"', hero:'"Archivo"', num:'"IBM Plex Mono"', body:'"IBM Plex Sans"', wDisp:900, wHero:900, wNum:600, sBig:'58px', sName:'31px', it:false},
+  I:{label:'I — Le stencil', sub:'Saira Stencil One · Saira Condensed', disp:'"Saira Stencil One"', hero:'"Saira Stencil One"', num:'"Saira Condensed"', body:'"Saira"', wDisp:400, wHero:400, wNum:700, sBig:'82px', sName:'27px', it:false},
+  J:{label:'J — La vitesse', sub:'Exo 2, tout en italique', disp:'"Exo 2"', hero:'"Exo 2"', num:'"Exo 2"', body:'"Exo 2"', wDisp:900, wHero:900, wNum:800, sBig:'68px', sName:'29px', it:true},
+};
+function applyTypo(key){
+  const t = TYPOS[key] || TYPOS.act;
+  const r = document.documentElement.style;
+  r.setProperty('--f-disp', t.disp); r.setProperty('--f-hero', t.hero);
+  r.setProperty('--f-num', t.num);  r.setProperty('--f-body', t.body);
+  r.setProperty('--w-disp', t.wDisp); r.setProperty('--w-hero', t.wHero); r.setProperty('--w-num', t.wNum);
+  r.setProperty('--s-big', t.sBig); r.setProperty('--s-name', t.sName);
+  r.setProperty('--fs-disp', t.it ? 'italic' : 'normal');
+  r.setProperty('--fs-num', t.it ? 'italic' : 'normal');
+  store.set('typo', key);
+  document.querySelectorAll('.typo-row').forEach(row=>row.setAttribute('aria-pressed', row.dataset.typo===key));
+}
+function renderTypoRows(){
+  $('typo-rows').innerHTML = Object.entries(TYPOS).map(([k,t])=>`
+    <button class="typo-row" data-typo="${k}" aria-pressed="false">
+      <span class="tr-name">${t.label}<small>${t.sub}</small></span>
+      <span class="tr-sample num" style="font-family:${t.num.replace(/"/g,'&quot;')};font-weight:${t.wNum};${t.it?'font-style:italic;':''}">4 320 <span style="font-family:${t.disp.replace(/"/g,'&quot;')};font-weight:${t.wDisp}">Aa</span></span>
+    </button>`).join('');
+  $('typo-rows').querySelectorAll('.typo-row').forEach(row=>{
+    row.addEventListener('click',()=>applyTypo(row.dataset.typo));
+  });
+}
+$('typo-btn').addEventListener('click',()=>{ closeFan(); $('sheet-typo').classList.add('open'); scrim.classList.add('open'); });
+
 /* ================= RACCOURCIS ACCUEIL ================= */
 $('btn-home-run').addEventListener('click', startRun);
 $('go-impact').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-impact"]').click());
@@ -1274,6 +1336,7 @@ $('go-duel').addEventListener('click', ()=>document.querySelector('.navbtn[data-
 
 /* ================= INIT ================= */
 renderStories(); renderFeed(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
+renderTypoRows(); applyTypo(store.get('typo','act'));
 </script>
 </body>
 </html>
