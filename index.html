@@ -200,26 +200,28 @@ svg{display:block}
 .story .ring.seen{background:var(--line)}
 .story .ring>span{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px;border:2.5px solid var(--surface)}
 .story small{font-size:10.5px;color:var(--ink-2);max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
-.feed{display:flex;flex-direction:column}
-.post{border-top:1px solid var(--line);padding:16px 0 6px;background:var(--card)}
-.post:first-child{border-top:0}
-.post-head{display:flex;align-items:center;gap:10px;padding:0 18px 10px}
-.post-head .who{flex:1;min-width:0}
-.post-head .name{font-weight:700;font-size:14px}
-.post-head .meta{font-size:11px;color:var(--ink-3);display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px}
-.post-title{padding:0 18px 10px;font-weight:600;font-size:15px;letter-spacing:-.01em}
-.routebox{margin:0;background:var(--sunken);position:relative}
-.routebox svg{width:100%;height:auto}
-.post-stats{display:flex;padding:14px 18px 0;gap:0}
-.pstat{flex:1;border-left:1px solid var(--line);padding-left:12px}
-.pstat:first-child{border-left:0;padding-left:0}
-.pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:27px;line-height:1}
-.pstat .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
-.post-impact{margin:12px 18px 0;padding:10px 0 0;border-top:1px dashed var(--line);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
-.post-impact svg{color:var(--brand);flex:none}
-.post-impact .eur{color:var(--ink-3);font-weight:500}
-.post-actions{display:flex;align-items:center;gap:2px;padding:6px 10px 4px}
-.pact{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:var(--r-ui);color:var(--ink-2);font-weight:600;font-size:12.5px;letter-spacing:.02em}
+/* Fil = mixte journal de bord (rail chronologique) × magazine (carte immersive) */
+.feed{margin:2px 16px 0 0;padding:4px 0 6px;margin-left:38px;border-left:2px solid var(--line)}
+.post{position:relative;padding:0 0 22px 20px}
+.post:last-child{padding-bottom:8px}
+.post .node{position:absolute;left:-18px;top:0}
+.post .node .avatar{width:34px;height:34px;font-size:12px;border:3px solid var(--surface)}
+.post .when{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-top:1px}
+.post .pname{font-weight:800;font-size:14px;margin-top:2px}
+.post .pname span{color:var(--ink-3);font-weight:600;font-size:12px}
+.pcard{margin-top:9px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.pmap{position:relative;background:var(--sunken)}
+.pmap svg{display:block;width:100%;height:auto}
+.pmap .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 32%,rgba(10,14,24,.78))}
+.pmap .pstats{position:absolute;left:14px;right:14px;bottom:10px;display:flex;color:#fff}
+.pmap .pstat{flex:1}
+.pmap .pstat .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:26px;line-height:1;white-space:nowrap}
+.pmap .pstat .l{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.pbody{padding:11px 14px 4px}
+.pbody .ptitle{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.pbody .pimpact{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);font-weight:800;font-size:12px;padding:6px 11px;border-radius:8px}
+.post-actions{display:flex;align-items:center;gap:2px;padding:4px 6px 6px}
+.pact{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r-ui);color:var(--ink-2);font-weight:600;font-size:12.5px;letter-spacing:.02em}
 .pact:hover{background:var(--sunken)}
 .pact.bravoed{color:var(--brand)}
 
@@ -933,47 +935,49 @@ function renderStories(){
 
 function postCard(p){
   const impactBits = [];
-  if(p.trees) impactBits.push(`${p.trees} arbre${p.trees>1?'s':''}`);
-  impactBits.push(`${p.meals} repas`);
+  if(p.trees) impactBits.push(`🌳 +${p.trees} arbre${p.trees>1?'s':''}`);
+  impactBits.push(`🍲 +${p.meals} repas`);
+  const manual = p.time === '—';
+  const stats = manual
+    ? `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
+       <div class="pstat"><div class="v num">+${p.meals}</div><div class="l">repas</div></div>
+       <div class="pstat"><div class="v num">${fmtEur(p.euros)}</div><div class="l">débloqués</div></div>`
+    : `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
+       <div class="pstat"><div class="v num">${p.time}</div><div class="l">durée</div></div>
+       <div class="pstat"><div class="v num">${p.pace}</div><div class="l">min / km</div></div>`;
   return `
   <article class="post" data-post="${p.id}">
-    <div class="post-head">
-      <span class="avatar" style="background:${TEAM_COLORS[p.team]||'#555'}">${initials(p.n)}</span>
-      <div class="who">
-        <div class="name">${p.n}</div>
-        <div class="meta"><span>${p.when}</span><span class="chip outline">${p.team}</span></div>
+    <div class="node"><span class="avatar" style="background:${TEAM_COLORS[p.team]||'#555'}">${initials(p.n)}</span></div>
+    <div class="when">${p.when}</div>
+    <div class="pname">${p.n} <span>· ${p.team}</span></div>
+    <div class="pcard">
+      <div class="pmap">
+        <svg viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" aria-label="Tracé du parcours" role="img">
+          <rect width="400" height="160" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 50 L410 42"/><path d="M-10 122 L410 128"/><path d="M100 -10 L112 170"/><path d="M300 -10 L290 170"/></g>
+          <path d="${p.route}" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <div class="grad"></div>
+        <div class="pstats num">${stats}</div>
       </div>
-    </div>
-    <div class="post-title">${p.title}</div>
-    <div class="routebox">
-      <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" aria-label="Tracé du parcours" role="img">
-        <rect width="400" height="180" fill="var(--sunken)"/>
-        <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 55 L410 45"/><path d="M-10 135 L410 140"/><path d="M100 -10 L112 190"/><path d="M300 -10 L290 190"/></g>
-        <path d="${p.route}" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div class="post-stats">
-      <div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
-      <div class="pstat"><div class="v num">${p.time}</div><div class="l">durée</div></div>
-      <div class="pstat"><div class="v num">${p.pace}</div><div class="l">min / km</div></div>
-    </div>
-    <div class="post-impact">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
-      A débloqué ${impactBits.join(' + ')} <span class="eur num">(${fmtEur(p.euros)})</span>
-    </div>
-    <div class="post-actions">
-      <button class="pact bravo" aria-pressed="false">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
-        Bravo · <span class="num bravo-count">${p.bravos}</span>
-      </button>
-      <button class="pact">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12Z"/></svg>
-        <span class="num">${p.comments}</span>
-      </button>
-      <button class="pact" style="margin-left:auto">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
-        Partager
-      </button>
+      <div class="pbody">
+        <div class="ptitle">${p.title}</div>
+        <span class="pimpact num">${impactBits.join(' · ')} · ${fmtEur(p.euros)}</span>
+      </div>
+      <div class="post-actions">
+        <button class="pact bravo" aria-pressed="false">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+          Bravo · <span class="num bravo-count">${p.bravos}</span>
+        </button>
+        <button class="pact">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12Z"/></svg>
+          <span class="num">${p.comments}</span>
+        </button>
+        <button class="pact" style="margin-left:auto">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+          Partager
+        </button>
+      </div>
     </div>
   </article>`;
 }
