@@ -843,6 +843,8 @@ svg{display:block}
   <div class="stage-note">Moov’On — maquette interactive · toutes les données sont fictives (entreprise, personnes, associations)</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <script>
 'use strict';
 /* ========= BARÈME (démo — sera configurable côté entreprise) =========
@@ -862,6 +864,56 @@ const store = {
   get(k,f){ try{ const v = localStorage.getItem('moovon:'+k); return v===null?f:JSON.parse(v);}catch(e){return f} },
   set(k,v){ try{ localStorage.setItem('moovon:'+k, JSON.stringify(v)); }catch(e){} }
 };
+
+/* ================= SUPABASE (optionnel — repli localStorage) =================
+   Renseignez config.js pour activer la synchronisation ; sinon la maquette
+   fonctionne exactement comme avant, en local. */
+const SB = (() => {
+  try{
+    const c = window.MOOVON_SUPABASE;
+    if(c && c.url && c.anonKey && window.supabase) return window.supabase.createClient(c.url, c.anonKey);
+  }catch(e){}
+  return null;
+})();
+function relTime(iso){
+  const s = (Date.now() - new Date(iso).getTime())/1000;
+  if(s < 90) return 'à l’instant';
+  if(s < 3600) return `il y a ${Math.round(s/60)} min`;
+  if(s < 86400) return `il y a ${Math.round(s/3600)} h`;
+  return `il y a ${Math.round(s/86400)} j`;
+}
+const SYNC_ROUTE = 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35';
+async function dbInit(){
+  if(!SB) return;
+  try{
+    const [{data: ms}, {data: acts}] = await Promise.all([
+      SB.from('missions').select('*'),
+      SB.from('activities').select('*').order('created_at',{ascending:false}).limit(8)
+    ]);
+    if(ms && ms.length){
+      ms.forEach(r => { const m = missions.find(x=>x.id===r.id); if(m){ m.got = +r.got; m.goal = +r.goal; m.per = +r.per; m.name = r.name; m.org = r.org; m.unit = r.unit; } });
+    }
+    if(acts && acts.length){
+      state.posts = acts.map(a => ({
+        id: a.id, n: a.author, team: a.team, when: relTime(a.created_at),
+        title: a.title, dist: a.dist, time: a.duration || '—', pace: a.pace || '—',
+        bravos: 0, comments: 0, route: SYNC_ROUTE
+      }));
+    }
+    renderFeed(); renderMissions(); renderMySum(); renderCorp(); renderToday();
+  }catch(e){ console.warn('Supabase indisponible — mode local', e); }
+}
+function dbAddActivity(p){
+  if(!SB) return;
+  SB.from('activities').insert({author:p.n, team:p.team, title:p.title, dist:p.dist, duration:p.time==='—'?null:p.time, pace:p.pace==='—'?null:p.pace})
+    .then(({error})=>{ if(error) console.warn('Supabase insert activité :', error.message); });
+}
+function dbDonate(m, v){
+  if(!SB) return;
+  SB.from('donations').insert({mission_id:m.id, author:'Camille Roux', amount:v})
+    .then(()=>SB.from('missions').update({got:m.got}).eq('id', m.id))
+    .then(({error})=>{ if(error) console.warn('Supabase mise à jour mission :', error.message); });
+}
 
 /* ================= DONNÉES DÉMO ================= */
 const TEAM_COLORS = {Marketing:'#B3541E', Finance:'#2C5F8A', RH:'#6E4B8E', 'IT & Data':'#1F7A6D', Juridique:'#8A2C4F', Direction:'#6B6B23'};
@@ -1061,6 +1113,7 @@ function renderMissions(){
       state.energyBal -= v;
       store.set('energyBal', state.energyBal);
       saveMissions();
+      dbDonate(m, v);
       renderMissions(); renderCorp(); renderToday(); renderMySum();
       const units = Math.floor(v/m.per);
       toast(`⚡ ${fmtInt(v)} donnés à « ${m.name} »${units>0?` — ${fmtInt(units)} ${m.unit}${units>1?'s':''}`:''}`);
@@ -1238,6 +1291,7 @@ function publishPost({title, dist, time, pace}){
   };
   state.posts.unshift(post);
   store.set('posts', state.posts.slice(0,10));
+  dbAddActivity(post);
   renderFeed(); renderCorp(); renderToday(); renderWeek(); renderMissions();
 }
 $('btn-publish').addEventListener('click',()=>{
@@ -1361,6 +1415,7 @@ $('go-duel').addEventListener('click', ()=>document.querySelector('.navbtn[data-
 /* ================= INIT ================= */
 renderStories(); renderFeed(); renderMissions(); renderMySum(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
 renderTypoRows(); applyTypo(store.get('typo','act'));
+dbInit();
 </script>
 </body>
 </html>
