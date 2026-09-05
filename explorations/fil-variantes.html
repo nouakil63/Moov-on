@@ -1,0 +1,312 @@
+<title>Fil d'activité — 5 formes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --ink:#141414; --mut:#6E6E6A; --line:#DEDEDA;
+  --brand:#0F3FA8; --brand-dim:#0B2F7E; --tint:#E7EDFA;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E;
+  }
+}
+:root[data-theme="dark"]{ --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;padding:40px 20px 72px}
+.head{max-width:960px;margin:0 auto 34px}
+.head h1{font-weight:900;font-size:clamp(26px,4.5vw,38px);text-transform:uppercase;letter-spacing:-.01em}
+.head p{color:var(--mut);margin-top:10px;max-width:64ch;font-size:14.5px;line-height:1.55}
+.grid{display:flex;flex-wrap:wrap;gap:34px 26px;justify-content:center;max-width:1400px;margin:0 auto}
+.slot{width:390px;max-width:100%}
+.slot-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slot-head .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;background:var(--ink);color:var(--bg);width:30px;height:30px;display:grid;place-items:center;flex:none}
+.slot-head h2{font-size:15px;font-weight:800}
+.slot-head small{color:var(--mut);font-size:12px;display:block;font-weight:500}
+.slot-desc{color:var(--mut);font-size:12.5px;line-height:1.5;margin:10px 2px 0}
+.frame{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#FFFFFF;color:#0A0A0A;padding-bottom:8px}
+.num{font-variant-numeric:tabular-nums}
+.seclab{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8A8A8A;padding:16px 18px 10px}
+.ava{border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;flex:none}
+
+/* ============ A — MAGAZINE ============ */
+.pA{margin:0 0 4px}
+.pA .map{position:relative;background:#EDF1ED}
+.pA .map svg{display:block;width:100%;height:auto}
+.pA .map .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(10,14,24,.78))}
+.pA .map .stats{position:absolute;left:16px;right:16px;bottom:12px;display:flex;gap:0;color:#fff}
+.pA .map .st{flex:1}
+.pA .map .st .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:27px;line-height:1}
+.pA .map .st .l{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.pA .map .who{position:absolute;left:16px;top:12px;display:flex;gap:9px;align-items:center;color:#fff}
+.pA .map .who .ava{width:34px;height:34px;font-size:12px;border:2px solid rgba(255,255,255,.6)}
+.pA .map .who .n{font-weight:800;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.pA .map .who small{font-size:10.5px;opacity:.85;display:block;font-weight:600}
+.pA .body{padding:12px 16px 6px}
+.pA .title{font-weight:800;font-size:15px;letter-spacing:-.01em}
+.pA .imp{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:var(--tint);color:var(--brand-dim);font-weight:800;font-size:12px;padding:6px 11px;border-radius:8px}
+.pA .acts{display:flex;gap:2px;padding:6px 8px 8px;color:#6E6E6A;font-weight:700;font-size:12.5px}
+.pA .acts span{padding:7px 10px;display:flex;gap:6px;align-items:center}
+.pA + .pA{border-top:1px solid #ECECEC}
+
+/* ============ B — LISTE COMPACTE ============ */
+.pB{display:flex;gap:12px;padding:13px 16px;border-top:1px solid #ECECEC;align-items:flex-start}
+.pB:first-of-type{border-top:0}
+.pB .ava{width:38px;height:38px;font-size:13px}
+.pB .mid{flex:1;min-width:0}
+.pB .n{font-weight:800;font-size:13.5px}
+.pB .n small{color:#8A8A8A;font-weight:600;font-size:11px}
+.pB .title{font-size:12.5px;color:#4A4A4A;margin-top:1px}
+.pB .stats{display:flex;gap:12px;margin-top:6px;font-size:12px;font-weight:700}
+.pB .stats span small{color:#8A8A8A;font-weight:600}
+.pB .imp{margin-top:6px;font-size:11.5px;font-weight:800;color:var(--brand)}
+.pB .thumb{width:74px;height:74px;border-radius:10px;background:#EDF1ED;flex:none;overflow:hidden}
+.pB .thumb svg{display:block;width:100%;height:100%}
+.pB .brv{font-size:11px;color:#8A8A8A;font-weight:700;margin-top:7px}
+
+/* ============ C — BILLET / DOSSARD ============ */
+.pC{margin:0 16px 14px;border:2px solid #0A0A0A;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);background:#fff}
+.pC .top{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:2px solid #0A0A0A}
+.pC .who{display:flex;gap:9px;align-items:center}
+.pC .who .ava{width:30px;height:30px;font-size:11px;border-radius:6px}
+.pC .who .n{font-weight:900;font-size:12.5px;text-transform:uppercase;letter-spacing:.02em}
+.pC .who small{font-size:10px;color:#8A8A8A;font-weight:700;display:block}
+.pC .bib{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;background:var(--brand);color:#fff;padding:2px 9px;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)}
+.pC .title{padding:10px 13px 0;font-weight:800;font-size:14px}
+.pC .route{margin:9px 13px 0;height:56px;background:repeating-linear-gradient(90deg,#F4F4F4 0 10px,#fff 10px 20px);position:relative;overflow:hidden}
+.pC .route svg{position:absolute;inset:0;width:100%;height:100%}
+.pC .stats{display:flex;padding:11px 13px;gap:0}
+.pC .st{flex:1;border-left:1px solid #E4E4E4;padding-left:11px}
+.pC .st:first-child{border-left:0;padding-left:0}
+.pC .st .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;line-height:1}
+.pC .st .l{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8A8A8A;margin-top:2px}
+.pC .stub{border-top:2px dashed #0A0A0A;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:12px}
+.pC .stub .i{color:var(--brand)}
+.pC .stub .b{color:#8A8A8A;font-weight:700;font-size:11.5px}
+
+/* ============ D — BULLE SOCIALE ============ */
+.pD{margin:0 16px 14px;background:#fff;border:1px solid #ECECEC;border-radius:24px;padding:14px;box-shadow:0 14px 30px -20px rgba(0,0,0,.25)}
+.pD .top{display:flex;gap:11px;align-items:center}
+.pD .ava{width:44px;height:44px;font-size:15px}
+.pD .phrase{font-family:"Nunito","Archivo",sans-serif;font-weight:800;font-size:14.5px;line-height:1.3}
+.pD .phrase b{color:var(--brand)}
+.pD .phrase small{display:block;font-size:11px;color:#8A8A8A;font-weight:700;margin-top:2px}
+.pD .route{margin-top:12px;border-radius:16px;overflow:hidden;background:#EDF1ED}
+.pD .route svg{display:block;width:100%;height:auto}
+.pD .statline{display:flex;gap:14px;margin-top:11px;font-size:12.5px;font-weight:800}
+.pD .statline span small{color:#8A8A8A;font-weight:700}
+.pD .acts{display:flex;gap:8px;margin-top:12px}
+.pD .bravo{flex:1;background:var(--tint);color:var(--brand-dim);border-radius:999px;padding:10px;text-align:center;font-weight:900;font-size:13px;font-family:"Nunito","Archivo",sans-serif}
+.pD .cmt{width:44px;height:40px;border-radius:999px;border:1.5px solid #ECECEC;display:grid;place-items:center;color:#6E6E6A}
+
+/* ============ E — JOURNAL / TIMELINE ============ */
+.pE-wrap{position:relative;padding:4px 16px 6px 0;margin-left:34px;border-left:2px solid #E4E4E4}
+.pE{position:relative;padding:0 0 18px 22px}
+.pE:last-child{padding-bottom:8px}
+.pE .node{position:absolute;left:-17px;top:0}
+.pE .node .ava{width:32px;height:32px;font-size:11px;border:3px solid #fff}
+.pE .when{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8A8A;padding-top:2px}
+.pE .n{font-weight:800;font-size:13.5px;margin-top:2px}
+.pE .n span{color:#6E6E6A;font-weight:600}
+.pE .card{margin-top:8px;border:1px solid #ECECEC;border-radius:12px;padding:10px 12px;background:#FAFAFA}
+.pE .line1{display:flex;justify-content:space-between;align-items:baseline}
+.pE .t{font-weight:700;font-size:12.5px}
+.pE .d{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px}
+.pE .spark{margin-top:7px;height:26px}
+.pE .imp{margin-top:7px;font-size:11.5px;font-weight:800;color:var(--brand);display:flex;align-items:center;gap:5px}
+.pE .brv{margin-top:6px;font-size:11px;color:#8A8A8A;font-weight:700}
+</style>
+
+<div class="head">
+  <h1>Fil d'activité — 5 formes</h1>
+  <p>Cinq façons de présenter les publications du fil, avec les deux mêmes posts (la course de Sofiane, la marche de Léa) pour comparer le rythme de lecture. La question de fond : combien de posts on veut voir par écran, et si on met en avant la performance ou le don.</p>
+</div>
+
+<div class="grid">
+
+  <!-- ============ A ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">A</span><div><h2>Le magazine</h2><small>Carte plein écran, stats sur l'image</small></div></div>
+    <div class="frame">
+      <div class="seclab">Fil d'activité</div>
+      <div class="pA">
+        <div class="map">
+          <svg viewBox="0 0 400 210" preserveAspectRatio="xMidYMid slice"><rect width="400" height="210" fill="#E4EAE4"/><g stroke="#D3DCD3" stroke-width="8" fill="none"><path d="M-10 60 L410 48"/><path d="M-10 150 L410 158"/><path d="M110 -10 L120 220"/><path d="M300 -10 L292 220"/></g><path d="M30 170 C 100 130, 80 70, 170 85 S 270 140, 330 80 S 372 45, 378 40" fill="none" stroke="#0F3FA8" stroke-width="6" stroke-linecap="round"/></svg>
+          <div class="grad"></div>
+          <div class="who"><span class="ava" style="background:#2C5F8A">SB</span><div><div class="n">Sofiane B.</div><small>il y a 25 min · Finance</small></div></div>
+          <div class="stats num">
+            <div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div>
+            <div class="st"><div class="v">32:10</div><div class="l">durée</div></div>
+            <div class="st"><div class="v">5:11</div><div class="l">min/km</div></div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="title">Fractionné avant la réunion budget</div>
+          <span class="imp">🍲 +12 repas financés · 9,92 €</span>
+        </div>
+        <div class="acts"><span>👏 14</span><span>💬 3</span><span style="margin-left:auto">↗</span></div>
+      </div>
+      <div class="pA">
+        <div class="map">
+          <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><rect width="400" height="150" fill="#E4EAE4"/><g stroke="#D3DCD3" stroke-width="8" fill="none"><path d="M-10 40 L410 34"/><path d="M-10 110 L410 116"/><path d="M140 -10 L148 160"/></g><path d="M40 30 C 80 80, 160 50, 190 100 S 150 140, 240 130 S 340 100, 370 125" fill="none" stroke="#0F3FA8" stroke-width="6" stroke-linecap="round"/></svg>
+          <div class="grad"></div>
+          <div class="who"><span class="ava" style="background:#6E4B8E">LF</span><div><div class="n">Léa Fontaine</div><small>il y a 2 h · RH</small></div></div>
+          <div class="stats num">
+            <div class="st"><div class="v">3,4 km</div><div class="l">distance</div></div>
+            <div class="st"><div class="v">41:05</div><div class="l">durée</div></div>
+            <div class="st"><div class="v">+6</div><div class="l">repas</div></div>
+          </div>
+        </div>
+        <div class="body"><div class="title">Marche du déjeuner avec l'équipe recrutement</div></div>
+      </div>
+    </div>
+    <p class="slot-desc">Immersif façon Strava premium : la carte est le héros, les stats se lisent dessus. Un seul post par écran — spectaculaire mais lent à parcourir.</p>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">B</span><div><h2>La liste compacte</h2><small>Vignette carte, 4-5 posts par écran</small></div></div>
+    <div class="frame">
+      <div class="seclab">Fil d'activité</div>
+      <div class="pB">
+        <span class="ava" style="background:#2C5F8A">SB</span>
+        <div class="mid">
+          <div class="n">Sofiane B. <small>· 25 min · Finance</small></div>
+          <div class="title">Fractionné avant la réunion budget</div>
+          <div class="stats num"><span>6,2 <small>km</small></span><span>32:10</span><span>5:11 <small>/km</small></span></div>
+          <div class="imp num">🍲 +12 repas · 9,92 €</div>
+          <div class="brv num">👏 14 bravos · 💬 3</div>
+        </div>
+        <div class="thumb"><svg viewBox="0 0 80 80"><rect width="80" height="80" fill="#E4EAE4"/><path d="M12 66 C 30 50, 24 28, 44 32 S 66 48, 70 18" fill="none" stroke="#0F3FA8" stroke-width="4" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="pB">
+        <span class="ava" style="background:#6E4B8E">LF</span>
+        <div class="mid">
+          <div class="n">Léa Fontaine <small>· 2 h · RH</small></div>
+          <div class="title">Marche du déjeuner avec l'équipe recrutement</div>
+          <div class="stats num"><span>3,4 <small>km</small></span><span>41:05</span><span>12:05 <small>/km</small></span></div>
+          <div class="imp num">🍲 +6 repas · 5,44 €</div>
+          <div class="brv num">👏 22 bravos · 💬 5</div>
+        </div>
+        <div class="thumb"><svg viewBox="0 0 80 80"><rect width="80" height="80" fill="#E4EAE4"/><path d="M12 18 C 26 40, 44 30, 48 50 S 62 66, 70 60" fill="none" stroke="#0F3FA8" stroke-width="4" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="pB">
+        <span class="ava" style="background:#1F7A6D">MD</span>
+        <div class="mid">
+          <div class="n">Marc Delattre <small>· hier · IT & Data</small></div>
+          <div class="title">10 km — objectif arbre atteint 🎯</div>
+          <div class="stats num"><span>10,1 <small>km</small></span><span>52:48</span><span>5:14 <small>/km</small></span></div>
+          <div class="imp num">🌳 +2 arbres · +20 repas</div>
+          <div class="brv num">👏 41 bravos · 💬 9</div>
+        </div>
+        <div class="thumb"><svg viewBox="0 0 80 80"><rect width="80" height="80" fill="#E4EAE4"/><path d="M10 40 C 28 16, 40 60, 56 40 S 70 24, 72 50" fill="none" stroke="#0F3FA8" stroke-width="4" stroke-linecap="round"/></svg></div>
+      </div>
+    </div>
+    <p class="slot-desc">Dense façon Strava classique : on embrasse 4-5 activités d'un coup, la communauté paraît vivante même avec peu d'utilisateurs. Le moins spectaculaire, le plus efficace.</p>
+  </div>
+
+  <!-- ============ C ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">C</span><div><h2>Le billet de course</h2><small>Dossard, talon perforé, langage section 1</small></div></div>
+    <div class="frame">
+      <div class="seclab">Fil d'activité</div>
+      <div class="pC">
+        <div class="top">
+          <div class="who"><span class="ava" style="background:#2C5F8A">SB</span><div><div class="n">Sofiane B.</div><small>il y a 25 min · Finance</small></div></div>
+          <span class="bib num">RUN</span>
+        </div>
+        <div class="title">Fractionné avant la réunion budget</div>
+        <div class="route"><svg viewBox="0 0 360 56" preserveAspectRatio="none"><path d="M10 46 C 70 30, 60 12, 130 20 S 240 44, 290 18 S 340 10, 350 12" fill="none" stroke="#0F3FA8" stroke-width="3" stroke-linecap="round"/></svg></div>
+        <div class="stats num">
+          <div class="st"><div class="v">6,2</div><div class="l">km</div></div>
+          <div class="st"><div class="v">32:10</div><div class="l">durée</div></div>
+          <div class="st"><div class="v">5:11</div><div class="l">min/km</div></div>
+        </div>
+        <div class="stub num"><span class="i">🍲 +12 repas · 9,92 €</span><span class="b">👏 14 · 💬 3</span></div>
+      </div>
+      <div class="pC">
+        <div class="top">
+          <div class="who"><span class="ava" style="background:#6E4B8E">LF</span><div><div class="n">Léa Fontaine</div><small>il y a 2 h · RH</small></div></div>
+          <span class="bib num" style="background:#0A0A0A">MARCHE</span>
+        </div>
+        <div class="title">Marche du déjeuner avec l'équipe recrutement</div>
+        <div class="stats num">
+          <div class="st"><div class="v">3,4</div><div class="l">km</div></div>
+          <div class="st"><div class="v">41:05</div><div class="l">durée</div></div>
+          <div class="st"><div class="v">12:05</div><div class="l">min/km</div></div>
+        </div>
+        <div class="stub num"><span class="i">🍲 +6 repas · 5,44 €</span><span class="b">👏 22 · 💬 5</span></div>
+      </div>
+    </div>
+    <p class="slot-desc">Chaque activité est un billet : cadre noir découpé, étiquette RUN/MARCHE en biseau, talon d'impact détaché par une perforation. Très identitaire, cohérent avec le hero.</p>
+  </div>
+
+  <!-- ============ D ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">D</span><div><h2>La bulle sociale</h2><small>Le don d'abord, la perf ensuite</small></div></div>
+    <div class="frame">
+      <div class="seclab">Fil d'activité</div>
+      <div class="pD">
+        <div class="top">
+          <span class="ava" style="background:#2C5F8A">SB</span>
+          <div class="phrase">Sofiane a offert <b>12 repas</b> en courant ce midi 🍲<small>il y a 25 min · Finance · « Fractionné avant la réunion budget »</small></div>
+        </div>
+        <div class="route"><svg viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice"><rect width="400" height="120" fill="#EDF1ED"/><path d="M30 95 C 100 70, 80 30, 170 45 S 270 85, 330 40 S 372 25, 378 22" fill="none" stroke="#0F3FA8" stroke-width="5" stroke-linecap="round"/></svg></div>
+        <div class="statline num"><span>6,2 <small>km</small></span><span>32:10 <small>durée</small></span><span>5:11 <small>/km</small></span></div>
+        <div class="acts"><div class="bravo num">👏 Bravo · 14</div><div class="cmt">💬</div></div>
+      </div>
+      <div class="pD">
+        <div class="top">
+          <span class="ava" style="background:#6E4B8E">LF</span>
+          <div class="phrase">Léa a financé <b>6 repas</b> en marchant avec son équipe 🚶<small>il y a 2 h · RH · « Marche du déjeuner »</small></div>
+        </div>
+        <div class="statline num"><span>3,4 <small>km</small></span><span>41:05 <small>durée</small></span><span>+5,44 <small>€</small></span></div>
+        <div class="acts"><div class="bravo num">👏 Bravo · 22</div><div class="cmt">💬</div></div>
+      </div>
+    </div>
+    <p class="slot-desc">Le fil raconte des dons, pas des chronos : « Sofiane a offert 12 repas ». Gros bouton Bravo arrondi. Le plus aligné avec le positionnement RSE — la performance devient secondaire.</p>
+  </div>
+
+  <!-- ============ E ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">E</span><div><h2>Le journal de bord</h2><small>Timeline verticale, fil chronologique</small></div></div>
+    <div class="frame">
+      <div class="seclab">Fil d'activité</div>
+      <div class="pE-wrap">
+        <div class="pE">
+          <div class="node"><span class="ava" style="background:#2C5F8A">SB</span></div>
+          <div class="when">Il y a 25 min</div>
+          <div class="n">Sofiane B. <span>· Finance</span></div>
+          <div class="card">
+            <div class="line1"><span class="t">Fractionné avant la réunion budget</span><span class="d num">6,2 km</span></div>
+            <svg class="spark" viewBox="0 0 300 26" preserveAspectRatio="none"><path d="M0 20 L30 14 60 18 90 8 120 13 150 5 180 12 210 7 240 14 270 6 300 10" fill="none" stroke="#0F3FA8" stroke-width="2"/></svg>
+            <div class="imp num">🍲 +12 repas financés · 9,92 €</div>
+            <div class="brv num">👏 14 bravos · 💬 3 · 32:10 · 5:11/km</div>
+          </div>
+        </div>
+        <div class="pE">
+          <div class="node"><span class="ava" style="background:#6E4B8E">LF</span></div>
+          <div class="when">Il y a 2 h</div>
+          <div class="n">Léa Fontaine <span>· RH</span></div>
+          <div class="card">
+            <div class="line1"><span class="t">Marche du déjeuner avec l'équipe</span><span class="d num">3,4 km</span></div>
+            <div class="imp num">🍲 +6 repas financés · 5,44 €</div>
+            <div class="brv num">👏 22 bravos · 💬 5 · 41:05</div>
+          </div>
+        </div>
+        <div class="pE">
+          <div class="node"><span class="ava" style="background:#1F7A6D">MD</span></div>
+          <div class="when">Hier</div>
+          <div class="n">Marc Delattre <span>· IT & Data</span></div>
+          <div class="card">
+            <div class="line1"><span class="t">10 km — objectif arbre atteint 🎯</span><span class="d num">10,1 km</span></div>
+            <div class="imp num">🌳 +2 arbres · +20 repas</div>
+            <div class="brv num">👏 41 bravos · 💬 9 · 52:48</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Un journal collectif : les avatars sont des jalons sur un fil vertical, l'allure du parcours en sparkline. Chronologique, calme, très lisible — original sans être tape-à-l'œil.</p>
+  </div>
+
+</div>

@@ -1,0 +1,243 @@
+<title>Section défis — 5 pistes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --ink:#141414; --mut:#6E6E6A; --line:#DEDEDA;
+  --brand:#0F3FA8; --brand-dim:#0B2F7E;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E;
+  }
+}
+:root[data-theme="dark"]{ --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;padding:40px 20px 72px}
+.head{max-width:960px;margin:0 auto 34px}
+.head h1{font-weight:900;font-size:clamp(26px,4.5vw,38px);text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance}
+.head p{color:var(--mut);margin-top:10px;max-width:64ch;font-size:14.5px;line-height:1.55}
+.grid{display:flex;flex-wrap:wrap;gap:34px 26px;justify-content:center;max-width:1400px;margin:0 auto}
+.slot{width:390px;max-width:100%}
+.slot-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slot-head .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;background:var(--ink);color:var(--bg);width:30px;height:30px;display:grid;place-items:center;flex:none}
+.slot-head h2{font-size:15px;font-weight:800}
+.slot-head small{color:var(--mut);font-size:12px;display:block;font-weight:500}
+.slot-desc{color:var(--mut);font-size:12.5px;line-height:1.5;margin:10px 2px 0}
+.frame{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#FFFFFF;color:#0A0A0A}
+.num{font-variant-numeric:tabular-nums}
+.dim{opacity:.45}
+.dim-note{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:8px 18px 2px;background:#fff}
+
+/* ===== SECTIONS FIXES (1 & 2, grisées) ===== */
+.hero5{background:var(--brand);color:#fff;padding:18px 18px 16px;position:relative;overflow:hidden}
+.hero5 .stripe{position:absolute;top:-40px;right:-52px;width:140px;height:280px;background:rgba(255,255,255,.07);transform:rotate(22deg)}
+.h5-row{display:flex;justify-content:space-between;align-items:center}
+.h5-date{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A9BEF2}
+.h5-bib{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:13px;background:#fff;color:var(--brand);padding:2px 9px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.hero5 h3{font-weight:900;font-size:26px;letter-spacing:-.02em;line-height:1;margin-top:10px;text-transform:uppercase}
+.h5-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:72px;line-height:.82;margin-top:12px;white-space:nowrap}
+.h5-big small{font-size:20px;font-weight:600;color:#A9BEF2;letter-spacing:.06em}
+.h5-sub{display:flex;gap:16px;margin-top:10px;font-size:11px;font-weight:600;color:#A9BEF2}
+.h5-sub b{color:#fff;font-size:13px}
+.h5-ticket{margin-top:13px;background:#fff;color:var(--brand-dim);clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px));padding:10px 13px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:12.5px}
+.h5-ticket small{display:block;font-weight:600;color:#5C79C4;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase}
+.corp3{margin:14px 16px 0;background:#fff;border:1px solid #E4E4E4;border-radius:22px;padding:14px;box-shadow:0 14px 30px -18px rgba(0,0,0,.3)}
+.c3-name{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A8A8A}
+.c3-main{display:flex;gap:14px;align-items:center;margin-top:11px}
+.c3-ring{width:78px;height:78px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--brand) 0 23%,#F2F2F2 23% 100%)}
+.c3-ring>div{width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+.c3-ring .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;line-height:1}
+.c3-ring .l{font-size:7.5px;font-weight:700;color:#8A8A8A;text-transform:uppercase;letter-spacing:.05em}
+.c3-facts{flex:1;display:flex;flex-direction:column;gap:7px}
+.c3-fact{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600}
+.c3-fact .ic{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:#E7EDFA;color:var(--brand);flex:none;font-size:11px}
+.sec3{margin-top:14px}
+
+/* ===== A — TICKET DE COURSE ===== */
+.sA{margin:0 16px 18px;background:#fff;border:2px solid #0A0A0A;clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);padding:13px 14px}
+.sA .top{display:flex;justify-content:space-between;align-items:center}
+.sA .k{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.sA .days{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;background:#0A0A0A;color:#fff;padding:2px 9px}
+.sA h4{font-weight:900;font-size:19px;letter-spacing:-.01em;margin-top:6px;text-transform:uppercase}
+.sA .bar{height:10px;background:#EDEDED;margin-top:11px;position:relative}
+.sA .bar i{display:block;height:100%;width:83.6%;background:var(--brand)}
+.sA .bar .flag{position:absolute;right:-2px;top:-7px;font-size:14px}
+.sA .cap{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:7px}
+.sA .cap span:last-child{color:#8A8A8A}
+
+/* ===== B — STADE NOCTURNE ===== */
+.sB{background:#0B1220;color:#EAF0FA;padding:18px;position:relative;overflow:hidden}
+.sB .glowbg{position:absolute;inset:auto -40px -70px -40px;height:140px;background:radial-gradient(ellipse at center,rgba(77,124,255,.35),transparent 70%)}
+.sB .k{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#8FB4FF}
+.sB .row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;position:relative}
+.sB h4{font-weight:800;font-size:19px;margin-top:6px;max-width:190px;line-height:1.15}
+.sB .pct{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:64px;line-height:.85;color:#8FB4FF;text-shadow:0 0 24px rgba(77,124,255,.55)}
+.sB .bar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:14px;overflow:hidden;position:relative}
+.sB .bar i{display:block;height:100%;width:83.6%;background:linear-gradient(90deg,#4D7CFF,#9DC0FF);border-radius:99px;box-shadow:0 0 16px rgba(77,124,255,.8)}
+.sB .cap{display:flex;justify-content:space-between;font-size:10.5px;color:#7C8BA8;margin-top:7px;font-weight:600}
+
+/* ===== C — BULLE CHALEUREUSE ===== */
+.sC{margin:0 16px 18px;background:#E7EDFA;border-radius:24px;padding:16px;font-family:"Nunito","Archivo",sans-serif}
+.sC .row{display:flex;gap:12px;align-items:center}
+.sC .em{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:22px;flex:none;box-shadow:0 6px 14px -8px rgba(15,63,168,.4)}
+.sC h4{font-weight:900;font-size:16.5px;color:#12295E;line-height:1.2}
+.sC p{font-size:12px;font-weight:700;color:#5C79C4;margin-top:1px}
+.sC .bar{height:14px;border-radius:99px;background:#fff;margin-top:13px;position:relative;overflow:visible}
+.sC .bar i{display:block;height:100%;width:83.6%;background:var(--brand);border-radius:99px}
+.sC .bar .dotm{position:absolute;left:83.6%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--brand);display:grid;place-items:center;font-size:10px}
+.sC .cap{display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#12295E;margin-top:9px}
+
+/* ===== D — VERSUS ===== */
+.sD{margin:0 0 18px;position:relative}
+.sD .k{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8A8A8A;padding:0 18px 8px}
+.sD .track{display:flex;height:74px;position:relative}
+.sD .a{flex-basis:51.3%;background:var(--brand);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 16px;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+.sD .b{flex:1;background:#0A0A0A;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 16px;margin-left:-10px;clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}
+.sD .t{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.sD .s{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:29px;line-height:1;margin-top:2px}
+.sD .vs{position:absolute;left:51.3%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:#fff;border:3px solid #0A0A0A;display:grid;place-items:center;font-weight:900;font-size:12px;color:#0A0A0A;z-index:2}
+.sD .foot{font-size:11px;color:#8A8A8A;padding:9px 18px 0;font-weight:600}
+
+/* ===== E — PARCOURS JALONNÉ ===== */
+.sE{margin:0 16px 18px;border:1px solid #E4E4E4;border-radius:14px;padding:14px}
+.sE .top{display:flex;justify-content:space-between;align-items:baseline}
+.sE h4{font-weight:800;font-size:14.5px}
+.sE .d{font-size:10.5px;font-weight:700;color:#8A8A8A}
+.sE .track{position:relative;height:44px;margin-top:14px}
+.sE .rail{position:absolute;left:0;right:0;top:9px;height:4px;background:#EDEDED;border-radius:99px}
+.sE .fill{position:absolute;left:0;top:9px;height:4px;width:83.6%;background:var(--brand);border-radius:99px}
+.sE .m{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px}
+.sE .m .p{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #EDEDED;display:grid;place-items:center;font-size:10px}
+.sE .m.on .p{border-color:var(--brand);background:var(--brand);color:#fff}
+.sE .m .t{font-size:9px;font-weight:700;color:#8A8A8A;white-space:nowrap}
+.sE .m.on .t{color:#0A0A0A}
+.sE .cap{font-size:11.5px;font-weight:700;margin-top:10px}
+.sE .cap b{color:var(--brand)}
+</style>
+
+<div class="head">
+  <h1>3ᵉ section de l'accueil — 5 pistes</h1>
+  <p>Les sections 1 (bloc couleur) et 2 (carte entreprise) sont figées et grisées ; seule la 3ᵉ section change, en pleine couleur. Elle occupe le créneau « défi / gamification ». Choisis une lettre, ou un mélange.</p>
+</div>
+
+<div class="grid">
+
+  <!-- ============ A ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">A</span><div><h2>Le ticket de course</h2><small>Prolonge le langage dossard de la section 1</small></div></div>
+    <div class="frame">
+      <div class="dim">
+        <div class="hero5"><div class="stripe"></div><div class="h5-row"><span class="h5-date">Mardi 2 sept. · Marketing</span><span class="h5-bib num">6 J</span></div><h3>Bonjour Camille</h3><div class="h5-big num">4 320<small> PAS</small></div><div class="h5-sub num"><span><b>3,2</b> km</span><span><b>6</b> repas</span><span><b>6 j</b> de série</span></div><div class="h5-ticket"><span><small>Prochaine récompense</small>7ᵉ repas dans 300 m</span><span>▶</span></div></div>
+        <div class="corp3"><div class="c3-name">Banque Corélis · Programme Élan</div><div class="c3-main"><div class="c3-ring"><div><span class="v num">23 %</span><span class="l">du budget</span></div></div><div class="c3-facts"><div class="c3-fact"><span class="ic">🌳</span><b class="num">418</b> arbres plantés</div><div class="c3-fact"><span class="ic">🍲</span><b class="num">3 120</b> repas financés</div><div class="c3-fact"><span class="ic">€</span><b class="num">23 460 €</b> débloqués</div></div></div></div>
+      </div>
+      <div class="sec3">
+        <div class="sA">
+          <div class="top"><span class="k">Défi du mois</span><span class="days num">J−12</span></div>
+          <h4>La forêt Corélis — 500 arbres</h4>
+          <div class="bar"><i></i><span class="flag">🏁</span></div>
+          <div class="cap num"><span>418 / 500 arbres</span><span>83 %</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Encadré noir découpé façon billet, compte à rebours « J−12 », drapeau d'arrivée. Graphique, nerveux, cohérent avec le ticket du hero.</p>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">B</span><div><h2>Le stade nocturne</h2><small>Panneau sombre, pourcentage lumineux</small></div></div>
+    <div class="frame">
+      <div class="dim">
+        <div class="hero5"><div class="stripe"></div><div class="h5-row"><span class="h5-date">Mardi 2 sept. · Marketing</span><span class="h5-bib num">6 J</span></div><h3>Bonjour Camille</h3><div class="h5-big num">4 320<small> PAS</small></div><div class="h5-sub num"><span><b>3,2</b> km</span><span><b>6</b> repas</span><span><b>6 j</b> de série</span></div><div class="h5-ticket"><span><small>Prochaine récompense</small>7ᵉ repas dans 300 m</span><span>▶</span></div></div>
+        <div class="corp3"><div class="c3-name">Banque Corélis · Programme Élan</div><div class="c3-main"><div class="c3-ring"><div><span class="v num">23 %</span><span class="l">du budget</span></div></div><div class="c3-facts"><div class="c3-fact"><span class="ic">🌳</span><b class="num">418</b> arbres plantés</div><div class="c3-fact"><span class="ic">🍲</span><b class="num">3 120</b> repas financés</div><div class="c3-fact"><span class="ic">€</span><b class="num">23 460 €</b> débloqués</div></div></div></div>
+      </div>
+      <div class="sec3">
+        <div class="sB">
+          <div class="glowbg"></div>
+          <span class="k">Défi du mois · J−12</span>
+          <div class="row">
+            <h4>La forêt Corélis — 500 arbres à planter</h4>
+            <div class="pct num">83<span style="font-size:26px">%</span></div>
+          </div>
+          <div class="bar"><i></i></div>
+          <div class="cap num"><span>418 / 500 arbres</span><span>Toute l'entreprise</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Rupture sombre entre deux sections claires : pourcentage géant qui irradie, jauge néon. Très « event sportif », spectaculaire en démo.</p>
+  </div>
+
+  <!-- ============ C ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">C</span><div><h2>La bulle d'équipe</h2><small>Prolonge le langage chaleureux de la section 2</small></div></div>
+    <div class="frame">
+      <div class="dim">
+        <div class="hero5"><div class="stripe"></div><div class="h5-row"><span class="h5-date">Mardi 2 sept. · Marketing</span><span class="h5-bib num">6 J</span></div><h3>Bonjour Camille</h3><div class="h5-big num">4 320<small> PAS</small></div><div class="h5-sub num"><span><b>3,2</b> km</span><span><b>6</b> repas</span><span><b>6 j</b> de série</span></div><div class="h5-ticket"><span><small>Prochaine récompense</small>7ᵉ repas dans 300 m</span><span>▶</span></div></div>
+        <div class="corp3"><div class="c3-name">Banque Corélis · Programme Élan</div><div class="c3-main"><div class="c3-ring"><div><span class="v num">23 %</span><span class="l">du budget</span></div></div><div class="c3-facts"><div class="c3-fact"><span class="ic">🌳</span><b class="num">418</b> arbres plantés</div><div class="c3-fact"><span class="ic">🍲</span><b class="num">3 120</b> repas financés</div><div class="c3-fact"><span class="ic">€</span><b class="num">23 460 €</b> débloqués</div></div></div></div>
+      </div>
+      <div class="sec3">
+        <div class="sC">
+          <div class="row">
+            <span class="em">🌳</span>
+            <div>
+              <h4>Plus que 82 arbres à planter !</h4>
+              <p>Défi du mois · il reste 12 jours</p>
+            </div>
+          </div>
+          <div class="bar"><i></i><span class="dotm">🌱</span></div>
+          <div class="cap num"><span>418 / 500</span><span>83 %</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Bulle teintée très ronde, copy positive (« plus que 82 ! »), curseur pousse sur la jauge. Doux et motivant, dans la continuité de la carte entreprise.</p>
+  </div>
+
+  <!-- ============ D ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">D</span><div><h2>Le versus</h2><small>La compétition d'équipes en pleine largeur</small></div></div>
+    <div class="frame">
+      <div class="dim">
+        <div class="hero5"><div class="stripe"></div><div class="h5-row"><span class="h5-date">Mardi 2 sept. · Marketing</span><span class="h5-bib num">6 J</span></div><h3>Bonjour Camille</h3><div class="h5-big num">4 320<small> PAS</small></div><div class="h5-sub num"><span><b>3,2</b> km</span><span><b>6</b> repas</span><span><b>6 j</b> de série</span></div><div class="h5-ticket"><span><small>Prochaine récompense</small>7ᵉ repas dans 300 m</span><span>▶</span></div></div>
+        <div class="corp3"><div class="c3-name">Banque Corélis · Programme Élan</div><div class="c3-main"><div class="c3-ring"><div><span class="v num">23 %</span><span class="l">du budget</span></div></div><div class="c3-facts"><div class="c3-fact"><span class="ic">🌳</span><b class="num">418</b> arbres plantés</div><div class="c3-fact"><span class="ic">🍲</span><b class="num">3 120</b> repas financés</div><div class="c3-fact"><span class="ic">€</span><b class="num">23 460 €</b> débloqués</div></div></div></div>
+      </div>
+      <div class="sec3">
+        <div class="sD">
+          <div class="k">Duel de la semaine — votre équipe mène</div>
+          <div class="track">
+            <div class="a"><span class="t">Marketing</span><span class="s num">236 km</span></div>
+            <div class="b"><span class="t">Finance</span><span class="s num">224 km</span></div>
+            <span class="vs">VS</span>
+          </div>
+          <div class="foot">L'équipe gagnante choisit l'association du mois d'octobre.</div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Écran scindé en diagonale, scores face à face, médaillon VS. Le plus gamifié — met la rivalité d'équipes au premier plan plutôt que le défi collectif.</p>
+  </div>
+
+  <!-- ============ E ============ -->
+  <div class="slot">
+    <div class="slot-head"><span class="n">E</span><div><h2>Le parcours jalonné</h2><small>Étapes franchies comme une course d'orientation</small></div></div>
+    <div class="frame">
+      <div class="dim">
+        <div class="hero5"><div class="stripe"></div><div class="h5-row"><span class="h5-date">Mardi 2 sept. · Marketing</span><span class="h5-bib num">6 J</span></div><h3>Bonjour Camille</h3><div class="h5-big num">4 320<small> PAS</small></div><div class="h5-sub num"><span><b>3,2</b> km</span><span><b>6</b> repas</span><span><b>6 j</b> de série</span></div><div class="h5-ticket"><span><small>Prochaine récompense</small>7ᵉ repas dans 300 m</span><span>▶</span></div></div>
+        <div class="corp3"><div class="c3-name">Banque Corélis · Programme Élan</div><div class="c3-main"><div class="c3-ring"><div><span class="v num">23 %</span><span class="l">du budget</span></div></div><div class="c3-facts"><div class="c3-fact"><span class="ic">🌳</span><b class="num">418</b> arbres plantés</div><div class="c3-fact"><span class="ic">🍲</span><b class="num">3 120</b> repas financés</div><div class="c3-fact"><span class="ic">€</span><b class="num">23 460 €</b> débloqués</div></div></div></div>
+      </div>
+      <div class="sec3">
+        <div class="sE">
+          <div class="top"><h4>Défi du mois — La forêt Corélis</h4><span class="d num">J−12</span></div>
+          <div class="track">
+            <div class="rail"></div><div class="fill"></div>
+            <div class="m on" style="left:4%"><span class="p">✓</span><span class="t num">100</span></div>
+            <div class="m on" style="left:36%"><span class="p">✓</span><span class="t num">250</span></div>
+            <div class="m on" style="left:69%"><span class="p">✓</span><span class="t num">400</span></div>
+            <div class="m" style="left:96%"><span class="p">🏁</span><span class="t num">500</span></div>
+          </div>
+          <div class="cap num">Étape 3 franchie — <b>82 arbres</b> avant l'arrivée</div>
+        </div>
+      </div>
+    </div>
+    <p class="slot-desc">Frise d'étapes cochées avec drapeau final : montre le chemin parcouru, pas seulement le pourcentage. Sobre, narratif, très lisible.</p>
+  </div>
+
+</div>

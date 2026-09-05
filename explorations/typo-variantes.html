@@ -1,0 +1,268 @@
+<title>Typographies Moov'On — 5 pistes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Barlow+Condensed:wght@600;700&family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=League+Spartan:wght@500;700;900&family=Work+Sans:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700;900&family=Big+Shoulders:opsz,wght@10..72,600;10..72,700&family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Albert+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@600;700;800&family=Saira+Extra+Condensed:wght@600;700&family=Saira+Condensed:wght@600;700&family=Saira+Stencil+One&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600&family=Baloo+2:wght@600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,700&family=Exo+2:ital,wght@0,400;0,600;1,800;1,900&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --ink:#141414; --mut:#6E6E6A; --line:#DEDEDA;
+  --brand:#0F3FA8; --brand-dim:#0B2F7E; --tint:#E7EDFA;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E;
+  }
+}
+:root[data-theme="dark"]{ --bg:#101012; --ink:#F0F0EE; --mut:#98989E; --line:#2A2A2E; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;padding:40px 20px 72px}
+.head{max-width:960px;margin:0 auto 30px}
+.head h1{font-weight:900;font-size:clamp(26px,4.5vw,38px);text-transform:uppercase;letter-spacing:-.01em}
+.head p{color:var(--mut);margin-top:10px;max-width:64ch;font-size:14.5px;line-height:1.55}
+.grid{display:flex;flex-wrap:wrap;gap:34px 26px;justify-content:center;max-width:1400px;margin:0 auto}
+.slot{width:390px;max-width:100%}
+.slot-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slot-head .n{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px;background:var(--ink);color:var(--bg);width:30px;height:30px;display:grid;place-items:center;flex:none}
+.slot-head h2{font-size:15px;font-weight:800}
+.slot-head small{color:var(--mut);font-size:12px;display:block;font-weight:500}
+.slot-desc{color:var(--mut);font-size:12.5px;line-height:1.5;margin:10px 2px 0}
+.frame{border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#fff;color:#0A0A0A}
+.num{font-variant-numeric:tabular-nums}
+
+/* gabarit commun — seules les familles changent via variables locales */
+.tile .hero{background:var(--brand);color:#fff;padding:18px 18px 16px}
+.tile .date{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A9BEF2;font-family:var(--f-body)}
+.tile .name{font-family:var(--f-disp);font-weight:var(--w-disp,900);font-size:var(--s-name,27px);letter-spacing:var(--ls-disp,-.02em);line-height:1.02;margin-top:10px;text-transform:uppercase}
+.tile .big{font-family:var(--f-num);font-weight:var(--w-num,700);font-size:var(--s-big,76px);line-height:.85;margin-top:12px;white-space:nowrap}
+.tile .big small{font-size:22px;color:#A9BEF2;letter-spacing:.05em;font-weight:600}
+.tile .ticket{margin-top:13px;background:#fff;color:var(--brand-dim);clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px));padding:10px 13px;font-family:var(--f-body);font-weight:800;font-size:12.5px}
+.tile .ticket small{display:block;font-weight:600;color:#5C79C4;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase}
+.tile .post{padding:14px 18px 16px}
+.tile .ptitle{font-family:var(--f-body);font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.tile .pstats{display:flex;margin-top:10px;border-top:1px solid #ECECEC;padding-top:10px}
+.tile .st{flex:1}
+.tile .st .v{font-family:var(--f-num);font-weight:var(--w-num,700);font-size:24px;line-height:1;white-space:nowrap}
+.tile .st .l{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A8A8A;margin-top:3px;font-family:var(--f-body)}
+.tile .body-sample{margin-top:11px;font-family:var(--f-body);font-size:12.5px;line-height:1.5;color:#4A4A4A}
+.tile .body-sample b{color:var(--brand)}
+
+.t0{--f-disp:"Archivo";--f-num:"Barlow Condensed";--f-body:"Archivo"}
+.tA{--f-disp:"Oswald";--f-num:"Oswald";--f-body:"Source Sans 3";--w-disp:700;--ls-disp:.01em;--s-name:29px;--s-big:72px;--w-num:600}
+.tB{--f-disp:"League Spartan";--f-num:"Barlow Condensed";--f-body:"Work Sans";--w-disp:900;--ls-disp:-.03em;--s-name:29px}
+.tC{--f-disp:"Bricolage Grotesque";--f-num:"Bricolage Grotesque";--f-body:"Figtree";--w-disp:800;--ls-disp:-.02em;--s-name:27px;--s-big:62px;--w-num:800}
+.tD{--f-disp:"Unbounded";--f-num:"Big Shoulders";--f-body:"Archivo";--w-disp:700;--ls-disp:0;--s-name:21px;--s-big:78px}
+.tE{--f-disp:"Fraunces";--f-num:"Fraunces";--f-body:"Albert Sans";--w-disp:900;--ls-disp:-.01em;--s-name:29px;--s-big:64px;--w-num:600}
+.tE .name{text-transform:none}
+.tF{--f-disp:"Saira";--f-num:"Saira Extra Condensed";--f-body:"Saira";--w-disp:800;--ls-disp:-.01em;--s-name:27px;--s-big:82px}
+.tG{--f-disp:"Archivo";--f-num:"IBM Plex Mono";--f-body:"IBM Plex Sans";--w-disp:900;--ls-disp:-.02em;--s-name:27px;--s-big:56px;--w-num:600}
+.tH{--f-disp:"Baloo 2";--f-num:"Baloo 2";--f-body:"Nunito Sans";--w-disp:800;--ls-disp:0;--s-name:27px;--s-big:64px;--w-num:800}
+.tH .name{text-transform:none}
+.tI{--f-disp:"Saira Stencil One";--f-num:"Saira Condensed";--f-body:"Saira";--w-disp:400;--ls-disp:.02em;--s-name:26px;--s-big:76px}
+.tJ{--f-disp:"Exo 2";--f-num:"Exo 2";--f-body:"Exo 2";--w-disp:900;--ls-disp:-.01em;--s-name:27px;--s-big:62px;--w-num:800}
+.tJ .name,.tJ .big{font-style:italic}
+</style>
+
+<div class="head">
+  <h1>La typo — 5 pistes</h1>
+  <p>Même composition partout (hero, ticket, extrait de post) — seules les polices changent : titre, chiffres, texte courant. La version actuelle est en référence. Regarde surtout : le « 4 320 », le mot « Bonjour Camille », et la petite ligne de texte courant.</p>
+</div>
+
+<div class="grid">
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">0</span><div><h2>Actuelle — référence</h2><small>Archivo Black · Barlow Condensed · Archivo</small></div></div>
+    <div class="frame tile t0">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">A</span><div><h2>Le stadier</h2><small>Oswald partout · Source Sans corps</small></div></div>
+    <div class="frame tile tA">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Une seule famille condensée pour titres ET chiffres : monolithique, tableau d'affichage de stade. L'option la plus « équipement sportif ».</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">B</span><div><h2>Le poster géométrique</h2><small>League Spartan · Barlow Condensed · Work Sans</small></div></div>
+    <div class="frame tile tB">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Titres ultra-noirs géométriques aux angles marqués, chiffres condensés. Punchy, affiche de meeting d'athlétisme des années 90.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">C</span><div><h2>Le contemporain</h2><small>Bricolage Grotesque · Figtree</small></div></div>
+    <div class="frame tile tC">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Grotesque française à détails irréguliers (regarde le « g », le « a ») : du caractère sans crier. Chiffres larges et pleins plutôt que condensés. Le plus « studio de design ».</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">D</span><div><h2>Le duo contrasté</h2><small>Unbounded titres · Big Shoulders chiffres</small></div></div>
+    <div class="frame tile tD">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Titres larges arrondis presque « badge », chiffres très condensés en face : le contraste maximal entre les deux registres. Le plus « marque tech ».</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">E</span><div><h2>L'inattendu serif</h2><small>Fraunces Black · Albert Sans</small></div></div>
+    <div class="frame tile tE">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Un serif noir et chaleureux pour les titres et chiffres (en bas de casse — « Bonjour Camille » sans capitales). Personne ne fait ça dans le sport : très différenciant, ton magazine premium. Risqué mais mémorable.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">F</span><div><h2>Le motorsport</h2><small>Saira · Saira Extra Condensed chiffres</small></div></div>
+    <div class="frame tile tF">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">La famille des paddocks F1 : semi-carrée, technique, chiffres extra-condensés très hauts. Sport mécanique plus que running — précis et rapide.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">G</span><div><h2>Le chronométreur</h2><small>Archivo Black · chiffres en monospace</small></div></div>
+    <div class="frame tile tG">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Tous les chiffres en monospace, comme un chronométrage officiel ou un télex d'arrivée. Chaque chiffre a la même largeur : les stats s'alignent parfaitement dans le fil. Look data crédible.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">H</span><div><h2>Le tout-rond</h2><small>Baloo 2 · Nunito Sans</small></div></div>
+    <div class="frame tile tH">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Tout est rond et épais, bas de casse, zéro agressivité : l'app de bien-être que tout le monde ose ouvrir, même les non-sportifs. Cohérent avec tes sections bulle — mais on perd le côté performance.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">I</span><div><h2>Le stencil</h2><small>Saira Stencil One · Saira Condensed</small></div></div>
+    <div class="frame tile tI">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Titres au pochoir façon course d'obstacles / bootcamp, chiffres condensés nets. Esprit Spartan Race, événementiel sportif — fort en démo, à doser dans l'usage quotidien.</p>
+  </div>
+
+  <div class="slot">
+    <div class="slot-head"><span class="n">J</span><div><h2>La vitesse</h2><small>Exo 2 — titres et chiffres en italique lourd</small></div></div>
+    <div class="frame tile tJ">
+      <div class="hero">
+        <div class="date">Mardi 2 septembre · Marketing</div>
+        <div class="name">Bonjour Camille</div>
+        <div class="big num">4 320<small> PAS</small></div>
+        <div class="ticket"><small>Prochaine récompense</small>7ᵉ repas dans 300 m</div>
+      </div>
+      <div class="post">
+        <div class="ptitle">Fractionné avant la réunion budget</div>
+        <div class="pstats num"><div class="st"><div class="v">6,2 km</div><div class="l">distance</div></div><div class="st"><div class="v">32:10</div><div class="l">durée</div></div><div class="st"><div class="v">5:11</div><div class="l">min/km</div></div></div>
+        <div class="body-sample">Sofiane a débloqué <b>12 repas</b> pour l'association Table Ouverte en courant 6,2 km ce midi.</div>
+      </div>
+    </div>
+    <p class="slot-desc">Tout penche vers l'avant : titres et chiffres en italique noir, l'énergie du mouvement figée dans la lettre. Le code des maillots et des chaussures de running.</p>
+  </div>
+
+</div>

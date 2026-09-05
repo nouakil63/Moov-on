@@ -1,0 +1,1421 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moov'On</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&family=Big+Shoulders:opsz,wght@10..72,600;10..72,700&family=Saira:wght@400;600;700;800&family=Saira+Extra+Condensed:wght@600;700&family=Saira+Condensed:wght@600;700&family=Saira+Stencil+One&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600&family=Exo+2:ital,wght@0,400;0,600;0,700;1,800;1,900&display=swap">
+<style>
+/* ================= TOKENS =================
+   --brand : PLACEHOLDER en attente des couleurs David Assurances.
+   Remplacer --brand / --brand-ink (et leurs variantes dark) uniquement. */
+:root{
+  --f-disp:"Anton";--f-hero:"Archivo";--f-num:"Barlow Condensed";--f-body:"Archivo";
+  --w-disp:400;--w-hero:900;--w-num:700;--s-big:96px;--s-name:33px;--fs-disp:normal;--fs-num:normal;
+  --paper:#EFEFEF;          /* ground behind the phone */
+  --surface:#FFFFFF;        /* app background */
+  --card:#FFFFFF;
+  --panel:#0A0A0A;          /* full-bleed dark panels (hero chiffres) */
+  --panel-ink:#FFFFFF;
+  --panel-mut:#9A9A9A;
+  --sunken:#F2F2F2;
+  --line:#E4E4E4;
+  --ink:#0A0A0A;
+  --ink-2:#4A4A4A;
+  --ink-3:#8A8A8A;
+  --brand:#0F3FA8;          /* PLACEHOLDER — couleur signature */
+  --brand-ink:#FFFFFF;
+  --brand-dim:#0B2F7E;
+  --brand-panel:#6C93FF;    /* déclinaison lisible sur les panneaux noirs */
+  --focus:#0E63C4;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.4);
+  --nav-h:76px;
+  --r-card:10px;            /* rayons volontairement faibles */
+  --r-ui:8px;
+  color-scheme:light dark;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --paper:#000000;
+    --surface:#0C0C0C;
+    --card:#0C0C0C;
+    --panel:#161616;
+    --panel-ink:#FFFFFF;
+    --panel-mut:#8F8F8F;
+    --sunken:#1B1B1B;
+    --line:#272727;
+    --ink:#F4F4F4;
+    --ink-2:#B9B9B9;
+    --ink-3:#7E7E7E;
+    --brand:#7C9CFF;
+    --brand-ink:#0A0F1E;
+    --brand-dim:#5B7FF0;
+    --brand-panel:#8FAEFF;
+    --shadow:0 18px 50px -18px rgba(0,0,0,.85);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#000000;
+  --surface:#0C0C0C;
+  --card:#0C0C0C;
+  --panel:#161616;
+  --panel-ink:#FFFFFF;
+  --panel-mut:#8F8F8F;
+  --sunken:#1B1B1B;
+  --line:#272727;
+  --ink:#F4F4F4;
+  --ink-2:#B9B9B9;
+  --ink-3:#7E7E7E;
+  --brand:#7C9CFF;
+  --brand-ink:#0A0F1E;
+  --brand-dim:#5B7FF0;
+  --brand-panel:#8FAEFF;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.85);
+}
+
+/* ================= BASE ================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-body),system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100dvh;padding:24px 12px;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+svg{display:block}
+.num{font-variant-numeric:tabular-nums}
+.disp{font-family:var(--f-num),"Arial Narrow",sans-serif}
+
+/* ================= DEVICE FRAME ================= */
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.stage-note{color:var(--ink-3);font-size:12.5px;letter-spacing:.02em;text-align:center}
+.device{
+  position:relative;width:min(412px,100%);height:min(880px,calc(100dvh - 76px));
+  min-height:600px;background:var(--surface);border-radius:30px;overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid var(--line);
+  display:flex;flex-direction:column;
+}
+@media (max-width:460px){
+  body{padding:0}
+  .device{width:100%;height:100dvh;min-height:100dvh;border-radius:0;border:0}
+  .stage-note{display:none}
+}
+
+/* ================= SCREENS ================= */
+.screens{position:relative;flex:1;overflow:hidden}
+.screen{
+  position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
+  padding-bottom:calc(var(--nav-h) + 28px);
+  opacity:0;transform:translateX(14px);pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+  scrollbar-width:none;
+}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;transform:none;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){
+  .screen{transition:none;transform:none}
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* ================= COMMON ================= */
+.pagehead{padding:24px 18px 12px;border-bottom:1px solid var(--line)}
+.pagehead h1{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:34px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+.pagehead .sub{color:var(--ink-3);font-size:12px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.section-label{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:22px 18px 10px;display:flex;align-items:baseline;gap:8px}
+.section-label::after{content:"";flex:1;height:1px;background:var(--line);align-self:center}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
+.chip.brand{background:var(--brand);color:var(--brand-ink)}
+.chip.outline{border:1px solid var(--line);color:var(--ink-2);background:none}
+.chip.dark{background:var(--ink);color:var(--surface)}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;flex:none;letter-spacing:.02em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;border-radius:var(--r-ui);padding:14px 18px;letter-spacing:.04em;text-transform:uppercase;font-size:13.5px;transition:transform .12s ease,opacity .12s ease}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--ink);color:var(--surface)}
+.btn.impact{background:var(--brand);color:var(--brand-ink)}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.btn.block{width:100%}
+.meter{height:5px;background:var(--sunken);border-radius:0;overflow:hidden}
+.meter>i{display:block;height:100%;background:var(--brand);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.meter-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:6px;letter-spacing:.03em}
+
+/* ================= HOME — section 1 : bloc couleur / dossard ================= */
+.hero5{background:var(--brand);color:var(--brand-ink);padding:22px 18px 20px;position:relative;overflow:hidden}
+.hero5 .stripe{position:absolute;top:-40px;right:-52px;width:150px;height:300px;background:color-mix(in srgb,var(--brand-ink) 7%,transparent);transform:rotate(22deg);pointer-events:none}
+.hero5 .h5-row{display:flex;justify-content:space-between;align-items:center;position:relative}
+.hero5 .h5-date{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.hero5 .h5-bib{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:15px;background:var(--brand-ink);color:var(--brand);padding:3px 10px;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);display:flex;align-items:center;gap:4px}
+.hero5 h1{font-family:var(--f-hero),sans-serif;font-weight:var(--w-hero,900);font-style:var(--fs-disp,normal);font-size:var(--s-name,33px);letter-spacing:-.02em;line-height:1;margin-top:12px;text-transform:uppercase;position:relative}
+.hero5 .h5-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:var(--w-num,700);font-size:var(--s-big,96px);line-height:.82;margin:16px -2px 0;white-space:nowrap;position:relative}
+.hero5 .h5-big small{font-size:25px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));letter-spacing:.06em}
+.hero5 .h5-sub{display:flex;gap:18px;margin-top:12px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));position:relative}
+.hero5 .h5-sub b{color:var(--brand-ink);font-size:14px}
+.hero5 .h5-ticket{margin-top:16px;background:var(--surface);color:var(--brand-dim);clip-path:polygon(0 0,100% 0,100% 100%,12px 100%,0 calc(100% - 12px));padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13.5px;width:100%;text-align:left;position:relative}
+.hero5 .h5-ticket small{display:block;font-weight:600;color:color-mix(in srgb,var(--brand-dim) 60%,var(--surface));font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+:root:not([data-theme="light"]) .hero5 .h5-ticket{color:var(--brand-dim)}
+
+/* ================= HOME — section 2 : carte chaleureuse entreprise ================= */
+.corp3{margin:18px 18px 0;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 16px 34px -20px rgba(0,0,0,.3);width:calc(100% - 36px);text-align:left;display:block}
+.corp3 .c3-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.corp3 .c3-name{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.corp3 .chev{color:var(--ink-3);flex:none}
+.corp3 .c3-main{display:flex;gap:16px;align-items:center;margin-top:14px}
+.corp3 .c3-ring{width:96px;height:96px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--brand) 0 23%,var(--sunken) 23% 100%)}
+.corp3 .c3-ring>div{width:72px;height:72px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center}
+.corp3 .c3-ring .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:23px;line-height:1}
+.corp3 .c3-ring .l{font-size:8.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.corp3 .c3-facts{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0}
+.corp3 .c3-fact{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+.corp3 .c3-fact .ic{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.corp3 .c3-fact b{font-weight:800}
+/* ================= HOME — section 3 : bulle défi du mois ================= */
+.defi3{margin:16px 18px 0;background:color-mix(in srgb,var(--brand) 12%,var(--card));border-radius:24px;padding:16px;width:calc(100% - 36px);text-align:left;display:block}
+.defi3 .d3-row{display:flex;gap:12px;align-items:center}
+.defi3 .d3-em{width:46px;height:46px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:22px;flex:none;box-shadow:0 6px 14px -8px color-mix(in srgb,var(--brand) 45%,transparent)}
+.defi3 h3{font-weight:800;font-size:16.5px;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.defi3 p{font-size:12px;font-weight:600;color:var(--brand);margin-top:1px}
+.defi3 .d3-bar{height:14px;border-radius:99px;background:var(--card);margin-top:14px;position:relative}
+.defi3 .d3-bar i{display:block;height:100%;border-radius:99px;background:var(--brand);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.defi3 .d3-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--card);border:4px solid var(--brand);display:grid;place-items:center;font-size:11px}
+.defi3 .d3-cap{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-top:10px}
+
+/* ================= HOME — section 4 : versus ================= */
+.duel4{margin:18px 0 0;display:block;width:100%;text-align:left}
+.duel4 .d4-k{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:0 18px 9px}
+.duel4 .d4-track{display:flex;height:76px;position:relative}
+.duel4 .d4-a{flex-basis:51.3%;background:var(--brand);color:var(--brand-ink);display:flex;flex-direction:column;justify-content:center;padding:0 18px;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+.duel4 .d4-b{flex:1;background:var(--ink);color:var(--surface);display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:0 18px;margin-left:-10px;clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}
+.duel4 .d4-t{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.duel4 .d4-s{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:31px;line-height:1;margin-top:2px}
+.duel4 .d4-vs{position:absolute;left:51.3%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:12px;color:var(--ink);z-index:2}
+.duel4 .d4-foot{font-size:11px;color:var(--ink-3);padding:9px 18px 0;font-weight:600}
+.corphero .meter-cap{color:var(--panel-mut)}
+.stories{display:flex;gap:16px;overflow-x:auto;padding:16px 18px 4px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;width:58px;background:none}
+.story .ring{width:54px;height:54px;border-radius:50%;padding:2.5px;background:var(--brand)}
+.story .ring.seen{background:var(--line)}
+.story .ring>span{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px;border:2.5px solid var(--surface)}
+.story small{font-size:10.5px;color:var(--ink-2);max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+/* Fil = mixte journal de bord (rail chronologique) × magazine (carte immersive) */
+.feed{margin:2px 16px 0 0;padding:4px 0 6px;margin-left:38px;border-left:2px solid var(--line)}
+.post{position:relative;padding:0 0 22px 20px}
+.post:last-child{padding-bottom:8px}
+.post .node{position:absolute;left:-18px;top:0}
+.post .node .avatar{width:34px;height:34px;font-size:12px;border:3px solid var(--surface)}
+.post .when{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-top:1px}
+.post .pname{font-weight:800;font-size:14px;margin-top:2px}
+.post .pname span{color:var(--ink-3);font-weight:600;font-size:12px}
+.pcard{margin-top:9px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.pmap{position:relative;background:var(--sunken)}
+.pmap svg{display:block;width:100%;height:auto}
+.pmap .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 32%,rgba(10,14,24,.78))}
+.pmap .pstats{position:absolute;left:14px;right:14px;bottom:10px;display:flex;color:#fff}
+.pmap .pstat{flex:1}
+.pmap .pstat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:26px;line-height:1;white-space:nowrap}
+.pmap .pstat .l{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.pbody{padding:11px 14px 4px}
+.pbody .ptitle{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.pbody .pimpact{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);font-weight:800;font-size:12px;padding:6px 11px;border-radius:8px}
+.post-actions{display:flex;align-items:center;gap:2px;padding:4px 6px 6px}
+.pact{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r-ui);color:var(--ink-2);font-weight:600;font-size:12.5px;letter-spacing:.02em}
+.pact:hover{background:var(--sunken)}
+.pact.bravoed{color:var(--brand)}
+
+/* ================= CHALLENGES ================= */
+.hero-challenge{background:var(--panel);color:var(--panel-ink);padding:22px 18px;position:relative}
+.hero-challenge .hc-label{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-panel);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.hero-challenge h2{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:33px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em;max-width:250px}
+.hero-challenge .hc-sub{font-size:12px;color:var(--panel-mut);margin-top:8px;letter-spacing:.02em}
+.hero-challenge .hc-days{position:absolute;top:20px;right:18px;text-align:center;border:1px solid #333;padding:7px 12px}
+.hero-challenge .hc-days .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:26px;line-height:1}
+.hero-challenge .hc-days .l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--panel-mut)}
+.hero-challenge .meter{background:#2B2B2B;margin-top:16px}
+.hero-challenge .meter>i{background:var(--brand-panel)}
+.hero-challenge .meter-cap{color:var(--panel-mut)}
+.lb{padding:0 0 4px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line)}
+.lb-row:first-child{border-top:0}
+.lb-row.me{background:var(--sunken)}
+.lb-rank{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:21px;width:22px;text-align:center;color:var(--ink-3)}
+.lb-row:nth-child(1) .lb-rank{color:var(--ink)}
+.lb-body{flex:1;min-width:0}
+.lb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lb-name{font-weight:700;font-size:13.5px}
+.lb-val{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:600;font-size:17px;color:var(--ink-2)}
+.lb-bar{height:4px;background:var(--sunken);margin-top:6px;overflow:hidden}
+.lb-row.me .lb-bar{background:var(--line)}
+.lb-bar>i{display:block;height:100%;background:var(--brand)}
+.duel{padding:16px 18px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.duel-head{display:flex;justify-content:space-between;align-items:center}
+.duel-title{font-weight:700;font-size:14px;letter-spacing:.01em}
+.duel-track{display:flex;height:36px;overflow:hidden;font-weight:700;font-size:12px;letter-spacing:.03em}
+.duel-a{background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;padding:0 12px;min-width:70px}
+.duel-b{background:var(--sunken);color:var(--ink-2);display:flex;align-items:center;justify-content:flex-end;padding:0 12px;flex:1}
+.duel-note{font-size:12px;color:var(--ink-3)}
+.minis{display:flex;gap:0;overflow-x:auto;padding:0 18px 8px;scrollbar-width:none}
+.minis::-webkit-scrollbar{display:none}
+.mini{flex:none;width:158px;padding:14px 14px 16px;border:1px solid var(--line);margin-left:-1px}
+.mini:first-child{margin-left:0}
+.mini .ic{width:32px;height:32px;display:grid;place-items:center;margin-bottom:10px;background:var(--ink);color:var(--surface)}
+.mini h4{font-size:13px;font-weight:700;line-height:1.2;letter-spacing:.01em}
+.mini p{font-size:11px;color:var(--ink-3);margin-top:3px}
+.mini .meter{margin-top:12px;height:4px}
+
+/* ================= MISSIONS ================= */
+.bal-hero{background:var(--brand);color:var(--brand-ink);padding:18px;margin:0}
+.bal-hero .bh-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.bal-hero .bh-big{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:var(--w-num,700);font-size:56px;line-height:.95;margin-top:6px}
+.bal-hero .bh-sub{font-size:11.5px;margin-top:6px;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand));font-weight:600}
+.mcard{margin:0 18px 14px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:15px;box-shadow:0 12px 28px -20px rgba(0,0,0,.3)}
+.mcard .m-top{display:flex;align-items:center;gap:11px}
+.mcard .m-ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.mcard .m-head{flex:1;min-width:0}
+.mcard .m-name{font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.mcard .m-org{font-size:11px;color:var(--ink-3);font-weight:600}
+.mcard .m-mine{font-size:10.5px;font-weight:700;color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--card));border-radius:999px;padding:4px 9px;white-space:nowrap}
+.mcard .m-per{font-size:12px;font-weight:600;color:var(--ink-2);margin-top:10px;display:flex;align-items:center;gap:6px}
+.mcard .m-per svg{color:var(--brand)}
+.mcard .meter{height:8px;border-radius:99px;margin-top:10px}
+.mcard .meter>i{border-radius:99px}
+.mcard .m-give{margin-top:12px;width:100%;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);border-radius:12px;padding:11px;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px}
+.mcard .m-panel{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+.mcard .m-panel input[type=range]{width:100%;accent-color:var(--brand);height:28px}
+.mcard .m-live{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;margin-top:2px}
+.mcard .m-live .eq{color:var(--brand)}
+.mcard .m-confirm{margin-top:10px;width:100%;background:var(--brand);color:var(--brand-ink);border-radius:12px;padding:12px;font-weight:800;font-size:13px}
+.mcard .m-confirm:disabled{opacity:.4}
+.m-note{font-size:10.5px;color:var(--ink-3);padding:2px 20px 8px}
+/* Profil — résumé impact */
+.mysum{margin:0 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.mysum .ms-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--line);font-size:12.5px;font-weight:600}
+.mysum .ms-row:first-child{border-top:0}
+.mysum .ms-row .m-ic{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.mysum .ms-row .n{flex:1;min-width:0}
+.mysum .ms-row .n small{display:block;font-weight:600;font-size:10.5px;color:var(--ink-3)}
+.mysum .ms-row .amt{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:17px;color:var(--brand);white-space:nowrap}
+
+/* ================= PROFILE ================= */
+.prof-head{display:flex;align-items:center;gap:14px;padding:26px 18px 14px}
+.prof-head .avatar{width:62px;height:62px;font-size:21px}
+.prof-name{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.prof-sub{font-size:12px;color:var(--ink-3);margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.prof-stats{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.prof-stat{flex:1;padding:14px 18px;border-left:1px solid var(--line)}
+.prof-stat:first-child{border-left:0}
+.prof-stat .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:30px;line-height:1}
+.prof-stat .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:4px}
+.week{padding:14px 18px 16px}
+.week h3{font-size:14px;font-weight:700}
+.week .wk-sub{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.wk-chart{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:16px}
+.wk-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;background:none;padding:2px;border-radius:4px}
+.wk-col .bar{width:100%;max-width:26px;background:var(--ink);border-radius:0;min-height:4px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.wk-col.today .bar{background:var(--brand)}
+.wk-col .d{font-size:10.5px;color:var(--ink-3);font-weight:700}
+.wk-col[aria-pressed="true"]{background:var(--sunken)}
+.wk-tip{margin-top:10px;font-size:12.5px;color:var(--ink-2);min-height:18px}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.badge{padding:16px 8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.badge:nth-child(3n){border-right:0}
+.badge .bic{width:38px;height:38px;display:grid;place-items:center;background:var(--ink);color:var(--surface)}
+.badge span{font-size:10px;font-weight:700;line-height:1.25;letter-spacing:.04em;text-transform:uppercase}
+.badge.locked{opacity:.35}
+.badge.locked .bic{background:var(--sunken);color:var(--ink-3)}
+
+/* ================= BOTTOM NAV + FAB ================= */
+.navwrap{position:absolute;left:0;right:0;bottom:0;z-index:40;pointer-events:none}
+.bottomnav{
+  pointer-events:auto;display:flex;align-items:stretch;height:var(--nav-h);
+  background:color-mix(in srgb,var(--surface) 94%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding-bottom:10px;
+}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.navbtn.active{color:var(--ink)}
+.navbtn.active .nic{color:var(--brand)}
+.navbtn .nic{color:inherit}
+.fab-slot{flex:1;position:relative}
+.fab{
+  pointer-events:auto;position:absolute;left:50%;top:-24px;transform:translateX(-50%);
+  width:58px;height:58px;border-radius:14px;background:var(--brand);color:var(--brand-ink);
+  display:grid;place-items:center;box-shadow:0 10px 24px -8px color-mix(in srgb,var(--brand) 65%,transparent);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-radius .25s ease;z-index:60;
+}
+.fab svg{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.fab[aria-expanded="true"]{border-radius:50%}
+.fab[aria-expanded="true"] svg{transform:rotate(135deg)}
+.scrim{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 45%,transparent);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:45}
+.scrim.open{opacity:1;pointer-events:auto}
+.fanmenu{position:absolute;left:0;right:0;bottom:calc(var(--nav-h) + 26px);z-index:50;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.fan-item{
+  pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r-ui);padding:10px 18px 10px 10px;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.35);font-weight:700;font-size:14px;min-width:250px;
+  opacity:0;transform:translateY(16px) scale(.94);
+  transition:opacity .22s ease,transform .28s cubic-bezier(.34,1.56,.64,1);
+}
+.fanmenu.open .fan-item{opacity:1;transform:none;}
+.fanmenu.open .fan-item:nth-child(1){transition-delay:.10s}
+.fanmenu.open .fan-item:nth-child(2){transition-delay:.05s}
+.fanmenu.open .fan-item:nth-child(3){transition-delay:0s}
+.fan-item .fic{width:38px;height:38px;border-radius:var(--r-ui);display:grid;place-items:center;flex:none}
+.fan-item .fic.brand{background:var(--brand);color:var(--brand-ink)}
+.fan-item .fic.dark{background:var(--ink);color:var(--surface)}
+.fan-item .fic.plain{background:var(--sunken);color:var(--ink-2)}
+.fan-item small{display:block;font-weight:500;font-size:11px;color:var(--ink-3);text-transform:none;letter-spacing:0}
+
+/* ================= LIVE RUN ================= */
+.overlay{
+  position:absolute;inset:0;z-index:80;background:var(--surface);
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,.25,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.overlay.open{transform:none}
+.run-map{position:relative;flex:1;min-height:0;background:var(--sunken);overflow:hidden}
+.run-map svg{position:absolute;inset:0;width:100%;height:100%}
+.run-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:16px;z-index:2}
+.run-live-chip{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--surface);padding:7px 13px;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--brand);animation:pulse 1.2s ease-out infinite}
+:root:not([data-theme="light"]) .pulse{background:var(--brand)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.gps-chip{background:var(--surface);border:1px solid var(--line);padding:7px 11px;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.run-panel{background:var(--card);border-top:1px solid var(--line);padding:20px 18px calc(18px + env(safe-area-inset-bottom));position:relative;z-index:3}
+.run-time{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:80px;line-height:.9;text-align:center;letter-spacing:.01em}
+.run-time small{font-size:26px;color:var(--ink-3);font-weight:600}
+.run-metrics{display:flex;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.rmet{flex:1;text-align:center;border-left:1px solid var(--line)}
+.rmet:first-child{border-left:0}
+.rmet .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:30px;line-height:1}
+.rmet .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.run-impact{margin-top:16px;background:var(--panel);color:var(--panel-ink);padding:13px 15px;display:flex;align-items:center;gap:12px}
+.run-impact .ric{width:36px;height:36px;background:var(--brand-panel);color:#0A0F1E;display:grid;place-items:center;flex:none}
+.run-impact .txt{flex:1;font-size:12.5px;color:var(--panel-mut);font-weight:500;line-height:1.4}
+.run-impact .txt b{font-size:14.5px;color:var(--panel-ink)}
+.run-ctrl{display:flex;gap:10px;margin-top:16px}
+.milestone{
+  position:absolute;left:50%;top:18%;transform:translate(-50%,10px);z-index:4;
+  background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase;
+  padding:12px 18px;display:flex;align-items:center;gap:8px;
+  opacity:0;transition:opacity .3s ease,transform .3s ease;pointer-events:none;
+  box-shadow:0 14px 30px -10px color-mix(in srgb,var(--brand) 60%,transparent);
+}
+.milestone.show{opacity:1;transform:translate(-50%,0)}
+
+/* ================= SUMMARY / SHEETS ================= */
+.sum-head{padding:28px 18px 8px;text-align:center}
+.sum-head .kicker{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--brand)}
+.sum-head h2{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:36px;text-transform:uppercase;line-height:1;margin-top:8px}
+.sum-route{margin:16px 0;background:var(--sunken)}
+.sum-grid{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sum-cell{flex:1;padding:13px;text-align:center;border-left:1px solid var(--line)}
+.sum-cell:first-child{border-left:0}
+.sum-cell .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:27px;line-height:1}
+.sum-cell .l{font-size:9.5px;color:var(--ink-3);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+.sum-impact{margin:14px 18px;padding:15px;background:var(--panel);color:var(--panel-ink);display:flex;gap:12px;align-items:center}
+.sum-impact .ric{width:44px;height:44px;background:var(--brand-panel);color:#0A0F1E;display:grid;place-items:center;flex:none}
+.sum-impact .v{font-family:var(--f-num),"Arial Narrow",sans-serif;font-style:var(--fs-num,normal);font-weight:700;font-size:24px;line-height:1.05}
+.sum-impact p{font-size:11.5px;color:var(--panel-mut);margin-top:3px}
+.sum-form{padding:0 18px}
+.sum-form input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-ui);padding:13px 14px;font:inherit;color:var(--ink);font-weight:600}
+.sum-form input:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+.sum-actions{display:flex;flex-direction:column;gap:10px;padding:16px 18px calc(18px + env(safe-area-inset-bottom))}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:85;background:var(--card);
+  border-radius:16px 16px 0 0;border-top:1px solid var(--line);
+  transform:translateY(105%);transition:transform .3s cubic-bezier(.32,.72,.25,1);
+  padding:14px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.4);
+}
+.sheet.open{transform:none}
+.sheet .grab{width:40px;height:4px;background:var(--line);margin:0 auto 16px}
+.sheet h3{font-family:var(--f-disp),Impact,sans-serif;font-weight:var(--w-disp,400);font-style:var(--fs-disp,normal);font-size:26px;text-transform:uppercase;letter-spacing:.01em}
+.sheet p.desc{font-size:13px;color:var(--ink-2);margin-top:6px}
+.sheet .fields{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.sheet .fields label{font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
+.sheet .fields input,.sheet .fields select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-ui);padding:12px;font:inherit;color:var(--ink);margin-top:5px}
+.sheet .btn{margin-top:18px}
+
+/* ================= SÉLECTEUR DE TYPO (outil maquette) ================= */
+.typo-btn{
+  position:absolute;right:12px;bottom:calc(var(--nav-h) + 18px);z-index:42;
+  width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);
+  box-shadow:0 8px 20px -8px rgba(0,0,0,.35);display:grid;place-items:center;
+  font-weight:800;font-size:15px;color:var(--ink);
+}
+.typo-rows{display:flex;flex-direction:column;margin-top:12px;max-height:52vh;overflow-y:auto}
+.typo-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-top:1px solid var(--line);text-align:left;width:100%}
+.typo-row:first-child{border-top:0}
+.typo-row .tr-name{font-weight:700;font-size:13px}
+.typo-row .tr-name small{display:block;font-weight:500;font-size:10.5px;color:var(--ink-3)}
+.typo-row .tr-sample{font-size:19px;white-space:nowrap;color:var(--ink)}
+.typo-row[aria-pressed="true"]{background:color-mix(in srgb,var(--brand) 10%,var(--card));border-radius:10px;padding-left:10px;padding-right:10px}
+.typo-note{font-size:10.5px;color:var(--ink-3);margin-top:10px}
+
+/* toast */
+.toast{
+  position:absolute;left:50%;bottom:calc(var(--nav-h) + 22px);transform:translate(-50%,14px);
+  background:var(--ink);color:var(--surface);font-weight:600;font-size:13px;
+  padding:12px 18px;opacity:0;transition:.3s ease;z-index:95;pointer-events:none;
+  max-width:88%;text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:90}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="device" id="device">
+
+    <div class="screens">
+
+      <!-- ============ ACCUEIL ============ -->
+      <section class="screen active" id="scr-home" aria-label="Accueil">
+        <div class="hero5">
+          <div class="stripe"></div>
+          <div class="h5-row">
+            <span class="h5-date" id="greet-date">Mardi 2 septembre · Marketing</span>
+            <span class="h5-bib num" aria-label="Série de 6 jours">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z"/></svg>
+              6 J
+            </span>
+          </div>
+          <h1>Bonjour Camille</h1>
+          <div class="h5-big num"><span id="today-steps">4 320</span><small> PAS</small></div>
+          <div class="h5-sub num">
+            <span><b id="today-km">3,2</b> km</span>
+            <span><b id="today-energy">3 200</b> ⚡ aujourd’hui</span>
+            <span><b>6 j</b> de série</span>
+          </div>
+          <button class="h5-ticket" id="go-missions" aria-label="Distribuer mon énergie sur les missions">
+            <span><small>Énergie à distribuer</small><span class="num" id="bal-ticket">6 750 ⚡ — choisir mes missions</span></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          </button>
+        </div>
+
+        <button class="corp3" id="go-impact" aria-label="Voir l’impact collectif">
+          <div class="c3-top">
+            <span class="c3-name">Banque Corélis · Programme Élan</span>
+            <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </div>
+          <div class="c3-main">
+            <div class="c3-ring" id="corp-ring"><div><span class="v num" id="corp-pct">72 %</span><span class="l">de l’objectif</span></div></div>
+            <div class="c3-facts">
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+                <span class="num"><b id="corp-energy">14,4 M</b> ⚡ d’énergie collective</span>
+              </div>
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg></span>
+                <span class="num"><b id="corp-trees">418</b> arbres plantés</span>
+              </div>
+              <div class="c3-fact">
+                <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg></span>
+                <span class="num"><b id="corp-meals">3 120</b> repas financés</span>
+              </div>
+            </div>
+          </div>
+        </button>
+
+        <button class="defi3" id="go-challenges" aria-label="Voir le défi du mois">
+          <div class="d3-row">
+            <span class="d3-em">🌳</span>
+            <div>
+              <h3 id="df-title">Plus que 82 arbres à planter !</h3>
+              <p>Défi du mois · il reste 12 jours</p>
+            </div>
+          </div>
+          <div class="d3-bar">
+            <i id="df-bar" style="width:83.6%"></i>
+            <span class="d3-dot" id="df-dot" style="left:83.6%">🌱</span>
+          </div>
+          <div class="d3-cap num"><span id="df-cnt">418 / 500</span><span id="df-pct">83 %</span></div>
+        </button>
+
+        <button class="duel4" id="go-duel" aria-label="Voir le duel de la semaine">
+          <div class="d4-k">Duel de la semaine — votre équipe mène</div>
+          <div class="d4-track">
+            <div class="d4-a"><span class="d4-t">Marketing</span><span class="d4-s num">236 km</span></div>
+            <div class="d4-b"><span class="d4-t">Finance</span><span class="d4-s num">224 km</span></div>
+            <span class="d4-vs">VS</span>
+          </div>
+          <div class="d4-foot">L’équipe gagnante choisit l’association du mois d’octobre.</div>
+        </button>
+
+        <div class="section-label">Vos collègues</div>
+        <div class="stories" id="stories" aria-label="Activité des équipes"></div>
+
+        <div class="section-label">Fil d’activité</div>
+        <div class="feed" id="feed"></div>
+      </section>
+
+      <!-- ============ DÉFIS ============ -->
+      <section class="screen" id="scr-challenges" aria-label="Défis">
+        <div class="pagehead">
+          <h1>Défis</h1><div class="sub">3 en cours · Banque Corélis</div>
+        </div>
+
+        <div class="hero-challenge">
+          <div class="hc-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/><path d="M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-3.5 3.8M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 3.5 3.8"/></svg>
+            Défi du mois
+          </div>
+          <h2>La forêt Corélis — 500 arbres</h2>
+          <div class="hc-sub">Toute l’entreprise · du 1<sup>er</sup> au 30 septembre</div>
+          <div class="hc-days"><div class="v num">12</div><div class="l">jours</div></div>
+          <div class="meter"><i style="width:83.6%"></i></div>
+          <div class="meter-cap"><span class="num">418 / 500 arbres</span><span>83 %</span></div>
+        </div>
+
+        <div class="section-label">Classement · km cumulés</div>
+        <div class="lb" id="leaderboard"></div>
+
+        <div class="section-label">Duel de la semaine</div>
+        <div class="duel">
+          <div class="duel-head">
+            <div class="duel-title">Marketing vs Finance</div>
+            <span class="chip outline num">+12 km d’écart</span>
+          </div>
+          <div class="duel-track" role="img" aria-label="Marketing 236 kilomètres contre Finance 224 kilomètres">
+            <div class="duel-a" style="flex-basis:51.3%">Marketing · <span class="num">&nbsp;236</span></div>
+            <div class="duel-b"><span class="num">224&nbsp;</span> · Finance</div>
+          </div>
+          <div class="duel-note">L’équipe gagnante choisit l’association du mois d’octobre.</div>
+        </div>
+
+        <div class="section-label">Mini-défis</div>
+        <div class="minis">
+          <div class="mini">
+            <div class="ic">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l3-5"/><path d="M2 20h20"/></svg>
+            </div>
+            <h4>Sprint du midi</h4>
+            <p>2 km entre 12 h et 14 h</p>
+            <div class="meter"><i style="width:60%"></i></div>
+          </div>
+          <div class="mini">
+            <div class="ic">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V9"/><path d="M12 9C7 9 5 5.5 5 2c4 0 7 2 7 7Z"/><path d="M12 13c0-4 3-6 7-6 0 3.5-2 6-7 6Z"/></svg>
+            </div>
+            <h4>Semaine verte</h4>
+            <p>50 000 pas = 1 arbre bonus</p>
+            <div class="meter"><i style="width:78%"></i></div>
+          </div>
+          <div class="mini">
+            <div class="ic">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg>
+            </div>
+            <h4>Assiduité</h4>
+            <p>5 sorties cette semaine</p>
+            <div class="meter"><i style="width:40%"></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MISSIONS ============ -->
+      <section class="screen" id="scr-missions" aria-label="Missions">
+        <div class="pagehead">
+          <h1>Missions</h1><div class="sub">Distribuez votre énergie aux causes</div>
+        </div>
+
+        <div class="bal-hero">
+          <div class="bh-label">Votre énergie disponible</div>
+          <div class="bh-big num"><span id="bal-big">6 750</span> ⚡</div>
+          <div class="bh-sub">1 mètre parcouru = 1 ⚡ · répartissez-la librement ci-dessous</div>
+        </div>
+
+        <div class="section-label">Missions ouvertes</div>
+        <div id="missions-list"></div>
+        <p class="m-note">Associations de démonstration — les partenaires réels seront intégrés une fois les conventions signées. Barème fixé par l’entreprise.</p>
+      </section>
+
+      <!-- ============ PROFIL ============ -->
+      <section class="screen" id="scr-profile" aria-label="Profil">
+        <div class="prof-head">
+          <div class="avatar" style="background:#B3541E">CR</div>
+          <div>
+            <div class="prof-name">Camille Roux</div>
+            <div class="prof-sub">
+              <span class="chip dark">Marketing</span>
+              <span class="chip outline">Série · 6 jours</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prof-stats">
+          <div class="prof-stat"><div class="v num" id="me-km">86,4</div><div class="l">km ce mois</div></div>
+          <div class="prof-stat"><div class="v num" id="me-given">0</div><div class="l">⚡ distribuées</div></div>
+          <div class="prof-stat"><div class="v num" id="me-bal">6 750</div><div class="l">⚡ disponibles</div></div>
+        </div>
+
+        <div class="section-label">Votre impact</div>
+        <div class="mysum" id="mysum"></div>
+
+        <div class="section-label">Cette semaine</div>
+        <div class="week">
+          <h3>Pas quotidiens</h3>
+          <div class="wk-sub num">Total : 61 240 pas · objectif 70 000</div>
+          <div class="wk-chart" id="wk-chart" role="img" aria-label="Pas par jour cette semaine, du lundi au dimanche"></div>
+          <div class="wk-tip num" id="wk-tip">Touchez un jour pour le détail.</div>
+        </div>
+
+        <div class="section-label">Badges</div>
+        <div class="badges">
+          <div class="badge"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg></div><span>Premier arbre</span></div>
+          <div class="badge"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 14l3-5"/><path d="M2 20h20"/></svg></div><span>10 km d’un coup</span></div>
+          <div class="badge"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span>Esprit d’équipe</span></div>
+          <div class="badge"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 4-2 5-2 8a4 4 0 0 0 8 .5C19.5 13 22 15 22 18a8 8 0 0 1-16 0c0-3 1.5-4.5 2-7 2 1 3-1 2-4 2 .5 3-1.5 2-5Z"/></svg></div><span>Série de 5 jours</span></div>
+          <div class="badge locked"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg></div><span>100 repas</span></div>
+          <div class="badge locked"><div class="bic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg></div><span>Vainqueur de défi</span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ LIVE RUN OVERLAY ============ -->
+    <div class="overlay" id="run-overlay" role="dialog" aria-label="Course en direct" aria-modal="true">
+      <div class="run-map">
+        <svg viewBox="0 0 400 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="460" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="10" fill="none" opacity=".8">
+            <path d="M-20 90 L420 60"/><path d="M-20 210 L420 190"/><path d="M-20 340 L420 330"/>
+            <path d="M80 -20 L110 480"/><path d="M230 -20 L215 480"/><path d="M340 -20 L360 480"/>
+          </g>
+          <path id="run-path" d="M60 420 C 120 380, 90 320, 150 300 S 250 280, 250 220 S 180 160, 230 110 S 330 90, 340 60"
+                fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="run-dot" r="9" fill="var(--brand)" stroke="var(--card)" stroke-width="3"/>
+        </svg>
+        <div class="run-top">
+          <span class="run-live-chip"><span class="pulse"></span> En direct</span>
+          <span class="gps-chip num" id="run-clock-chip">GPS simulé</span>
+        </div>
+        <div class="milestone" id="milestone">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          <span id="milestone-txt">+500 ⚡</span>
+        </div>
+      </div>
+      <div class="run-panel">
+        <div class="run-time num" id="run-time">00:00<small>,0</small></div>
+        <div class="run-metrics">
+          <div class="rmet"><div class="v num" id="run-dist">0</div><div class="l">mètres</div></div>
+          <div class="rmet"><div class="v num" id="run-pace">–:––</div><div class="l">min / km</div></div>
+          <div class="rmet"><div class="v num" id="run-steps">0</div><div class="l">pas</div></div>
+        </div>
+        <div class="run-impact">
+          <div class="ric">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          </div>
+          <div class="txt" id="run-impact-txt"><b class="num">⚡ 0</b> énergie récoltée — à distribuer sur vos missions après la course</div>
+        </div>
+        <div class="run-ctrl">
+          <button class="btn ghost" id="btn-pause" style="flex:1">Pause</button>
+          <button class="btn primary" id="btn-finish" style="flex:1.6">Terminer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SUMMARY OVERLAY ============ -->
+    <div class="overlay" id="sum-overlay" role="dialog" aria-label="Résumé de course" aria-modal="true" style="overflow-y:auto">
+      <div class="sum-head">
+        <div class="kicker">Course terminée</div>
+        <h2>Belle sortie, Camille</h2>
+      </div>
+      <div class="sum-route">
+        <svg viewBox="0 0 400 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="180" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 50 L410 40"/><path d="M-10 130 L410 140"/><path d="M120 -10 L130 190"/><path d="M290 -10 L280 190"/></g>
+          <path d="M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35" fill="none" stroke="var(--brand)" stroke-width="5.5" stroke-linecap="round"/>
+          <circle cx="40" cy="150" r="7" fill="var(--card)" stroke="var(--brand)" stroke-width="4"/>
+          <circle cx="375" cy="35" r="7" fill="var(--brand)" stroke="var(--card)" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-cell"><div class="v num" id="sum-dist">0 m</div><div class="l">distance</div></div>
+        <div class="sum-cell"><div class="v num" id="sum-time">00:00</div><div class="l">durée</div></div>
+        <div class="sum-cell"><div class="v num" id="sum-pace">–:––</div><div class="l">min / km</div></div>
+      </div>
+      <div class="sum-impact">
+        <div class="ric">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+        </div>
+        <div><div class="v num" id="sum-impact-line">+5 200 ⚡ récoltés</div><p>ajoutés à votre réserve d’énergie — direction l’onglet Missions</p></div>
+      </div>
+      <div class="sum-form">
+        <input type="text" id="sum-title" value="Course du midi" aria-label="Titre de la publication">
+      </div>
+      <div class="sum-actions">
+        <button class="btn impact block" id="btn-publish">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          Publier dans le fil
+        </button>
+        <button class="btn ghost block" id="btn-discard">Ne pas publier</button>
+      </div>
+    </div>
+
+    <!-- ============ SHEETS ============ -->
+    <div class="sheet" id="sheet-result" role="dialog" aria-label="Publier un résultat" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Publier un résultat</h3>
+      <p class="desc">Une activité faite hors de l’app ? Ajoutez-la, elle compte aussi pour l’impact.</p>
+      <div class="fields">
+        <div><label for="res-type">Activité</label>
+          <select id="res-type"><option>Marche</option><option selected>Course</option><option>Vélo</option><option>Randonnée</option></select>
+        </div>
+        <div><label for="res-dist">Distance (km)</label><input id="res-dist" type="number" inputmode="decimal" value="5,2" min="0" step="0.1"></div>
+        <div><label for="res-title">Titre</label><input id="res-title" type="text" value="Sortie du soir"></div>
+      </div>
+      <button class="btn impact block" id="btn-res-publish">Ajouter au fil</button>
+    </div>
+
+    <div class="sheet" id="sheet-challenge" role="dialog" aria-label="Créer un défi" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Lancer un défi</h3>
+      <p class="desc">Défiez une autre équipe — l’équipe gagnante oriente le don du mois.</p>
+      <div class="fields">
+        <div><label for="ch-target">Équipe adverse</label>
+          <select id="ch-target"><option>Finance</option><option>RH</option><option>IT & Data</option><option>Juridique</option></select>
+        </div>
+        <div><label for="ch-goal">Objectif</label>
+          <select id="ch-goal"><option>Le plus de km en 7 jours</option><option>Le plus de pas en 7 jours</option><option>Le plus de sorties</option></select>
+        </div>
+      </div>
+      <button class="btn primary block" id="btn-ch-send">Envoyer le défi</button>
+    </div>
+
+    <!-- ============ NAV ============ -->
+    <div class="scrim" id="scrim"></div>
+    <div class="fanmenu" id="fanmenu">
+      <button class="fan-item" data-fan="run">
+        <span class="fic brand"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span>Lancer une course<small>GPS et récolte d’énergie en direct</small></span>
+      </button>
+      <button class="fan-item" data-fan="result">
+        <span class="fic dark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span>Publier un résultat<small>Activité faite hors de l’app</small></span>
+      </button>
+      <button class="fan-item" data-fan="challenge">
+        <span class="fic plain"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg></span>
+        <span>Créer un défi<small>Équipe contre équipe</small></span>
+      </button>
+    </div>
+
+    <nav class="navwrap" aria-label="Navigation principale">
+      <div class="bottomnav">
+        <button class="navbtn active" data-nav="scr-home">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+          Accueil
+        </button>
+        <button class="navbtn" data-nav="scr-challenges">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/><path d="M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-3.5 3.8M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 3.5 3.8"/></svg></span>
+          Défis
+        </button>
+        <div class="fab-slot">
+          <button class="fab" id="fab" aria-expanded="false" aria-label="Ajouter">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <button class="navbtn" data-nav="scr-missions">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+          Missions
+        </button>
+        <button class="navbtn" data-nav="scr-profile">
+          <span class="nic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
+          Profil
+        </button>
+      </div>
+    </nav>
+
+    <button class="typo-btn" id="typo-btn" aria-label="Changer la typographie">Aa</button>
+    <div class="sheet" id="sheet-typo" role="dialog" aria-label="Choisir la typographie" aria-modal="true">
+      <div class="grab"></div>
+      <h3>Typographie</h3>
+      <div class="typo-rows" id="typo-rows"></div>
+      <p class="typo-note">Outil de prévisualisation de la maquette — ne fera pas partie de l’application finale. Le choix est mémorisé sur cet appareil.</p>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <canvas class="confetti" id="confetti"></canvas>
+  </div>
+  <div class="stage-note">Moov’On — maquette interactive · toutes les données sont fictives (entreprise, personnes, associations)</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+'use strict';
+/* ========= BARÈME (démo — sera configurable côté entreprise) =========
+   1 mètre parcouru = 1 point d'énergie (⚡), à distribuer sur les missions. */
+const RATE = {
+  energyPerMeter: 1,
+  stepsPerMeter: 1.35
+};
+const SIM_SPEED = 55;      // m/s simulés — accéléré pour la démo (≈5 km en 90 s)
+
+const $ = id => document.getElementById(id);
+const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
+const fmtE = n => n >= 1e6 ? (n/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' M'
+              : n >= 1e4 ? Math.round(n/1000).toLocaleString('fr-FR') + ' k'
+              : fmtInt(n);
+const store = {
+  get(k,f){ try{ const v = localStorage.getItem('moovon:'+k); return v===null?f:JSON.parse(v);}catch(e){return f} },
+  set(k,v){ try{ localStorage.setItem('moovon:'+k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ================= SUPABASE (optionnel — repli localStorage) =================
+   Renseignez config.js pour activer la synchronisation ; sinon la maquette
+   fonctionne exactement comme avant, en local. */
+const SB = (() => {
+  try{
+    const c = window.MOOVON_SUPABASE;
+    if(c && c.url && c.anonKey && window.supabase) return window.supabase.createClient(c.url, c.anonKey);
+  }catch(e){}
+  return null;
+})();
+function relTime(iso){
+  const s = (Date.now() - new Date(iso).getTime())/1000;
+  if(s < 90) return 'à l’instant';
+  if(s < 3600) return `il y a ${Math.round(s/60)} min`;
+  if(s < 86400) return `il y a ${Math.round(s/3600)} h`;
+  return `il y a ${Math.round(s/86400)} j`;
+}
+const SYNC_ROUTE = 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35';
+async function dbInit(){
+  if(!SB) return;
+  try{
+    const [{data: ms}, {data: acts}] = await Promise.all([
+      SB.from('missions').select('*'),
+      SB.from('activities').select('*').order('created_at',{ascending:false}).limit(8)
+    ]);
+    if(ms && ms.length){
+      ms.forEach(r => { const m = missions.find(x=>x.id===r.id); if(m){ m.got = +r.got; m.goal = +r.goal; m.per = +r.per; m.name = r.name; m.org = r.org; m.unit = r.unit; } });
+    }
+    if(acts && acts.length){
+      state.posts = acts.map(a => ({
+        id: a.id, n: a.author, team: a.team, when: relTime(a.created_at),
+        title: a.title, dist: a.dist, time: a.duration || '—', pace: a.pace || '—',
+        bravos: 0, comments: 0, route: SYNC_ROUTE
+      }));
+    }
+    renderFeed(); renderMissions(); renderMySum(); renderCorp(); renderToday();
+  }catch(e){ console.warn('Supabase indisponible — mode local', e); }
+}
+function dbAddActivity(p){
+  if(!SB) return;
+  SB.from('activities').insert({author:p.n, team:p.team, title:p.title, dist:p.dist, duration:p.time==='—'?null:p.time, pace:p.pace==='—'?null:p.pace})
+    .then(({error})=>{ if(error) console.warn('Supabase insert activité :', error.message); });
+}
+function dbDonate(m, v){
+  if(!SB) return;
+  SB.from('donations').insert({mission_id:m.id, author:'Camille Roux', amount:v})
+    .then(()=>SB.from('missions').update({got:m.got}).eq('id', m.id))
+    .then(({error})=>{ if(error) console.warn('Supabase mise à jour mission :', error.message); });
+}
+
+/* ================= DONNÉES DÉMO ================= */
+const TEAM_COLORS = {Marketing:'#B3541E', Finance:'#2C5F8A', RH:'#6E4B8E', 'IT & Data':'#1F7A6D', Juridique:'#8A2C4F', Direction:'#6B6B23'};
+const STORIES = [
+  {n:'Vous', t:'Marketing', me:true},
+  {n:'Sofiane', t:'Finance'}, {n:'Léa', t:'RH'}, {n:'Marc', t:'IT & Data'},
+  {n:'Inès', t:'Marketing', seen:true}, {n:'Hugo', t:'Juridique', seen:true}, {n:'Awa', t:'Direction', seen:true}
+];
+const BASE_FEED = [
+  {id:'p1', n:'Sofiane B.', team:'Finance', when:'il y a 25 min', title:'Fractionné avant la réunion budget', dist:6200, time:'32:10', pace:'5:11', give:'Urgence & Secours', bravos:14, comments:3, route:'M30 150 C 90 110, 70 60, 150 70 S 240 130, 300 80 S 360 40, 372 35'},
+  {id:'p2', n:'Léa Fontaine', team:'RH', when:'il y a 2 h', title:'Marche du déjeuner avec l’équipe recrutement', dist:3400, time:'41:05', pace:'12:05', give:'Refuge animalier', bravos:22, comments:5, route:'M40 40 C 80 90, 160 60, 190 110 S 150 160, 240 150 S 340 120, 370 145'},
+  {id:'p3', n:'Marc Delattre', team:'IT & Data', when:'hier', title:'10 km — plein d’énergie pour la forêt 🎯', dist:10100, time:'52:48', pace:'5:14', give:'La forêt Corélis', bravos:41, comments:9, route:'M30 90 C 110 40, 150 140, 220 100 S 280 30, 330 70 S 365 130, 375 140'}
+];
+
+/* Missions (associations fictives — les vraies seront branchées après signature des partenariats) */
+const MISSIONS_DEF = [
+  {id:'secours', name:'Urgence & Secours', org:'Premiers Secours Solidaires', per:500,  unit:'kit de secours distribué', goal:2000000, got:1240000, icon:'cross'},
+  {id:'animaux', name:'Refuge animalier', org:'Les Quatre Pattes',            per:300,  unit:'repas pour un animal',     goal:1500000, got:890000,  icon:'paw'},
+  {id:'enfants', name:'Enfants à l’hôpital', org:'Cœur d’Enfants',            per:1000, unit:'heure d’animation offerte', goal:3000000, got:2210000, icon:'heart'},
+  {id:'arbres',  name:'La forêt Corélis', org:'Canopée Demain',               per:5000, unit:'arbre planté',             goal:2500000, got:2090000, icon:'tree'},
+  {id:'repas',   name:'Repas chauds', org:'Table Ouverte',                    per:500,  unit:'repas chaud servi',        goal:2000000, got:1560000, icon:'bowl'},
+];
+const MICON = {
+  cross:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>',
+  paw:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="8" r="2.2"/><circle cx="12" cy="5.5" r="2.2"/><circle cx="17" cy="8" r="2.2"/><path d="M12 10c3 0 6 2.6 6 5.4 0 2-1.5 3.1-3.2 2.8-1.1-.2-1.9-.7-2.8-.7s-1.7.5-2.8.7C7.5 18.5 6 17.4 6 15.4 6 12.6 9 10 12 10Z"/></svg>',
+  heart:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3.4 1-4.5 2.5C10.9 4 9.3 3 7.5 3A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg>',
+  tree:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg>',
+  bowl:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>',
+  bolt:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>'
+};
+const LEADERBOARD = [
+  {team:'IT & Data', km:312}, {team:'Marketing', km:236, me:true}, {team:'Finance', km:224},
+  {team:'RH', km:187}, {team:'Juridique', km:141}, {team:'Direction', km:96}
+];
+const WEEK = [
+  {d:'L', steps:9840},{d:'M', steps:11250},{d:'M', steps:7420},{d:'J', steps:12600},
+  {d:'V', steps:8930},{d:'S', steps:11200},{d:'D', steps:0, today:true}
+];
+
+/* ================= ÉTAT ================= */
+const state = {
+  corpEnergy: store.get('corpEnergy', 14380000),   // énergie collective (1 ⚡ = 1 m)
+  posts: store.get('posts', []),                    // publications de l'utilisateur, en tête de fil
+  meKm: store.get('meKm', 86.4),
+  energyBal: store.get('energyBal', 6750),          // énergie perso à distribuer
+  todaySteps: store.get('todaySteps', 4320),
+  missions: store.get('missions', {}),              // {id:{got,my}} — deltas persistés
+};
+const MONTH_GOAL = 20000000;                         // objectif collectif du mois en ⚡
+const missions = MISSIONS_DEF.map(m => ({...m, ...(state.missions[m.id]||{my:0})}));
+function saveMissions(){
+  state.missions = Object.fromEntries(missions.map(m=>[m.id,{got:m.got,my:m.my}]));
+  store.set('missions', state.missions);
+}
+const missionTrees = () => Math.floor((missions.find(m=>m.id==='arbres').got)/5000);
+const missionMeals = () => Math.floor((missions.find(m=>m.id==='repas').got)/500);
+WEEK[6].steps = Math.round(state.todaySteps);
+
+/* ================= RENDU ================= */
+function initials(name){ return name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function renderStories(){
+  $('stories').innerHTML = STORIES.map(s=>`
+    <button class="story" aria-label="Activité de ${s.n}">
+      <span class="ring ${s.seen?'seen':''}"><span style="background:${TEAM_COLORS[s.t]||'#555'}">${s.me?'+':initials(s.n)}</span></span>
+      <small>${s.n}</small>
+    </button>`).join('');
+}
+
+function postCard(p){
+  const energy = Math.round(p.dist * RATE.energyPerMeter);
+  const manual = p.time === '—';
+  const stats = manual
+    ? `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
+       <div class="pstat"><div class="v num">+${fmtE(energy)}</div><div class="l">énergie ⚡</div></div>
+       <div class="pstat"><div class="v num">${fmtInt(p.dist*RATE.stepsPerMeter)}</div><div class="l">pas</div></div>`
+    : `<div class="pstat"><div class="v num">${(p.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:1})} km</div><div class="l">distance</div></div>
+       <div class="pstat"><div class="v num">${p.time}</div><div class="l">durée</div></div>
+       <div class="pstat"><div class="v num">${p.pace}</div><div class="l">min / km</div></div>`;
+  return `
+  <article class="post" data-post="${p.id}">
+    <div class="node"><span class="avatar" style="background:${TEAM_COLORS[p.team]||'#555'}">${initials(p.n)}</span></div>
+    <div class="when">${p.when}</div>
+    <div class="pname">${p.n} <span>· ${p.team}</span></div>
+    <div class="pcard">
+      <div class="pmap">
+        <svg viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" aria-label="Tracé du parcours" role="img">
+          <rect width="400" height="160" fill="var(--sunken)"/>
+          <g stroke="var(--line)" stroke-width="8" fill="none" opacity=".8"><path d="M-10 50 L410 42"/><path d="M-10 122 L410 128"/><path d="M100 -10 L112 170"/><path d="M300 -10 L290 170"/></g>
+          <path d="${p.route}" fill="none" stroke="var(--brand)" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <div class="grad"></div>
+        <div class="pstats num">${stats}</div>
+      </div>
+      <div class="pbody">
+        <div class="ptitle">${p.title}</div>
+        <span class="pimpact num">⚡ +${fmtInt(energy)} énergie récoltée${p.give?` · → ${p.give}`:''}</span>
+      </div>
+      <div class="post-actions">
+        <button class="pact bravo" aria-pressed="false">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+          Bravo · <span class="num bravo-count">${p.bravos}</span>
+        </button>
+        <button class="pact">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12Z"/></svg>
+          <span class="num">${p.comments}</span>
+        </button>
+        <button class="pact" style="margin-left:auto">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+          Partager
+        </button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderFeed(){
+  $('feed').innerHTML = [...state.posts, ...BASE_FEED].map(postCard).join('');
+}
+
+function renderToday(){
+  const d = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  $('greet-date').textContent = d.charAt(0).toUpperCase()+d.slice(1) + ' · Équipe Marketing';
+  const meters = state.todaySteps / RATE.stepsPerMeter;
+  $('today-steps').textContent = fmtInt(state.todaySteps);
+  $('today-km').textContent = (meters/1000).toLocaleString('fr-FR',{maximumFractionDigits:1});
+  $('today-energy').textContent = fmtInt(meters * RATE.energyPerMeter);
+  $('bal-ticket').textContent = `${fmtInt(state.energyBal)} ⚡ — choisir mes missions`;
+}
+
+function renderCorp(){
+  $('corp-energy').textContent = fmtE(state.corpEnergy);
+  $('corp-trees').textContent = fmtInt(missionTrees());
+  $('corp-meals').textContent = fmtInt(missionMeals());
+  const pct = Math.min(100, state.corpEnergy/MONTH_GOAL*100);
+  $('corp-ring').style.background = `conic-gradient(var(--brand) 0 ${pct.toFixed(1)}%, var(--sunken) ${pct.toFixed(1)}% 100%)`;
+  $('corp-pct').textContent = Math.round(pct) + ' %';
+  const goal = 500, trees = missionTrees(), rest = Math.max(0, goal - trees);
+  const dfPct = Math.min(100, trees/goal*100);
+  $('df-title').textContent = rest > 0 ? `Plus que ${rest} arbre${rest>1?'s':''} à planter !` : 'Objectif atteint — 500 arbres plantés !';
+  $('df-cnt').textContent = `${fmtInt(Math.min(trees, goal))} / ${goal}`;
+  $('df-pct').textContent = Math.round(dfPct) + ' %';
+  $('df-bar').style.width = dfPct.toFixed(1) + '%';
+  $('df-dot').style.left = dfPct.toFixed(1) + '%';
+  $('me-km').textContent = state.meKm.toLocaleString('fr-FR',{maximumFractionDigits:1});
+  const given = missions.reduce((s,m)=>s+m.my,0);
+  $('me-given').textContent = fmtInt(given);
+  $('me-bal').textContent = fmtInt(state.energyBal);
+}
+
+/* ================= MISSIONS ================= */
+function renderMissions(){
+  $('bal-big').textContent = fmtInt(state.energyBal);
+  $('missions-list').innerHTML = missions.map(m=>{
+    const pct = Math.min(100, m.got/m.goal*100);
+    return `
+    <div class="mcard" data-m="${m.id}">
+      <div class="m-top">
+        <span class="m-ic">${MICON[m.icon]}</span>
+        <div class="m-head"><div class="m-name">${m.name}</div><div class="m-org">avec ${m.org}</div></div>
+        ${m.my>0?`<span class="m-mine num">Vous : ${fmtE(m.my)} ⚡</span>`:''}
+      </div>
+      <div class="m-per num">${MICON.bolt} ${fmtInt(m.per)} ⚡ = 1 ${m.unit}</div>
+      <div class="meter"><i style="width:${pct.toFixed(1)}%"></i></div>
+      <div class="meter-cap num"><span>${fmtE(m.got)} / ${fmtE(m.goal)} ⚡</span><span>${Math.round(pct)} %</span></div>
+      <button class="m-give" data-give="${m.id}">${MICON.bolt} Donner de l’énergie</button>
+      <div class="m-panel" hidden>
+        <input type="range" min="0" max="${Math.min(state.energyBal, m.goal-m.got)}" step="50" value="${Math.min(500,state.energyBal)}" aria-label="Quantité d’énergie à donner">
+        <div class="m-live num"><span class="amt">500 ⚡</span><span class="eq">= 1 ${m.unit}</span></div>
+        <button class="m-confirm">Confirmer le don</button>
+      </div>
+    </div>`;
+  }).join('');
+  $('missions-list').querySelectorAll('.mcard').forEach(card=>{
+    const m = missions.find(x=>x.id===card.dataset.m);
+    const panel = card.querySelector('.m-panel');
+    const range = card.querySelector('input[type=range]');
+    const amt = card.querySelector('.m-live .amt');
+    const eq = card.querySelector('.m-live .eq');
+    const confirm = card.querySelector('.m-confirm');
+    const update = ()=>{
+      const v = +range.value;
+      amt.textContent = `${fmtInt(v)} ⚡`;
+      const units = Math.floor(v/m.per);
+      eq.textContent = units>0 ? `= ${fmtInt(units)} ${m.unit}${units>1?'s':''}` : `1 ${m.unit} à ${fmtInt(m.per)} ⚡`;
+      confirm.disabled = v<=0;
+    };
+    card.querySelector('.m-give').addEventListener('click',()=>{
+      if(state.energyBal<=0){ toast('Plus d’énergie disponible — bougez pour en récolter !'); return; }
+      panel.hidden = !panel.hidden; update();
+    });
+    range.addEventListener('input',update);
+    confirm.addEventListener('click',()=>{
+      const v = Math.min(+range.value, state.energyBal);
+      if(v<=0) return;
+      m.got += v; m.my += v;
+      state.energyBal -= v;
+      store.set('energyBal', state.energyBal);
+      saveMissions();
+      dbDonate(m, v);
+      renderMissions(); renderCorp(); renderToday(); renderMySum();
+      const units = Math.floor(v/m.per);
+      toast(`⚡ ${fmtInt(v)} donnés à « ${m.name} »${units>0?` — ${fmtInt(units)} ${m.unit}${units>1?'s':''}`:''}`);
+    });
+  });
+}
+function renderMySum(){
+  const rows = missions.filter(m=>m.my>0).map(m=>`
+    <div class="ms-row">
+      <span class="m-ic">${MICON[m.icon]}</span>
+      <span class="n">${m.name}<small>${fmtInt(Math.floor(m.my/m.per))} × ${m.unit}</small></span>
+      <span class="amt num">${fmtE(m.my)} ⚡</span>
+    </div>`).join('');
+  $('mysum').innerHTML = rows || `
+    <div class="ms-row"><span class="m-ic">${MICON.bolt}</span><span class="n">Aucune énergie distribuée pour l’instant<small>Rendez-vous dans l’onglet Missions pour donner vos ⚡</small></span></div>`;
+}
+
+function renderLeaderboard(){
+  const max = Math.max(...LEADERBOARD.map(r=>r.km));
+  $('leaderboard').innerHTML = LEADERBOARD.map((r,i)=>`
+    <div class="lb-row ${r.me?'me':''}">
+      <div class="lb-rank num">${i+1}</div>
+      <span class="avatar" style="width:34px;height:34px;font-size:12px;background:${TEAM_COLORS[r.team]||'#555'}">${initials(r.team)}</span>
+      <div class="lb-body">
+        <div class="lb-top"><span class="lb-name">${r.team}${r.me?' — votre équipe':''}</span><span class="lb-val num">${r.km} km</span></div>
+        <div class="lb-bar"><i style="width:${(r.km/max*100).toFixed(0)}%"></i></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderWeek(){
+  const max = Math.max(...WEEK.map(d=>d.steps), 1);
+  $('wk-chart').innerHTML = WEEK.map((d,i)=>`
+    <button class="wk-col ${d.today?'today':''}" data-i="${i}" aria-pressed="false" aria-label="${d.steps.toLocaleString('fr-FR')} pas">
+      <span class="bar" style="height:${Math.max(4, d.steps/max*100)}%"></span>
+      <span class="d">${d.d}</span>
+    </button>`).join('');
+  $('wk-chart').querySelectorAll('.wk-col').forEach(col=>{
+    col.addEventListener('click',()=>{
+      $('wk-chart').querySelectorAll('.wk-col').forEach(c=>c.setAttribute('aria-pressed','false'));
+      col.setAttribute('aria-pressed','true');
+      const d = WEEK[+col.dataset.i];
+      $('wk-tip').textContent = d.today && d.steps===0
+        ? 'Aujourd’hui : rien pour l’instant — lancez une course avec le bouton +'
+        : `${d.steps.toLocaleString('fr-FR')} pas ≈ ⚡ ${fmtInt(d.steps/RATE.stepsPerMeter)} d’énergie`;
+    });
+  });
+}
+
+/* ================= NAVIGATION ================= */
+let currentScreen = 'scr-home';
+document.querySelectorAll('.navbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target = btn.dataset.nav;
+    if(target===currentScreen) return;
+    closeFan();
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===target));
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b===btn));
+    currentScreen = target;
+  });
+});
+
+/* ================= FAB / FAN MENU ================= */
+const fab = $('fab'), fan = $('fanmenu'), scrim = $('scrim');
+function openFan(){ fab.setAttribute('aria-expanded','true'); fan.classList.add('open'); scrim.classList.add('open'); }
+function closeFan(){ fab.setAttribute('aria-expanded','false'); fan.classList.remove('open'); scrim.classList.remove('open'); }
+fab.addEventListener('click',()=> fab.getAttribute('aria-expanded')==='true' ? closeFan() : openFan());
+scrim.addEventListener('click',()=>{ closeFan(); closeSheets(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeFan(); closeSheets(); }});
+
+fan.querySelectorAll('.fan-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    closeFan();
+    const act = item.dataset.fan;
+    if(act==='run') startRun();
+    if(act==='result'){ $('sheet-result').classList.add('open'); scrim.classList.add('open'); }
+    if(act==='challenge'){ $('sheet-challenge').classList.add('open'); scrim.classList.add('open'); }
+  });
+});
+function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); scrim.classList.remove('open'); }
+
+/* ================= TOAST ================= */
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= COURSE EN DIRECT ================= */
+const run = {active:false, paused:false, dist:0, t:0, raf:null, last:0, marks:0, pathLen:0};
+const runPath = $('run-path'), runDot = $('run-dot');
+
+function startRun(){
+  run.active = true; run.paused = false; run.dist = 0; run.t = 0; run.marks = 0; run.last = 0;
+  run.pathLen = runPath.getTotalLength();
+  runPath.style.strokeDasharray = run.pathLen;
+  runPath.style.strokeDashoffset = run.pathLen;
+  $('btn-pause').textContent = 'Pause';
+  $('run-overlay').classList.add('open');
+  updateRunUI();
+  cancelAnimationFrame(run.raf);
+  run.raf = requestAnimationFrame(tick);
+}
+function tick(ts){
+  if(!run.active) return;
+  if(!run.last) run.last = ts;
+  const dt = Math.min((ts - run.last)/1000, .1);
+  run.last = ts;
+  if(!run.paused){
+    run.t += dt;
+    run.dist += SIM_SPEED * dt;
+    const marks = Math.floor(run.dist / 500);
+    if(marks > run.marks){ run.marks = marks; milestone(`+500 ⚡ — ${fmtInt(marks*500)} récoltés`); }
+    updateRunUI();
+  }
+  run.raf = requestAnimationFrame(tick);
+}
+function updateRunUI(){
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60), d = Math.floor((run.t%1)*10);
+  $('run-time').innerHTML = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}<small>,${d}</small>`;
+  $('run-dist').textContent = fmtInt(run.dist);
+  $('run-steps').textContent = fmtInt(run.dist * RATE.stepsPerMeter);
+  const paceSec = run.dist > 30 ? (run.t / (run.dist/1000)) : 0;
+  $('run-pace').textContent = paceSec ? `${Math.floor(paceSec/60)}:${String(Math.floor(paceSec%60)).padStart(2,'0')}` : '–:––';
+  $('run-impact-txt').innerHTML =
+    `<b class="num">⚡ ${fmtInt(run.dist*RATE.energyPerMeter)}</b> énergie récoltée — à distribuer sur vos missions après la course`;
+  const prog = Math.min(run.dist/5000, 1);
+  runPath.style.strokeDashoffset = run.pathLen * (1-prog);
+  const pt = runPath.getPointAtLength(run.pathLen * prog);
+  runDot.setAttribute('cx', pt.x); runDot.setAttribute('cy', pt.y);
+}
+let msTimer;
+function milestone(txt){
+  $('milestone-txt').textContent = txt;
+  $('milestone').classList.add('show');
+  clearTimeout(msTimer); msTimer = setTimeout(()=>$('milestone').classList.remove('show'), 2200);
+}
+$('btn-pause').addEventListener('click',()=>{
+  run.paused = !run.paused;
+  $('btn-pause').textContent = run.paused ? 'Reprendre' : 'Pause';
+});
+$('btn-finish').addEventListener('click',()=>{
+  run.active = false;
+  cancelAnimationFrame(run.raf);
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60);
+  $('sum-dist').textContent = run.dist>=1000 ? (run.dist/1000).toLocaleString('fr-FR',{maximumFractionDigits:2})+' km' : fmtInt(run.dist)+' m';
+  $('sum-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  $('sum-pace').textContent = $('run-pace').textContent;
+  $('sum-impact-line').textContent = `+${fmtInt(run.dist*RATE.energyPerMeter)} ⚡ récoltés`;
+  $('sum-title').value = new Date().getHours() < 12 ? 'Course du matin' : (new Date().getHours() < 18 ? 'Course du midi' : 'Course du soir');
+  $('run-overlay').classList.remove('open');
+  $('sum-overlay').classList.add('open');
+});
+
+/* ================= PUBLICATION ================= */
+function earnEnergy(dist){
+  const energy = Math.round(dist * RATE.energyPerMeter);
+  state.energyBal += energy;
+  state.corpEnergy += energy;
+  state.meKm += dist/1000;
+  state.todaySteps += Math.round(dist * RATE.stepsPerMeter);
+  WEEK[6].steps = Math.round(state.todaySteps);
+  store.set('energyBal', state.energyBal);
+  store.set('corpEnergy', state.corpEnergy);
+  store.set('todaySteps', state.todaySteps);
+  store.set('meKm', Math.round(state.meKm*10)/10);
+  return energy;
+}
+function publishPost({title, dist, time, pace}){
+  const post = {
+    id:'u'+Date.now(), n:'Camille Roux', team:'Marketing', when:'à l’instant',
+    title, dist, time, pace,
+    bravos:0, comments:0,
+    route:'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35'
+  };
+  state.posts.unshift(post);
+  store.set('posts', state.posts.slice(0,10));
+  dbAddActivity(post);
+  renderFeed(); renderCorp(); renderToday(); renderWeek(); renderMissions();
+}
+$('btn-publish').addEventListener('click',()=>{
+  const energy = earnEnergy(run.dist);
+  const m = Math.floor(run.t/60), s = Math.floor(run.t%60);
+  publishPost({
+    title: $('sum-title').value.trim() || 'Ma course', dist: Math.round(run.dist),
+    time: `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`,
+    pace: $('sum-pace').textContent
+  });
+  $('sum-overlay').classList.remove('open');
+  goHome();
+  confetti();
+  toast(`Publié ! ⚡ ${fmtInt(energy)} ajoutés à votre réserve — à distribuer dans Missions`);
+});
+$('btn-discard').addEventListener('click',()=>{
+  $('sum-overlay').classList.remove('open');
+  toast('Course enregistrée sans publication');
+});
+$('btn-res-publish').addEventListener('click',()=>{
+  const km = parseFloat(String($('res-dist').value).replace(',','.')) || 0;
+  if(km<=0){ toast('Indiquez une distance'); return; }
+  const dist = Math.round(km*1000);
+  const energy = earnEnergy(dist);
+  publishPost({
+    title: $('res-title').value.trim() || $('res-type').value,
+    dist, time:'—', pace:'—'
+  });
+  closeSheets(); goHome();
+  toast(`Résultat ajouté : ⚡ ${fmtInt(energy)} d’énergie récoltée`);
+});
+$('btn-ch-send').addEventListener('click',()=>{
+  closeSheets();
+  toast(`Défi envoyé à l’équipe ${$('ch-target').value} — en attente d’acceptation`);
+});
+function goHome(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id==='scr-home'));
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.nav==='scr-home'));
+  currentScreen = 'scr-home';
+  const scr = $('scr-home'); scr.scrollTop = 0;
+}
+
+/* ================= BRAVOS ================= */
+$('feed').addEventListener('click',e=>{
+  const btn = e.target.closest('.bravo');
+  if(!btn) return;
+  const count = btn.querySelector('.bravo-count');
+  const on = btn.classList.toggle('bravoed');
+  btn.setAttribute('aria-pressed', on);
+  count.textContent = +count.textContent + (on?1:-1);
+});
+
+/* ================= CONFETTI (léger) ================= */
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = $('confetti'), ctx = cv.getContext('2d');
+  const r = cv.getBoundingClientRect(); cv.width = r.width; cv.height = r.height;
+  const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#0F3FA8';
+  const colors = [brand, '#0A0A0A', '#8A8A8A', brand];
+  const parts = Array.from({length:70},()=>({
+    x: cv.width/2 + (Math.random()-.5)*80, y: cv.height*.55,
+    vx:(Math.random()-.5)*7, vy:-(4+Math.random()*7),
+    s:4+Math.random()*4, c:colors[Math.floor(Math.random()*colors.length)], a:1, rot:Math.random()*Math.PI
+  }));
+  let frames = 0;
+  (function anim(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.22; p.a-=.011; p.rot+=.1;
+      if(p.a<=0) return;
+      ctx.save(); ctx.globalAlpha=Math.max(p.a,0); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); ctx.restore();
+    });
+    if(++frames<130) requestAnimationFrame(anim);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* ================= SÉLECTEUR DE TYPO (outil maquette) ================= */
+const TYPOS = {
+  act:{label:'Actuelle', sub:'Anton · Barlow Condensed · Archivo', disp:'"Anton"', hero:'"Archivo"', num:'"Barlow Condensed"', body:'"Archivo"', wDisp:400, wHero:900, wNum:700, sBig:'96px', sName:'33px', it:false},
+  A:{label:'A — Le stadier', sub:'Oswald · Source Sans', disp:'"Oswald"', hero:'"Oswald"', num:'"Oswald"', body:'"Source Sans 3"', wDisp:700, wHero:700, wNum:600, sBig:'82px', sName:'30px', it:false},
+  C:{label:'C — Le contemporain', sub:'Bricolage Grotesque · Figtree', disp:'"Bricolage Grotesque"', hero:'"Bricolage Grotesque"', num:'"Bricolage Grotesque"', body:'"Figtree"', wDisp:800, wHero:800, wNum:800, sBig:'72px', sName:'29px', it:false},
+  D:{label:'D — Le duo contrasté', sub:'Unbounded · Big Shoulders', disp:'"Unbounded"', hero:'"Unbounded"', num:'"Big Shoulders"', body:'"Archivo"', wDisp:700, wHero:700, wNum:700, sBig:'88px', sName:'23px', it:false},
+  F:{label:'F — Le motorsport', sub:'Saira · Saira Extra Condensed', disp:'"Saira"', hero:'"Saira"', num:'"Saira Extra Condensed"', body:'"Saira"', wDisp:800, wHero:800, wNum:700, sBig:'100px', sName:'30px', it:false},
+  G:{label:'G — Le chronométreur', sub:'Archivo Black · IBM Plex Mono', disp:'"Archivo"', hero:'"Archivo"', num:'"IBM Plex Mono"', body:'"IBM Plex Sans"', wDisp:900, wHero:900, wNum:600, sBig:'58px', sName:'31px', it:false},
+  I:{label:'I — Le stencil', sub:'Saira Stencil One · Saira Condensed', disp:'"Saira Stencil One"', hero:'"Saira Stencil One"', num:'"Saira Condensed"', body:'"Saira"', wDisp:400, wHero:400, wNum:700, sBig:'82px', sName:'27px', it:false},
+  J:{label:'J — La vitesse', sub:'Exo 2, tout en italique', disp:'"Exo 2"', hero:'"Exo 2"', num:'"Exo 2"', body:'"Exo 2"', wDisp:900, wHero:900, wNum:800, sBig:'68px', sName:'29px', it:true},
+};
+function applyTypo(key){
+  const t = TYPOS[key] || TYPOS.act;
+  const r = document.documentElement.style;
+  r.setProperty('--f-disp', t.disp); r.setProperty('--f-hero', t.hero);
+  r.setProperty('--f-num', t.num);  r.setProperty('--f-body', t.body);
+  r.setProperty('--w-disp', t.wDisp); r.setProperty('--w-hero', t.wHero); r.setProperty('--w-num', t.wNum);
+  r.setProperty('--s-big', t.sBig); r.setProperty('--s-name', t.sName);
+  r.setProperty('--fs-disp', t.it ? 'italic' : 'normal');
+  r.setProperty('--fs-num', t.it ? 'italic' : 'normal');
+  store.set('typo', key);
+  document.querySelectorAll('.typo-row').forEach(row=>row.setAttribute('aria-pressed', row.dataset.typo===key));
+}
+function renderTypoRows(){
+  $('typo-rows').innerHTML = Object.entries(TYPOS).map(([k,t])=>`
+    <button class="typo-row" data-typo="${k}" aria-pressed="false">
+      <span class="tr-name">${t.label}<small>${t.sub}</small></span>
+      <span class="tr-sample num" style="font-family:${t.num.replace(/"/g,'&quot;')};font-weight:${t.wNum};${t.it?'font-style:italic;':''}">4 320 <span style="font-family:${t.disp.replace(/"/g,'&quot;')};font-weight:${t.wDisp}">Aa</span></span>
+    </button>`).join('');
+  $('typo-rows').querySelectorAll('.typo-row').forEach(row=>{
+    row.addEventListener('click',()=>applyTypo(row.dataset.typo));
+  });
+}
+$('typo-btn').addEventListener('click',()=>{ closeFan(); $('sheet-typo').classList.add('open'); scrim.classList.add('open'); });
+
+/* ================= RACCOURCIS ACCUEIL ================= */
+const goMissions = ()=>document.querySelector('.navbtn[data-nav="scr-missions"]').click();
+$('go-missions').addEventListener('click', goMissions);
+$('go-impact').addEventListener('click', goMissions);
+$('go-challenges').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
+$('go-duel').addEventListener('click', ()=>document.querySelector('.navbtn[data-nav="scr-challenges"]').click());
+
+/* ================= INIT ================= */
+renderStories(); renderFeed(); renderMissions(); renderMySum(); renderCorp(); renderToday(); renderLeaderboard(); renderWeek();
+renderTypoRows(); applyTypo(store.get('typo','act'));
+dbInit();
+</script>
+</body>
+</html>
