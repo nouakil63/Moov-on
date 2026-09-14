@@ -1,0 +1,13 @@
+{
+  "id": "./",
+  "name": "Moov’On — bouger ensemble",
+  "short_name": "Moov’On",
+  "description": "Votre collectif, votre énergie, votre impact solidaire.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F4F8",
+  "theme_color": "#1543B7",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
