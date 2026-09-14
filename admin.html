@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moov'On Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* ============ TOKENS (mêmes que l'app employé) ============ */
+:root{
+  --surface:#FFFFFF; --card:#FFFFFF; --panel:#0A0A0A; --panel-ink:#FFFFFF; --panel-mut:#9A9A9A;
+  --sunken:#F2F2F2; --line:#E4E4E4; --ink:#0A0A0A; --ink-2:#4A4A4A; --ink-3:#8A8A8A;
+  --brand:#0F3FA8; --brand-ink:#FFFFFF; --brand-dim:#0B2F7E; --brand-panel:#6C93FF;
+  --ok:#177A44; --warn:#A97717; --focus:#0E63C4;
+  color-scheme:light dark;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --surface:#0C0C0C; --card:#141414; --panel:#1B1B1B; --panel-ink:#FFF; --panel-mut:#8F8F8F;
+    --sunken:#1D1D1D; --line:#2A2A2A; --ink:#F4F4F4; --ink-2:#B9B9B9; --ink-3:#7E7E7E;
+    --brand:#7C9CFF; --brand-ink:#0A0F1E; --brand-dim:#5B7FF0; --brand-panel:#8FAEFF;
+    --ok:#3FA96F; --warn:#D9A845;
+  }
+}
+:root[data-theme="dark"]{
+  --surface:#0C0C0C; --card:#141414; --panel:#1B1B1B; --panel-ink:#FFF; --panel-mut:#8F8F8F;
+  --sunken:#1D1D1D; --line:#2A2A2A; --ink:#F4F4F4; --ink-2:#B9B9B9; --ink-3:#7E7E7E;
+  --brand:#7C9CFF; --brand-ink:#0A0F1E; --brand-dim:#5B7FF0; --brand-panel:#8FAEFF;
+  --ok:#3FA96F; --warn:#D9A845;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--surface);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100dvh;display:flex}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+.num{font-variant-numeric:tabular-nums}
+.cond{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
+
+/* ============ SIDEBAR ============ */
+.side{width:232px;flex:none;background:var(--panel);color:var(--panel-ink);display:flex;flex-direction:column;position:sticky;top:0;height:100dvh}
+.side .logo{font-family:"Anton",Impact,sans-serif;font-size:21px;letter-spacing:.02em;text-transform:uppercase;padding:22px 20px 4px}
+.side .logo em{font-style:normal;color:var(--brand-panel)}
+.side .sub{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-mut);padding:0 20px 18px}
+.side nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
+.snav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--panel-mut);font-weight:600;font-size:13.5px;text-align:left}
+.snav svg{flex:none}
+.snav:hover{background:rgba(255,255,255,.06);color:var(--panel-ink)}
+.snav.active{background:var(--brand);color:var(--brand-ink)}
+.side .foot{padding:14px 20px 18px;font-size:11px;color:var(--panel-mut);border-top:1px solid rgba(255,255,255,.09)}
+.side .foot a{color:var(--brand-panel);font-weight:700;text-decoration:none}
+.sb-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--warn)}
+.sb-dot.on{background:var(--ok)}
+
+/* ============ CONTENT ============ */
+.main{flex:1;min-width:0;padding:0 0 60px}
+.pagehead{padding:26px 30px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.pagehead h1{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:30px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.pagehead .sub{color:var(--ink-3);font-size:12px;margin-top:6px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.asec{display:none}
+.asec.active{display:block}
+.wrap{padding:22px 30px;max-width:1080px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}.side{width:70px}.side .logo{font-size:13px;padding:18px 8px 2px;text-align:center}.side .sub,.snav span,.side .foot{display:none}.snav{justify-content:center}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.card h3{font-size:14px;font-weight:800;letter-spacing:-.01em}
+.card .hint{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;border-radius:10px;padding:11px 16px;font-size:13px;letter-spacing:.03em;text-transform:uppercase;transition:transform .1s ease}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--brand);color:var(--brand-ink)}
+.btn.dark{background:var(--ink);color:var(--surface)}
+.btn.ghost{border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:11.5px;border-radius:8px}
+.ticket{clip-path:polygon(0 0,100% 0,100% 100%,10px 100%,0 calc(100% - 10px))}
+label.f{display:block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:12px 0 5px}
+label.f:first-of-type{margin-top:0}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:900px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px}
+.kpi .l{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .v{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:38px;line-height:1;margin-top:7px;white-space:nowrap}
+.kpi .d{font-size:11.5px;font-weight:600;color:var(--ink-2);margin-top:5px}
+.kpi.hero{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.kpi.hero .l{color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.kpi.hero .d{color:color-mix(in srgb,var(--brand-ink) 75%,var(--brand))}
+
+/* bars chart */
+.bars{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.brow{display:flex;align-items:center;gap:10px}
+.brow .n{width:86px;font-weight:700;font-size:12.5px;flex:none}
+.brow .track{flex:1;height:16px;background:var(--sunken);border-radius:4px;position:relative}
+.brow .track i{position:absolute;left:0;top:0;bottom:0;background:var(--brand);border-radius:4px 3px 3px 4px}
+.brow .v{width:64px;text-align:right;font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;color:var(--ink-2);flex:none}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:0}
+td input{width:90px;padding:6px 8px;border-radius:8px}
+td input.wide{width:100%;min-width:130px}
+.mic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--card));color:var(--brand);flex:none}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 10px}
+.pill.ok{background:color-mix(in srgb,var(--ok) 14%,var(--card));color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 16%,var(--card));color:var(--warn)}
+.meter{height:6px;border-radius:99px;background:var(--sunken);overflow:hidden;min-width:90px}
+.meter i{display:block;height:100%;background:var(--brand);border-radius:99px}
+
+/* perso preview */
+.phone{width:290px;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:var(--surface);flex:none;box-shadow:0 20px 44px -24px rgba(0,0,0,.4)}
+.ph-hero{background:var(--brand);color:var(--brand-ink);padding:16px}
+.ph-date{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.ph-name{font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:-.01em;margin-top:8px}
+.ph-big{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:54px;line-height:.85;margin-top:10px}
+.ph-big small{font-size:15px;color:color-mix(in srgb,var(--brand-ink) 62%,var(--brand))}
+.ph-ticket{margin-top:12px;background:var(--surface);color:var(--brand-dim);clip-path:polygon(0 0,100% 0,100% 100%,9px 100%,0 calc(100% - 9px));padding:8px 10px;font-weight:800;font-size:10.5px}
+.ph-ticket small{display:block;font-weight:600;font-size:8px;letter-spacing:.05em;text-transform:uppercase;opacity:.7}
+.ph-card{margin:12px;border:1px solid var(--line);border-radius:16px;padding:11px;font-size:11px;font-weight:700}
+.ph-card .o{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.ph-logo{width:30px;height:30px;border-radius:9px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:15px;font-weight:800}
+
+/* distrib */
+.qrbox{width:172px;height:172px;background:#fff;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;padding:10px}
+.qrbox img,.qrbox canvas{max-width:100%;max-height:100%}
+.steps{counter-reset:s;display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step::before{counter-increment:s;content:counter(s);font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:16px;background:var(--ink);color:var(--surface);width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none}
+.step b{display:block;font-size:13px}
+.step p{font-size:12px;color:var(--ink-2)}
+.note{margin-top:14px;padding:11px 13px;border-radius:12px;background:color-mix(in srgb,var(--warn) 12%,var(--card));color:var(--warn);font-size:12px;font-weight:600}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);background:var(--ink);color:var(--surface);font-weight:600;font-size:13px;padding:12px 18px;border-radius:10px;opacity:0;transition:.3s ease;z-index:95;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<aside class="side">
+  <div class="logo">Moov’<em>On</em></div>
+  <div class="sub">Espace administrateur</div>
+  <nav>
+    <button class="snav active" data-sec="overview"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span>Vue d’ensemble</span></button>
+    <button class="snav" data-sec="missions"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg><span>Missions & assos</span></button>
+    <button class="snav" data-sec="defis"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 4H7v5a5 5 0 0 0 10 0V4Z"/></svg><span>Défis</span></button>
+    <button class="snav" data-sec="equipes"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Équipes & employés</span></button>
+    <button class="snav" data-sec="budget"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A3.5 3.5 0 0 0 12 7.5c-2 0-3.5 2-3.5 4.5s1.5 4.5 3.5 4.5A3.5 3.5 0 0 0 14.8 15M7 10.5h5M7 13.5h5"/></svg><span>Budget & barème</span></button>
+    <button class="snav" data-sec="distrib"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg><span>Distribution de l’app</span></button>
+    <button class="snav" data-sec="perso"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17 3h4v4M21 3l-7.5 7.5"/><path d="M12 21a9 9 0 1 1 9-9c0 2-1.5 3-3 3h-2a2 2 0 0 0-1.5 3.3c.6.7.5 2.7-2.5 2.7Z"/></svg><span>Personnalisation</span></button>
+  </nav>
+  <div class="foot">
+    <div><span class="sb-dot" id="sb-dot"></span><span id="sb-state">Mode démo (local)</span></div>
+    <div style="margin-top:6px"><a href="index.html">Voir l’app employé →</a></div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- ================= VUE D'ENSEMBLE ================= -->
+  <section class="asec active" id="sec-overview">
+    <div class="pagehead"><div><h1>Vue d’ensemble</h1><div class="sub" id="ov-org">Banque Corélis · Programme Élan · Septembre</div></div></div>
+    <div class="wrap">
+      <div class="kpis">
+        <div class="kpi hero"><div class="l">Énergie collective</div><div class="v num" id="k-energy">14,4 M ⚡</div><div class="d num">72 % de l’objectif mensuel</div></div>
+        <div class="kpi"><div class="l">Énergie distribuée</div><div class="v num" id="k-given">8,0 M ⚡</div><div class="d">versée aux missions</div></div>
+        <div class="kpi"><div class="l">Budget consommé</div><div class="v num" id="k-eur">12 800 €</div><div class="d num" id="k-eur-sub">sur 100 000 € engagés</div></div>
+        <div class="kpi"><div class="l">Collègues actifs</div><div class="v num">642</div><div class="d num">sur 810 inscrits · 79 %</div></div>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div class="card">
+          <h3>Kilomètres par équipe — septembre</h3>
+          <div class="bars" id="ov-bars"></div>
+        </div>
+        <div class="card">
+          <h3>Dernières activités</h3>
+          <div class="hint">Publications des employés (temps réel si Supabase est branché)</div>
+          <table style="margin-top:8px"><tbody id="ov-acts"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MISSIONS ================= -->
+  <section class="asec" id="sec-missions">
+    <div class="pagehead">
+      <div><h1>Missions & associations</h1><div class="sub">Barèmes, objectifs et partenaires — modifiés ici, appliqués dans l’app</div></div>
+      <button class="btn primary ticket" id="btn-newm">+ Nouvelle mission</button>
+    </div>
+    <div class="wrap">
+      <div class="card" style="overflow-x:auto">
+        <table>
+          <thead><tr><th></th><th>Mission</th><th>Association</th><th>Barème (⚡/unité)</th><th>Objectif (⚡)</th><th>Progression</th><th></th></tr></thead>
+          <tbody id="m-rows"></tbody>
+        </table>
+      </div>
+      <div class="card" id="newm-card" hidden style="margin-top:16px;max-width:560px">
+        <h3>Nouvelle mission</h3>
+        <label class="f">Nom de la mission</label><input id="nm-name" placeholder="ex. Forêt urbaine" style="width:100%">
+        <label class="f">Association partenaire</label><input id="nm-org" placeholder="ex. Canopée Demain" style="width:100%">
+        <div class="grid2">
+          <div><label class="f">Barème (⚡ pour 1 unité)</label><input id="nm-per" type="number" value="500" min="1"></div>
+          <div><label class="f">Objectif collectif (⚡)</label><input id="nm-goal" type="number" value="1000000" min="1"></div>
+        </div>
+        <label class="f">Unité financée</label><input id="nm-unit" placeholder="ex. arbre planté" style="width:100%">
+        <label class="f">Icône</label>
+        <select id="nm-icon"><option value="cross">Croix (secours)</option><option value="paw">Patte (animaux)</option><option value="heart">Cœur (santé/enfants)</option><option value="tree">Arbre (environnement)</option><option value="bowl">Bol (alimentaire)</option></select>
+        <div style="margin-top:16px;display:flex;gap:10px"><button class="btn primary" id="nm-save">Créer la mission</button><button class="btn ghost" id="nm-cancel">Annuler</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DÉFIS ================= -->
+  <section class="asec" id="sec-defis">
+    <div class="pagehead">
+      <div><h1>Défis</h1><div class="sub">Défis collectifs et duels d’équipes</div></div>
+      <button class="btn primary ticket" onclick="toast('Création de défi — écran à venir dans la maquette')">+ Créer un défi</button>
+    </div>
+    <div class="wrap grid2">
+      <div class="card">
+        <h3>Défi du mois</h3><div class="hint">Affiché en bulle sur l’accueil de tous les employés</div>
+        <label class="f">Intitulé</label><input value="La forêt Corélis — 500 arbres" style="width:100%">
+        <div class="grid2">
+          <div><label class="f">Mission liée</label><select><option>La forêt Corélis</option><option>Repas chauds</option><option>Urgence & Secours</option></select></div>
+          <div><label class="f">Objectif (unités)</label><input type="number" value="500"></div>
+        </div>
+        <div class="grid2">
+          <div><label class="f">Début</label><input type="date" value="2026-09-01"></div>
+          <div><label class="f">Fin</label><input type="date" value="2026-09-30"></div>
+        </div>
+        <div style="margin-top:14px"><button class="btn dark" onclick="toast('Défi du mois enregistré (démo)')">Enregistrer</button></div>
+      </div>
+      <div class="card">
+        <h3>Duel de la semaine</h3><div class="hint">L’équipe gagnante choisit l’association du mois suivant</div>
+        <div class="grid2">
+          <div><label class="f">Équipe A</label><select><option>Marketing</option><option>Finance</option><option>RH</option><option>IT & Data</option></select></div>
+          <div><label class="f">Équipe B</label><select><option>Finance</option><option>Marketing</option><option>RH</option><option>IT & Data</option></select></div>
+        </div>
+        <label class="f">Critère</label><select><option>Le plus de km en 7 jours</option><option>Le plus de pas en 7 jours</option><option>Le plus de sorties</option></select>
+        <div style="margin-top:14px;display:flex;gap:10px">
+          <button class="btn dark" onclick="toast('Duel programmé pour lundi (démo)')">Programmer</button>
+          <button class="btn ghost" onclick="toast('Duel en cours : Marketing 236 km · Finance 224 km')">Voir le duel en cours</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ÉQUIPES ================= -->
+  <section class="asec" id="sec-equipes">
+    <div class="pagehead">
+      <div><h1>Équipes & employés</h1><div class="sub">Structure des équipes et accès des collaborateurs</div></div>
+      <button class="btn primary ticket" onclick="toast('Équipe créée (démo)')">+ Nouvelle équipe</button>
+    </div>
+    <div class="wrap">
+      <div class="card" style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Équipe</th><th>Membres</th><th>Km / mois</th><th>⚡ récoltés</th><th>Participation</th><th></th></tr></thead>
+          <tbody id="t-rows"></tbody>
+        </table>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div class="card">
+          <h3>Inviter des employés</h3><div class="hint">Un email = une invitation avec le lien de téléchargement</div>
+          <label class="f">Adresses (une par ligne)</label>
+          <textarea id="inv-mails" rows="4" style="width:100%" placeholder="prenom.nom@corelis.fr&#10;…"></textarea>
+          <div style="margin-top:12px"><button class="btn primary" id="inv-send">Envoyer les invitations</button></div>
+        </div>
+        <div class="card">
+          <h3>Inscription libre par domaine</h3><div class="hint">Toute adresse de ce domaine peut créer un compte sans invitation</div>
+          <label class="f">Domaine autorisé</label><input value="@corelis.fr" style="width:100%">
+          <label class="f">Validation</label>
+          <select><option>Automatique (email vérifié)</option><option>Manuelle par un administrateur</option></select>
+          <div style="margin-top:12px"><button class="btn dark" onclick="toast('Règle de domaine enregistrée (démo)')">Enregistrer</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BUDGET ================= -->
+  <section class="asec" id="sec-budget">
+    <div class="pagehead"><div><h1>Budget & barème</h1><div class="sub">Les euros restent ici — les employés ne voient que l’énergie</div></div></div>
+    <div class="wrap grid2">
+      <div class="card">
+        <h3>Enveloppe mécénat</h3>
+        <label class="f">Budget annuel engagé (€)</label><input id="b-budget" type="number" value="100000">
+        <label class="f">Valeur d’1 ⚡ (€)</label><input id="b-rate" type="number" step="0.0001" value="0.0016">
+        <label class="f">Objectif collectif mensuel (⚡)</label><input id="b-goal" type="number" value="20000000">
+        <div style="margin-top:14px"><button class="btn dark" id="b-save">Enregistrer</button></div>
+        <div class="note">Démo : le taux « 1 mètre = 1 ⚡ » est fixe ; la valeur en € d’un ⚡ et le plafond budgétaire sont réglés ici et jamais montrés aux employés.</div>
+      </div>
+      <div class="card">
+        <h3>Simulateur</h3><div class="hint">Estimez la consommation du budget avant de fixer le barème</div>
+        <label class="f">Employés actifs</label><input id="s-emp" type="number" value="650">
+        <label class="f">Pas moyens / jour / employé</label><input id="s-steps" type="number" value="7500">
+        <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+          <div class="kpi" style="border:0;padding:0">
+            <div class="l">Projection mensuelle</div>
+            <div class="v num" id="s-energy">83,3 M ⚡</div>
+            <div class="d num" id="s-eur">≈ 133 333 € / mois — au-dessus du budget !</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DISTRIBUTION ================= -->
+  <section class="asec" id="sec-distrib">
+    <div class="pagehead"><div><h1>Distribution de l’app</h1><div class="sub">Comment vos employés installent Moov’On — sans App Store public</div></div></div>
+    <div class="wrap grid2">
+      <div class="card">
+        <h3>Lien de l’application</h3><div class="hint">Le lien unique à partager (email interne, intranet, affiche QR)</div>
+        <label class="f">URL</label>
+        <div style="display:flex;gap:8px"><input id="d-url" style="flex:1" placeholder="https://moov-on.vercel.app"><button class="btn dark sm" id="d-copy">Copier</button></div>
+        <div style="display:flex;gap:16px;align-items:flex-start;margin-top:16px">
+          <div class="qrbox" id="d-qr"></div>
+          <div style="font-size:12px;color:var(--ink-2);line-height:1.6">
+            Le QR code se régénère avec l’URL.<br>Imprimez-le pour les affiches d’ascenseur, les écrans d’accueil et le livret d’onboarding.
+            <div style="margin-top:10px"><button class="btn ghost sm" id="d-save">Enregistrer l’URL</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Publication sur les stores (app native)</h3><div class="hint">Pour la vraie app iOS/Android, hors du store public</div>
+        <div class="steps">
+          <div class="step"><div><b>iOS — distribution non répertoriée</b><p>Apple propose l’« Unlisted App Distribution » : l’app passe la validation App Store normale mais n’apparaît ni dans la recherche ni dans les classements — seul le lien direct permet de l’installer. Se demande via un formulaire à Apple ; pas de compte entreprise particulier requis au-delà du compte développeur.</p></div></div>
+          <div class="step"><div><b>Android — Google Play privé</b><p>Deux options : canal fermé (installation réservée à une liste d’emails) ou « managed Google Play » pour une diffusion limitée à l’organisation.</p></div></div>
+          <div class="step"><div><b>Alternative 100 % lien</b><p>La version web (PWA) s’installe depuis le navigateur « Ajouter à l’écran d’accueil » — zéro store, déploiement immédiat. C’est ce que fait la maquette actuelle.</p></div></div>
+        </div>
+        <div class="note">À vérifier au moment du dépôt : les conditions exactes de l’Unlisted App Distribution d’Apple évoluent — prévoir la demande dans le planning (quelques jours de délai).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PERSONNALISATION ================= -->
+  <section class="asec" id="sec-perso">
+    <div class="pagehead">
+      <div><h1>Personnalisation</h1><div class="sub">Marque blanche — l’app aux couleurs de l’entreprise</div></div>
+      <button class="btn primary ticket" id="p-publish">Publier dans l’app</button>
+    </div>
+    <div class="wrap" style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start">
+      <div class="card" style="flex:1;min-width:300px;max-width:480px">
+        <h3>Identité</h3>
+        <label class="f">Nom de l’entreprise</label><input id="p-org" value="Banque Corélis" style="width:100%">
+        <label class="f">Nom du programme</label><input id="p-prog" value="Programme Élan" style="width:100%">
+        <label class="f">Logo (emoji ou initiales)</label><input id="p-logo" value="⚡" maxlength="4" style="width:90px">
+        <label class="f">Couleur signature</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input id="p-color" type="color" value="#0F3FA8" style="width:56px;height:40px;padding:3px">
+          <input id="p-hex" value="#0F3FA8" style="width:110px" class="num">
+        </div>
+        <div class="hint" style="margin-top:12px">La couleur est déclinée automatiquement (foncée pour les textes, claire pour les fonds sombres). « Publier » écrit dans la base : tous les employés voient le changement au prochain lancement.</div>
+        <div class="note" id="p-note" hidden>Supabase non configuré : l’aperçu fonctionne, la publication sera locale à ce navigateur.</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px">Aperçu en direct</div>
+        <div class="phone">
+          <div class="ph-hero">
+            <div class="ph-date" id="pv-date">Lundi 14 septembre · Marketing</div>
+            <div class="ph-name">Bonjour Camille</div>
+            <div class="ph-big num">4 320<small> PAS</small></div>
+            <div class="ph-ticket"><small>Énergie à distribuer</small>6 750 ⚡ — choisir mes missions</div>
+          </div>
+          <div class="ph-card">
+            <div style="display:flex;gap:9px;align-items:center">
+              <span class="ph-logo" id="pv-logo">⚡</span>
+              <div><div class="o" id="pv-org">Banque Corélis · Programme Élan</div><div class="num" style="margin-top:2px">14,4 M ⚡ · 418 arbres · 3 120 repas</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toastEl" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const fmtInt = n => Math.round(n).toLocaleString('fr-FR');
+const fmtE = n => n >= 1e6 ? (n/1e6).toLocaleString('fr-FR',{maximumFractionDigits:1}) + ' M'
+              : n >= 1e4 ? Math.round(n/1000).toLocaleString('fr-FR') + ' k' : fmtInt(n);
+let toastTimer;
+function toast(m){ const t=$('toastEl'); t.textContent=m; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2800); }
+
+const SB = (() => { try{
+  const c = window.MOOVON_SUPABASE;
+  if(c && c.url && c.anonKey && window.supabase) return window.supabase.createClient(c.url, c.anonKey);
+}catch(e){} return null; })();
+
+/* ---------- navigation ---------- */
+document.querySelectorAll('.snav').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.snav').forEach(x=>x.classList.toggle('active',x===b));
+  document.querySelectorAll('.asec').forEach(s=>s.classList.toggle('active', s.id==='sec-'+b.dataset.sec));
+}));
+
+/* ---------- marque ---------- */
+function shade(hex, mixWith, ratio){
+  const h = hex.replace('#',''); if(h.length!==6) return hex;
+  const [r,g,b] = [0,2,4].map(i=>parseInt(h.slice(i,i+2),16));
+  const [mr,mg,mb] = mixWith==='w' ? [255,255,255] : [10,15,30];
+  const c = v => Math.round(v).toString(16).padStart(2,'0');
+  return '#'+c(r+(mr-r)*ratio)+c(g+(mg-g)*ratio)+c(b+(mb-b)*ratio);
+}
+function applyBrand(hex){
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex||'')) return;
+  const r = document.documentElement.style;
+  r.setProperty('--brand', hex);
+  r.setProperty('--brand-dim', shade(hex,'d',.28));
+  r.setProperty('--brand-panel', shade(hex,'w',.45));
+}
+
+/* ---------- données démo ---------- */
+const ICONS = {
+  cross:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>',
+  paw:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="8" r="2.2"/><circle cx="12" cy="5.5" r="2.2"/><circle cx="17" cy="8" r="2.2"/><path d="M12 10c3 0 6 2.6 6 5.4 0 2-1.5 3.1-3.2 2.8-1.1-.2-1.9-.7-2.8-.7s-1.7.5-2.8.7C7.5 18.5 6 17.4 6 15.4 6 12.6 9 10 12 10Z"/></svg>',
+  heart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3.4 1-4.5 2.5C10.9 4 9.3 3 7.5 3A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></svg>',
+  tree:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7"/><path d="m9 9 3-7 3 7"/><path d="m7 15 5-6 5 6"/></svg>',
+  bowl:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M7 11V7a2 2 0 0 1 4 0M13 11V5a2 2 0 0 1 4 0v6"/></svg>'
+};
+let missions = [
+  {id:'secours', name:'Urgence & Secours', org:'Premiers Secours Solidaires', per:500, unit:'kit de secours distribué', goal:2000000, got:1240000, icon:'cross'},
+  {id:'animaux', name:'Refuge animalier', org:'Les Quatre Pattes', per:300, unit:'repas pour un animal', goal:1500000, got:890000, icon:'paw'},
+  {id:'enfants', name:'Enfants à l’hôpital', org:'Cœur d’Enfants', per:1000, unit:'heure d’animation offerte', goal:3000000, got:2210000, icon:'heart'},
+  {id:'arbres', name:'La forêt Corélis', org:'Canopée Demain', per:5000, unit:'arbre planté', goal:2500000, got:2090000, icon:'tree'},
+  {id:'repas', name:'Repas chauds', org:'Table Ouverte', per:500, unit:'repas chaud servi', goal:2000000, got:1560000, icon:'bowl'},
+];
+const TEAMS = [
+  {n:'IT & Data', m:118, km:312, e:2140000},{n:'Marketing', m:84, km:236, e:1730000},
+  {n:'Finance', m:102, km:224, e:1610000},{n:'RH', m:58, km:187, e:1240000},
+  {n:'Juridique', m:64, km:141, e:960000},{n:'Direction', m:22, km:96, e:610000},
+];
+let acts = [
+  {n:'Sofiane B.', team:'Finance', title:'Fractionné avant la réunion budget', dist:6200, when:'il y a 25 min'},
+  {n:'Léa Fontaine', team:'RH', title:'Marche du déjeuner', dist:3400, when:'il y a 2 h'},
+  {n:'Marc Delattre', team:'IT & Data', title:'10 km — plein d’énergie', dist:10100, when:'hier'},
+];
+
+/* ---------- rendus ---------- */
+function renderBars(){
+  const max = Math.max(...TEAMS.map(t=>t.km));
+  $('ov-bars').innerHTML = TEAMS.map(t=>`
+    <div class="brow"><span class="n">${t.n}</span>
+      <span class="track"><i style="width:${(t.km/max*100).toFixed(0)}%"></i></span>
+      <span class="v num">${t.km} km</span></div>`).join('');
+}
+function renderActs(){
+  $('ov-acts').innerHTML = acts.slice(0,6).map(a=>`
+    <tr><td><b>${a.n}</b><br><span style="color:var(--ink-3);font-size:11px">${a.team} · ${a.when}</span></td>
+    <td>${a.title}</td><td class="num" style="text-align:right;font-weight:700">+${fmtE(Math.round(a.dist))} ⚡</td></tr>`).join('');
+}
+function renderMissions(){
+  $('m-rows').innerHTML = missions.map(m=>{
+    const pct = Math.min(100, m.got/m.goal*100);
+    return `<tr data-m="${m.id}">
+      <td><span class="mic">${ICONS[m.icon]||ICONS.tree}</span></td>
+      <td><input class="wide" data-f="name" value="${m.name.replace(/"/g,'&quot;')}"><div style="font-size:10.5px;color:var(--ink-3);margin-top:3px">${m.unit}</div></td>
+      <td><input class="wide" data-f="org" value="${m.org.replace(/"/g,'&quot;')}"></td>
+      <td><input data-f="per" type="number" value="${m.per}" min="1"></td>
+      <td><input data-f="goal" type="number" value="${m.goal}" min="1"></td>
+      <td><div class="meter"><i style="width:${pct.toFixed(0)}%"></i></div><div class="num" style="font-size:11px;color:var(--ink-3);margin-top:4px">${fmtE(m.got)} / ${fmtE(m.goal)} · ${Math.round(pct)} %</div></td>
+      <td><button class="btn sm dark" data-save="${m.id}">Enregistrer</button></td>
+    </tr>`;
+  }).join('');
+  $('m-rows').querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>saveMission(b.dataset.save)));
+}
+function renderTeams(){
+  $('t-rows').innerHTML = TEAMS.map(t=>{
+    const part = Math.round(60 + (t.km/312)*35);
+    return `<tr><td><b>${t.n}</b></td><td class="num">${t.m}</td><td class="num">${t.km}</td><td class="num">${fmtE(t.e)} ⚡</td>
+    <td><span class="pill ${part>75?'ok':'warn'}">${part} %</span></td>
+    <td><button class="btn sm ghost" onclick="toast('Fiche équipe — écran à venir')">Gérer</button></td></tr>`;
+  }).join('');
+}
+function refreshKpis(){
+  const given = missions.reduce((s,m)=>s+m.got,0);
+  $('k-given').textContent = fmtE(given) + ' ⚡';
+  const rate = parseFloat($('b-rate').value)||0.0016;
+  const budget = parseFloat($('b-budget').value)||100000;
+  $('k-eur').textContent = fmtInt(given*rate) + ' €';
+  $('k-eur-sub').textContent = `sur ${fmtInt(budget)} € engagés`;
+}
+
+/* ---------- missions : sauvegarde / création ---------- */
+async function saveMission(id){
+  const tr = document.querySelector(`tr[data-m="${id}"]`);
+  const m = missions.find(x=>x.id===id);
+  m.name = tr.querySelector('[data-f=name]').value.trim() || m.name;
+  m.org  = tr.querySelector('[data-f=org]').value.trim() || m.org;
+  m.per  = Math.max(1, +tr.querySelector('[data-f=per]').value || m.per);
+  m.goal = Math.max(1, +tr.querySelector('[data-f=goal]').value || m.goal);
+  if(SB){
+    const {error} = await SB.from('missions').update({name:m.name, org:m.org, per:m.per, goal:m.goal}).eq('id', id);
+    if(error){ toast('Erreur Supabase : ' + error.message); return; }
+  }
+  renderMissions(); refreshKpis();
+  toast(`Mission « ${m.name} » enregistrée${SB?' — visible dans l’app':' (démo locale)'}`);
+}
+$('btn-newm').addEventListener('click',()=>{ $('newm-card').hidden = false; });
+$('nm-cancel').addEventListener('click',()=>{ $('newm-card').hidden = true; });
+$('nm-save').addEventListener('click', async ()=>{
+  const m = {
+    id: ($('nm-name').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'mission-'+Date.now()),
+    name: $('nm-name').value.trim(), org: $('nm-org').value.trim(),
+    per: Math.max(1,+$('nm-per').value||500), unit: $('nm-unit').value.trim()||'unité financée',
+    goal: Math.max(1,+$('nm-goal').value||1000000), got: 0, icon: $('nm-icon').value
+  };
+  if(!m.name || !m.org){ toast('Nom et association obligatoires'); return; }
+  if(SB){
+    const {error} = await SB.from('missions').insert(m);
+    if(error){ toast('Erreur Supabase : ' + error.message); return; }
+  }
+  missions.push(m); renderMissions(); refreshKpis();
+  $('newm-card').hidden = true;
+  toast(`Mission « ${m.name} » créée${SB?' — en ligne dans l’app':' (démo locale)'}`);
+});
+
+/* ---------- budget / simulateur ---------- */
+function simulate(){
+  const emp = +$('s-emp').value||0, steps = +$('s-steps').value||0;
+  const energy = emp * (steps/1.35) * 30;             // 1 m = 1 ⚡, 30 jours
+  const rate = parseFloat($('b-rate').value)||0.0016;
+  const budget = parseFloat($('b-budget').value)||100000;
+  const eur = energy * rate, monthly = budget/12;
+  $('s-energy').textContent = fmtE(energy) + ' ⚡';
+  $('s-eur').textContent = `≈ ${fmtInt(eur)} € / mois — ${eur > monthly ? 'au-dessus' : 'dans'} le budget mensuel (${fmtInt(monthly)} €)`;
+  $('s-eur').style.color = eur > monthly ? 'var(--warn)' : 'var(--ok)';
+}
+['s-emp','s-steps','b-rate','b-budget'].forEach(id=>$(id).addEventListener('input',()=>{simulate();refreshKpis();}));
+$('b-save').addEventListener('click',()=>{ try{localStorage.setItem('moovon:admin-budget',JSON.stringify({b:$('b-budget').value,r:$('b-rate').value,g:$('b-goal').value}));}catch(e){} toast('Budget et barème enregistrés (démo — table dédiée à prévoir)'); });
+
+/* ---------- distribution ---------- */
+let qr = null;
+function renderQr(){
+  const url = $('d-url').value.trim() || 'https://moov-on.vercel.app';
+  $('d-qr').innerHTML = '';
+  if(window.QRCode) qr = new QRCode($('d-qr'), {text:url, width:150, height:150, correctLevel:QRCode.CorrectLevel.M});
+  else $('d-qr').textContent = 'QR indisponible';
+}
+$('d-url').addEventListener('input', renderQr);
+$('d-copy').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText($('d-url').value.trim()); toast('Lien copié'); }
+  catch(e){ toast('Copie impossible — sélectionnez le champ'); }
+});
+$('d-save').addEventListener('click', async ()=>{
+  if(SB){ const {error} = await SB.from('settings').update({app_url:$('d-url').value.trim()}).eq('id','org');
+    if(error){ toast('Erreur Supabase : '+error.message); return; } }
+  toast('URL de distribution enregistrée');
+});
+$('inv-send').addEventListener('click',()=>{
+  const n = $('inv-mails').value.split('\n').map(s=>s.trim()).filter(s=>s.includes('@')).length;
+  toast(n ? `${n} invitation${n>1?'s':''} envoyée${n>1?'s':''} (démo)` : 'Aucune adresse valide');
+});
+
+/* ---------- personnalisation ---------- */
+function previewPerso(){
+  const org = $('p-org').value.trim()||'Banque Corélis';
+  const prog = $('p-prog').value.trim();
+  $('pv-org').textContent = prog ? `${org} · ${prog}` : org;
+  $('pv-logo').textContent = $('p-logo').value.trim()||'⚡';
+  $('ov-org').textContent = `${$('pv-org').textContent} · Septembre`;
+  applyBrand($('p-hex').value.trim());
+}
+$('p-color').addEventListener('input',()=>{ $('p-hex').value = $('p-color').value.toUpperCase(); previewPerso(); });
+$('p-hex').addEventListener('input',()=>{ if(/^#[0-9a-fA-F]{6}$/.test($('p-hex').value.trim())) $('p-color').value = $('p-hex').value.trim(); previewPerso(); });
+['p-org','p-prog','p-logo'].forEach(id=>$(id).addEventListener('input', previewPerso));
+$('p-publish').addEventListener('click', async ()=>{
+  const payload = { org_name:$('p-org').value.trim(), program_name:$('p-prog').value.trim(), brand:$('p-hex').value.trim(), logo:$('p-logo').value.trim() };
+  if(SB){
+    const {error} = await SB.from('settings').update(payload).eq('id','org');
+    if(error){ toast('Erreur Supabase : ' + error.message); return; }
+    toast('Publié — l’app employé est aux couleurs de ' + payload.org_name);
+  } else {
+    try{ localStorage.setItem('moovon:admin-perso', JSON.stringify(payload)); }catch(e){}
+    toast('Enregistré localement (Supabase non configuré)');
+  }
+});
+
+/* ---------- chargement Supabase ---------- */
+async function load(){
+  $('pv-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase()) + ' · Marketing';
+  renderBars(); renderActs(); renderMissions(); renderTeams(); simulate(); refreshKpis(); renderQr();
+  if(!SB){ $('sb-state').textContent = 'Mode démo (local)'; $('p-note').hidden = false; return; }
+  try{
+    const [{data: ms}, {data: as}, {data: org}] = await Promise.all([
+      SB.from('missions').select('*'),
+      SB.from('activities').select('*').order('created_at',{ascending:false}).limit(6),
+      SB.from('settings').select('*').eq('id','org').maybeSingle()
+    ]);
+    if(ms && ms.length) missions = ms.map(r=>({...r, per:+r.per, goal:+r.goal, got:+r.got}));
+    if(as && as.length) acts = as.map(a=>({n:a.author, team:a.team, title:a.title, dist:a.dist, when:new Date(a.created_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}));
+    if(org){
+      $('p-org').value = org.org_name||''; $('p-prog').value = org.program_name||'';
+      $('p-logo').value = org.logo||'⚡';
+      if(/^#[0-9a-fA-F]{6}$/.test(org.brand||'')){ $('p-hex').value = org.brand; $('p-color').value = org.brand; }
+      if(org.app_url) $('d-url').value = org.app_url;
+      previewPerso(); renderQr();
+    }
+    renderMissions(); renderActs(); refreshKpis();
+    $('sb-dot').classList.add('on'); $('sb-state').textContent = 'Connecté à Supabase';
+  }catch(e){
+    console.warn('Supabase indisponible', e);
+    $('sb-state').textContent = 'Supabase injoignable — mode démo';
+    $('p-note').hidden = false;
+  }
+}
+load();
+</script>
+</body>
+</html>
