@@ -4,6 +4,7 @@
   const $=id=>document.getElementById(id);
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const params=new URLSearchParams(location.search);
+  const ADMIN_URL='https://moov-on-vert.vercel.app/admin.html';
   let selectedOrg=Demo.getInvitation(params.get('invite'))?.orgId||Demo.orgs().find(o=>o.id===params.get('org'))?.id||'corelis';
   let loginEmail='',step='email',lastContext='',installPrompt;
   const personas=[
@@ -74,39 +75,26 @@
     if($('auth-error'))$('auth-error').hidden=true;
   }
   function login(email,orgId){
-    try{Demo.login({email,orgId});if(params.get('portal')&&Demo.canAdmin())location.href='admin.html';else sync();}catch(e){error(e.message);}
+    try{Demo.login({email,orgId});if(params.get('portal')&&Demo.canAdmin())location.href=ADMIN_URL;else sync();}catch(e){error(e.message);}
   }
   function switchProfile(email,orgId){MoovApp.stop();document.querySelectorAll('dialog[open]').forEach(d=>d.close());login(email,orgId);MoovApp.goHome();}
   function controls(suffix="rail"){const c=Demo.current();return `<details class="presenter-controls"><summary>Outils de présentation</summary><p>Changer de profil pour explorer les parcours.</p><label for="demo-persona-${suffix}">Profil de démonstration</label><select id="demo-persona-${suffix}">${(!personas.some(p=>p.email===c.user.email)&&c.user.role!=='platform')?`<option selected value="${escape(c.user.email)}|${escape(c.org.id)}">${escape(c.user.name)} · Profil actuel</option>`:''}${personas.map(p=>`<option value="${p.email}|${p.orgId}" ${p.email===c.user.email?'selected':''}>${p.name} · ${p.role} · ${Demo.org(p.orgId).shortName}</option>`).join('')}<option value="hello@moovon.demo|corelis" ${c.user.role==='platform'?'selected':''}>Équipe Moov’On · Administration</option></select><button class="shell-secondary" data-switch>Ouvrir ce profil</button>${Demo.canAdmin()?'<a href="admin.html#presentation">Horloge et remise à zéro →</a>':''}<small>Les profils de présentation sont fictifs.</small></details>`;}
   function renderChrome(){
     const c=Demo.current();if(!c)return;
     $('tenant-strip').innerHTML=`<button id="mobile-account" class="tenant-identity" aria-label="Compte et espace entreprise">${logo(c.org)}<span>${escape(c.org.shortName)}<small>${escape(c.org.program)}</small></span><i>⌄</i></button><span class="live-label">DÉMO</span>`;
-    $('demo-rail').innerHTML=`<a class="moov-wordmark" href="./index.html">moov<span>’</span>on<i>↗</i></a><div class="rail-heading"><span class="eyebrow">VOTRE COLLECTIF</span><h2>On avance<br>ensemble.</h2><p>Chaque mouvement fait grandir l’impact de ${escape(c.org.shortName)}.</p></div><div class="rail-company">${logo(c.org)}<div><b>${escape(c.org.name)}</b><small>${escape(c.org.program)}</small></div></div><nav class="rail-nav" aria-label="Espaces"><a class="selected" href="./index.html"><span>◉</span> Application salarié <i>↗</i></a><button class="rail-admin" data-admin><span aria-hidden="true">▦</span><div><b>Espace administrateur</b><small>${Demo.canAdmin()?'Gérer mon entreprise':'Accès démo'}</small></div><i aria-hidden="true">↗</i></button><button data-account><span>◎</span> Mon compte <i>↗</i></button><button data-install><span>↓</span> Installer sur mon téléphone</button></nav>${controls()}<div class="rail-bottom"><span class="demo-pill"><i></i> Maquette de présentation</span><p>Stories, comptes et personnalisation<br>à explorer en direct.</p><button class="text-button" data-logout>Se déconnecter →</button></div>`;
+    $('demo-rail').innerHTML=`<a class="moov-wordmark" href="./index.html">moov<span>’</span>on<i>↗</i></a><div class="rail-heading"><span class="eyebrow">VOTRE COLLECTIF</span><h2>On avance<br>ensemble.</h2><p>Chaque mouvement fait grandir l’impact de ${escape(c.org.shortName)}.</p></div><div class="rail-company">${logo(c.org)}<div><b>${escape(c.org.name)}</b><small>${escape(c.org.program)}</small></div></div><nav class="rail-nav" aria-label="Espaces"><a class="selected" href="./index.html"><span>◉</span> Application salarié <i>↗</i></a><a class="rail-admin" href="admin.html" aria-label="Espace administrateur — nouvel onglet"><span aria-hidden="true">▦</span><div><b>Espace administrateur</b><small>Missions, équipes et budget</small></div><i aria-hidden="true">↗</i></a><button data-account><span>◎</span> Mon compte <i>↗</i></button><button data-install><span>↓</span> Installer sur mon téléphone</button></nav>${controls()}<div class="rail-bottom"><span class="demo-pill"><i></i> Maquette de présentation</span><p>Stories, comptes et personnalisation<br>à explorer en direct.</p><button class="text-button" data-logout>Se déconnecter →</button></div>`;
     $('profile-account').innerHTML=`<div class="account-actions"><button data-account>Mon compte et mon entreprise <span>→</span></button>${Demo.canAdmin()?'<a href="admin.html">Ouvrir le portail entreprise <span>↗</span></a>':''}<button data-install>Installer l’application <span>↓</span></button><button data-logout>Se déconnecter</button></div>`;
     $('mobile-account').onclick=openAccount;
     wireChrome($('demo-rail'));wireChrome($('profile-account'));
   }
   function wireChrome(root){
-    root.querySelectorAll('[data-admin]').forEach(b=>b.onclick=openAdmin);
+    root.querySelectorAll('a[href="admin.html"]').forEach(a=>{a.href=ADMIN_URL;a.target='_blank';a.rel='noopener noreferrer';});
     root.querySelectorAll('[data-account]').forEach(b=>b.onclick=openAccount);
     root.querySelectorAll('[data-logout]').forEach(b=>b.onclick=logout);
     root.querySelectorAll('[data-install]').forEach(b=>b.onclick=showInstall);
     root.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{const v=root.querySelector('select').value.split('|');switchProfile(...v);});
   }
   function logout(){MoovApp.stop();document.querySelectorAll('dialog[open]').forEach(d=>d.close());Demo.logout();step='email';lastContext='';sync();}
-  function openAdmin(){
-    const c=Demo.current();if(!c)return;
-    if(Demo.canAdmin()){location.href='admin.html';return;}
-    const admins=Demo.users(c.org.id).filter(u=>u.role==='admin'&&u.status==='active');
-    const enter=admin=>{try{MoovApp.stop();Demo.login({email:admin.email,orgId:c.org.id});location.href='admin.html';}catch(e){MoovApp.toast(e.message);}};
-    if(admins.length===1){enter(admins[0]);return;}
-    if(!admins.length){MoovApp.toast('Aucun profil administrateur actif dans cette entreprise.');return;}
-    const d=makeDialog('admin-access-dialog');
-    d.innerHTML=`<div class="dialog-top"><span class="eyebrow">ACCÈS DE DÉMONSTRATION</span><button data-close aria-label="Fermer">×</button></div><h2>Espace administrateur</h2><p>Choisissez le compte qui gère ${escape(c.org.name)}.</p><form><label for="admin-profile">Profil administrateur</label><select id="admin-profile">${admins.map(u=>`<option value="${escape(u.id)}">${escape(u.name)} · ${escape(u.email)}</option>`).join('')}</select><button class="shell-primary">Ouvrir l’administration →</button></form>`;
-    d.querySelector('[data-close]').onclick=()=>d.close();
-    d.querySelector('form').onsubmit=e=>{e.preventDefault();const admin=admins.find(u=>u.id===$('admin-profile').value);if(admin)enter(admin);};
-    d.showModal();
-  }
   function makeDialog(id){let d=$(id);if(!d){d=document.createElement('dialog');d.id=id;d.className='app-dialog';document.body.append(d);d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});}return d;}
   function openAccount(){
     const c=Demo.current();if(!c)return;
