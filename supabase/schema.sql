@@ -87,3 +87,45 @@ drop policy if exists "demo_settings_read"  on public.settings;
 drop policy if exists "demo_settings_write" on public.settings;
 create policy "demo_settings_read"  on public.settings for select using (true);
 create policy "demo_settings_write" on public.settings for update using (true) with check (true);
+
+-- ------------------------------------------------ équipes & membres
+create table if not exists public.teams (
+  id   text primary key,
+  name text not null
+);
+insert into public.teams (id, name) values
+  ('marketing','Marketing'), ('finance','Finance'), ('rh','RH'),
+  ('it','IT & Data'), ('juridique','Juridique'), ('direction','Direction')
+on conflict (id) do nothing;
+
+create table if not exists public.members (
+  id      uuid primary key default gen_random_uuid(),
+  name    text not null,
+  email   text not null unique,
+  team_id text not null references public.teams(id),
+  active  boolean not null default true
+);
+insert into public.members (name, email, team_id) values
+  ('Camille Roux','camille.roux@corelis.fr','marketing'),
+  ('Inès Bel','ines.bel@corelis.fr','marketing'),
+  ('Thomas Marchand','thomas.marchand@corelis.fr','marketing'),
+  ('Sofiane Benali','sofiane.benali@corelis.fr','finance'),
+  ('Claire Danet','claire.danet@corelis.fr','finance'),
+  ('Paul Riva','paul.riva@corelis.fr','finance'),
+  ('Léa Fontaine','lea.fontaine@corelis.fr','rh'),
+  ('Nadia Karim','nadia.karim@corelis.fr','rh'),
+  ('Jules Perrin','jules.perrin@corelis.fr','rh'),
+  ('Marc Delattre','marc.delattre@corelis.fr','it'),
+  ('Awa Diop','awa.diop@corelis.fr','it'),
+  ('Romain Cler','romain.cler@corelis.fr','it'),
+  ('Hugo Lantier','hugo.lantier@corelis.fr','juridique'),
+  ('Sarah Nouri','sarah.nouri@corelis.fr','juridique'),
+  ('Anne Vasseur','anne.vasseur@corelis.fr','direction')
+on conflict (email) do nothing;
+
+alter table public.teams   enable row level security;
+alter table public.members enable row level security;
+drop policy if exists "demo_teams_all"   on public.teams;
+drop policy if exists "demo_members_all" on public.members;
+create policy "demo_teams_all"   on public.teams   for all using (true) with check (true);
+create policy "demo_members_all" on public.members for all using (true) with check (true);
