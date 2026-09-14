@@ -131,6 +131,25 @@ td input.wide{width:100%;min-width:130px}
 .step p{font-size:12px;color:var(--ink-2)}
 .note{margin-top:14px;padding:11px 13px;border-radius:12px;background:color-mix(in srgb,var(--warn) 12%,var(--card));color:var(--warn);font-size:12px;font-weight:600}
 
+/* drawer équipe */
+.scrim2{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:60}
+.scrim2.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:94vw;background:var(--card);border-left:1px solid var(--line);z-index:70;transform:translateX(105%);transition:transform .3s cubic-bezier(.32,.72,.25,1);display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.dr-head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.dr-head h2{font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:20px;text-transform:uppercase;letter-spacing:.02em;flex:1}
+.dr-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center}
+.dr-body{flex:1;overflow-y:auto;padding:16px 20px}
+.dr-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:space-between;align-items:center}
+.mrow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .av{width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.mrow .who{flex:1;min-width:0}
+.mrow .who b{font-size:13px;display:block}
+.mrow .who small{font-size:11px;color:var(--ink-3);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .km{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;color:var(--ink-2);flex:none}
+.mrow select{padding:6px 8px;border-radius:8px;font-size:12px;max-width:110px}
+.mrow.inactive .who,.mrow.inactive .av,.mrow.inactive .km{opacity:.4}
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);background:var(--ink);color:var(--surface);font-weight:600;font-size:13px;padding:12px 18px;border-radius:10px;opacity:0;transition:.3s ease;z-index:95;pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -249,7 +268,7 @@ td input.wide{width:100%;min-width:130px}
   <section class="asec" id="sec-equipes">
     <div class="pagehead">
       <div><h1>Équipes & employés</h1><div class="sub">Structure des équipes et accès des collaborateurs</div></div>
-      <button class="btn primary ticket" onclick="toast('Équipe créée (démo)')">+ Nouvelle équipe</button>
+      <button class="btn primary ticket" id="btn-newteam">+ Nouvelle équipe</button>
     </div>
     <div class="wrap">
       <div class="card" style="overflow-x:auto">
@@ -373,6 +392,28 @@ td input.wide{width:100%;min-width:130px}
 
 </main>
 
+<div class="scrim2" id="scrim2"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Gestion de l’équipe">
+  <div class="dr-head">
+    <h2 id="dr-title">Équipe</h2>
+    <button class="dr-close" id="dr-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="dr-body">
+    <label class="f">Nom de l’équipe</label>
+    <div style="display:flex;gap:8px"><input id="dr-name" style="flex:1"><button class="btn sm dark" id="dr-rename">Renommer</button></div>
+    <label class="f" style="margin-top:20px">Membres <span id="dr-count" class="num" style="color:var(--ink-3)"></span></label>
+    <div id="dr-members"></div>
+    <label class="f" style="margin-top:20px">Ajouter un membre</label>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input id="dr-add-name" placeholder="Prénom Nom">
+      <div style="display:flex;gap:8px"><input id="dr-add-mail" placeholder="prenom.nom@corelis.fr" style="flex:1"><button class="btn sm primary" id="dr-add">Ajouter</button></div>
+    </div>
+  </div>
+  <div class="dr-foot">
+    <span style="font-size:11px;color:var(--ink-3)">Les km affichés sont des valeurs de démonstration.</span>
+    <button class="btn sm ghost" id="dr-del" style="color:#C0392B">Supprimer l’équipe</button>
+  </div>
+</aside>
 <div class="toast" id="toastEl" role="status" aria-live="polite"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -429,11 +470,30 @@ let missions = [
   {id:'arbres', name:'La forêt Corélis', org:'Canopée Demain', per:5000, unit:'arbre planté', goal:2500000, got:2090000, icon:'tree'},
   {id:'repas', name:'Repas chauds', org:'Table Ouverte', per:500, unit:'repas chaud servi', goal:2000000, got:1560000, icon:'bowl'},
 ];
-const TEAMS = [
-  {n:'IT & Data', m:118, km:312, e:2140000},{n:'Marketing', m:84, km:236, e:1730000},
-  {n:'Finance', m:102, km:224, e:1610000},{n:'RH', m:58, km:187, e:1240000},
-  {n:'Juridique', m:64, km:141, e:960000},{n:'Direction', m:22, km:96, e:610000},
+let teams = [
+  {id:'it', name:'IT & Data'},{id:'marketing', name:'Marketing'},{id:'finance', name:'Finance'},
+  {id:'rh', name:'RH'},{id:'juridique', name:'Juridique'},{id:'direction', name:'Direction'},
 ];
+let members = [
+  {id:'d1',name:'Camille Roux',email:'camille.roux@corelis.fr',team_id:'marketing',active:true},
+  {id:'d2',name:'Inès Bel',email:'ines.bel@corelis.fr',team_id:'marketing',active:true},
+  {id:'d3',name:'Thomas Marchand',email:'thomas.marchand@corelis.fr',team_id:'marketing',active:true},
+  {id:'d4',name:'Sofiane Benali',email:'sofiane.benali@corelis.fr',team_id:'finance',active:true},
+  {id:'d5',name:'Claire Danet',email:'claire.danet@corelis.fr',team_id:'finance',active:true},
+  {id:'d6',name:'Paul Riva',email:'paul.riva@corelis.fr',team_id:'finance',active:true},
+  {id:'d7',name:'Léa Fontaine',email:'lea.fontaine@corelis.fr',team_id:'rh',active:true},
+  {id:'d8',name:'Nadia Karim',email:'nadia.karim@corelis.fr',team_id:'rh',active:true},
+  {id:'d9',name:'Jules Perrin',email:'jules.perrin@corelis.fr',team_id:'rh',active:true},
+  {id:'d10',name:'Marc Delattre',email:'marc.delattre@corelis.fr',team_id:'it',active:true},
+  {id:'d11',name:'Awa Diop',email:'awa.diop@corelis.fr',team_id:'it',active:true},
+  {id:'d12',name:'Romain Cler',email:'romain.cler@corelis.fr',team_id:'it',active:true},
+  {id:'d13',name:'Hugo Lantier',email:'hugo.lantier@corelis.fr',team_id:'juridique',active:true},
+  {id:'d14',name:'Sarah Nouri',email:'sarah.nouri@corelis.fr',team_id:'juridique',active:true},
+  {id:'d15',name:'Anne Vasseur',email:'anne.vasseur@corelis.fr',team_id:'direction',active:true},
+];
+const TEAM_KM = {it:312, marketing:236, finance:224, rh:187, juridique:141, direction:96};
+const demoKm = name => 18 + (Array.from(name).reduce((s,c)=>s+c.charCodeAt(0),0) % 68);
+const initials = n => n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 let acts = [
   {n:'Sofiane B.', team:'Finance', title:'Fractionné avant la réunion budget', dist:6200, when:'il y a 25 min'},
   {n:'Léa Fontaine', team:'RH', title:'Marche du déjeuner', dist:3400, when:'il y a 2 h'},
@@ -442,8 +502,9 @@ let acts = [
 
 /* ---------- rendus ---------- */
 function renderBars(){
-  const max = Math.max(...TEAMS.map(t=>t.km));
-  $('ov-bars').innerHTML = TEAMS.map(t=>`
+  const rows = teams.map(t=>({n:t.name, km:TEAM_KM[t.id]||demoKm(t.name)})).sort((a,b)=>b.km-a.km);
+  const max = Math.max(...rows.map(r=>r.km),1);
+  $('ov-bars').innerHTML = rows.map(t=>`
     <div class="brow"><span class="n">${t.n}</span>
       <span class="track"><i style="width:${(t.km/max*100).toFixed(0)}%"></i></span>
       <span class="v num">${t.km} km</span></div>`).join('');
@@ -469,13 +530,104 @@ function renderMissions(){
   $('m-rows').querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>saveMission(b.dataset.save)));
 }
 function renderTeams(){
-  $('t-rows').innerHTML = TEAMS.map(t=>{
-    const part = Math.round(60 + (t.km/312)*35);
-    return `<tr><td><b>${t.n}</b></td><td class="num">${t.m}</td><td class="num">${t.km}</td><td class="num">${fmtE(t.e)} ⚡</td>
-    <td><span class="pill ${part>75?'ok':'warn'}">${part} %</span></td>
-    <td><button class="btn sm ghost" onclick="toast('Fiche équipe — écran à venir')">Gérer</button></td></tr>`;
+  $('t-rows').innerHTML = teams.map(t=>{
+    const ms = members.filter(m=>m.team_id===t.id);
+    const actifs = ms.filter(m=>m.active).length;
+    const km = TEAM_KM[t.id] || demoKm(t.name);
+    const part = ms.length ? Math.round(actifs/ms.length*100) : 0;
+    return `<tr><td><b>${t.name}</b></td><td class="num">${actifs}${ms.length>actifs?` <span style="color:var(--ink-3)">/ ${ms.length}</span>`:''}</td><td class="num">${km}</td><td class="num">${fmtE(km*1000)} ⚡</td>
+    <td><span class="pill ${part>=75?'ok':'warn'}">${part} %</span></td>
+    <td><button class="btn sm ghost" data-team="${t.id}">Gérer</button></td></tr>`;
   }).join('');
+  $('t-rows').querySelectorAll('[data-team]').forEach(b=>b.addEventListener('click',()=>openTeam(b.dataset.team)));
 }
+
+/* ---------- drawer équipe ---------- */
+let curTeam = null;
+function openTeam(id){
+  curTeam = id;
+  const t = teams.find(x=>x.id===id); if(!t) return;
+  $('dr-title').textContent = t.name;
+  $('dr-name').value = t.name;
+  renderDrawerMembers();
+  $('drawer').classList.add('open'); $('scrim2').classList.add('open');
+}
+function closeDrawer(){ $('drawer').classList.remove('open'); $('scrim2').classList.remove('open'); }
+$('dr-close').addEventListener('click', closeDrawer);
+$('scrim2').addEventListener('click', closeDrawer);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+
+function renderDrawerMembers(){
+  const ms = members.filter(m=>m.team_id===curTeam);
+  $('dr-count').textContent = `· ${ms.length}`;
+  $('dr-del').disabled = ms.length>0;
+  $('dr-del').style.opacity = ms.length>0 ? .4 : 1;
+  $('dr-members').innerHTML = ms.length ? ms.map(m=>`
+    <div class="mrow ${m.active?'':'inactive'}" data-mid="${m.id}">
+      <span class="av">${initials(m.name)}</span>
+      <span class="who"><b>${m.name}</b><small>${m.email}</small></span>
+      <span class="km num">${m.active?demoKm(m.name)+' km':'inactif'}</span>
+      <select data-move aria-label="Changer d’équipe">${teams.map(t=>`<option value="${t.id}" ${t.id===curTeam?'selected':''}>${t.name}</option>`).join('')}</select>
+      <button class="btn sm ghost" data-tgl>${m.active?'Désactiver':'Réactiver'}</button>
+    </div>`).join('') : '<div style="color:var(--ink-3);font-size:12.5px;padding:8px 0">Aucun membre — l’équipe peut être supprimée.</div>';
+  $('dr-members').querySelectorAll('.mrow').forEach(row=>{
+    const mid = row.dataset.mid;
+    row.querySelector('[data-move]').addEventListener('change', async e=>{
+      const m = members.find(x=>x.id===mid); const dest = e.target.value;
+      if(SB && !String(mid).startsWith('d')){ const {error}=await SB.from('members').update({team_id:dest}).eq('id',mid); if(error){toast('Erreur Supabase : '+error.message);return;} }
+      m.team_id = dest;
+      renderDrawerMembers(); renderTeams();
+      toast(`${m.name} → ${teams.find(t=>t.id===dest).name}`);
+    });
+    row.querySelector('[data-tgl]').addEventListener('click', async ()=>{
+      const m = members.find(x=>x.id===mid);
+      if(SB && !String(mid).startsWith('d')){ const {error}=await SB.from('members').update({active:!m.active}).eq('id',mid); if(error){toast('Erreur Supabase : '+error.message);return;} }
+      m.active = !m.active;
+      renderDrawerMembers(); renderTeams();
+      toast(`${m.name} ${m.active?'réactivé·e':'désactivé·e'}`);
+    });
+  });
+}
+$('dr-rename').addEventListener('click', async ()=>{
+  const t = teams.find(x=>x.id===curTeam);
+  const name = $('dr-name').value.trim(); if(!name) return;
+  if(SB){ const {error}=await SB.from('teams').update({name}).eq('id',curTeam); if(error){toast('Erreur Supabase : '+error.message);return;} }
+  t.name = name; $('dr-title').textContent = name;
+  renderTeams(); renderBars(); renderDrawerMembers();
+  toast(`Équipe renommée « ${name} »`);
+});
+$('dr-add').addEventListener('click', async ()=>{
+  const name = $('dr-add-name').value.trim(), email = $('dr-add-mail').value.trim().toLowerCase();
+  if(!name || !email.includes('@')){ toast('Nom et email valides requis'); return; }
+  let mid = 'd'+Date.now();
+  if(SB){
+    const {data, error} = await SB.from('members').insert({name, email, team_id:curTeam}).select().single();
+    if(error){ toast('Erreur Supabase : '+error.message); return; }
+    mid = data.id;
+  }
+  members.push({id:mid, name, email, team_id:curTeam, active:true});
+  $('dr-add-name').value=''; $('dr-add-mail').value='';
+  renderDrawerMembers(); renderTeams();
+  toast(`${name} ajouté·e à l’équipe`);
+});
+$('dr-del').addEventListener('click', async ()=>{
+  if(members.some(m=>m.team_id===curTeam)) return;
+  if(SB){ const {error}=await SB.from('teams').delete().eq('id',curTeam); if(error){toast('Erreur Supabase : '+error.message);return;} }
+  teams = teams.filter(t=>t.id!==curTeam);
+  closeDrawer(); renderTeams(); renderBars();
+  toast('Équipe supprimée');
+});
+$('btn-newteam').addEventListener('click', async ()=>{
+  const name = ($('inv-mails').value, window.prompt('Nom de la nouvelle équipe :') || '').trim();
+  if(!name) return;
+  const id = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'equipe-'+Date.now();
+  if(teams.some(t=>t.id===id)){ toast('Cette équipe existe déjà'); return; }
+  if(SB){ const {error}=await SB.from('teams').insert({id, name}); if(error){toast('Erreur Supabase : '+error.message);return;} }
+  teams.push({id, name});
+  renderTeams(); renderBars();
+  openTeam(id);
+  toast(`Équipe « ${name} » créée — ajoutez ses membres`);
+});
 function refreshKpis(){
   const given = missions.reduce((s,m)=>s+m.got,0);
   $('k-given').textContent = fmtE(given) + ' ⚡';
@@ -586,11 +738,16 @@ async function load(){
   renderBars(); renderActs(); renderMissions(); renderTeams(); simulate(); refreshKpis(); renderQr();
   if(!SB){ $('sb-state').textContent = 'Mode démo (local)'; $('p-note').hidden = false; return; }
   try{
-    const [{data: ms}, {data: as}, {data: org}] = await Promise.all([
+    const [{data: ms}, {data: as}, {data: org}, {data: ts}, {data: mbs}] = await Promise.all([
       SB.from('missions').select('*'),
       SB.from('activities').select('*').order('created_at',{ascending:false}).limit(6),
-      SB.from('settings').select('*').eq('id','org').maybeSingle()
+      SB.from('settings').select('*').eq('id','org').maybeSingle(),
+      SB.from('teams').select('*'),
+      SB.from('members').select('*')
     ]);
+    if(ts && ts.length) teams = ts;
+    if(mbs && mbs.length) members = mbs;
+    renderTeams(); renderBars();
     if(ms && ms.length) missions = ms.map(r=>({...r, per:+r.per, goal:+r.goal, got:+r.got}));
     if(as && as.length) acts = as.map(a=>({n:a.author, team:a.team, title:a.title, dist:a.dist, when:new Date(a.created_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}));
     if(org){
