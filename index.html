@@ -500,7 +500,7 @@ svg{display:block}
 
         <button class="corp3" id="go-impact" aria-label="Voir l’impact collectif">
           <div class="c3-top">
-            <span class="c3-name">Banque Corélis · Programme Élan</span>
+            <span class="c3-name" id="org-name">Banque Corélis · Programme Élan</span>
             <svg class="chev" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
           </div>
           <div class="c3-main">
@@ -883,13 +883,34 @@ function relTime(iso){
   return `il y a ${Math.round(s/86400)} j`;
 }
 const SYNC_ROUTE = 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35';
+function shade(hex, mixWith, ratio){
+  const h = hex.replace('#',''); if(h.length!==6) return hex;
+  const [r,g,b] = [0,2,4].map(i=>parseInt(h.slice(i,i+2),16));
+  const [mr,mg,mb] = mixWith==='w' ? [255,255,255] : [10,15,30];
+  const c = v => Math.round(v).toString(16).padStart(2,'0');
+  return '#'+c(r+(mr-r)*ratio)+c(g+(mg-g)*ratio)+c(b+(mb-b)*ratio);
+}
+function applyBrand(hex){
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex||'')) return;
+  const r = document.documentElement.style;
+  r.setProperty('--brand', hex);
+  r.setProperty('--brand-dim', shade(hex,'d',.28));
+  r.setProperty('--brand-panel', shade(hex,'w',.45));
+}
+function applyOrg(s){
+  if(!s) return;
+  if(s.org_name) $('org-name').textContent = `${s.org_name} · ${s.program_name||''}`.replace(/ · $/,'');
+  applyBrand(s.brand);
+}
 async function dbInit(){
   if(!SB) return;
   try{
-    const [{data: ms}, {data: acts}] = await Promise.all([
+    const [{data: ms}, {data: acts}, {data: org}] = await Promise.all([
       SB.from('missions').select('*'),
-      SB.from('activities').select('*').order('created_at',{ascending:false}).limit(8)
+      SB.from('activities').select('*').order('created_at',{ascending:false}).limit(8),
+      SB.from('settings').select('*').eq('id','org').maybeSingle()
     ]);
+    applyOrg(org);
     if(ms && ms.length){
       ms.forEach(r => { const m = missions.find(x=>x.id===r.id); if(m){ m.got = +r.got; m.goal = +r.goal; m.per = +r.per; m.name = r.name; m.org = r.org; m.unit = r.unit; } });
     }

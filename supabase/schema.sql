@@ -69,3 +69,21 @@ create policy "demo_activities_read"  on public.activities for select using (tru
 create policy "demo_activities_write" on public.activities for insert with check (true);
 create policy "demo_donations_read"   on public.donations  for select using (true);
 create policy "demo_donations_write"  on public.donations  for insert with check (true);
+
+-- ------------------------------------------------ personnalisation (marque blanche)
+create table if not exists public.settings (
+  id           text primary key default 'org',
+  org_name     text not null default 'Banque Corélis',
+  program_name text not null default 'Programme Élan',
+  brand        text not null default '#0F3FA8',   -- couleur signature (hex)
+  logo         text not null default '⚡',         -- emoji ou initiales
+  app_url      text not null default ''            -- lien de distribution de l'app
+);
+
+insert into public.settings (id) values ('org') on conflict (id) do nothing;
+
+alter table public.settings enable row level security;
+drop policy if exists "demo_settings_read"  on public.settings;
+drop policy if exists "demo_settings_write" on public.settings;
+create policy "demo_settings_read"  on public.settings for select using (true);
+create policy "demo_settings_write" on public.settings for update using (true) with check (true);

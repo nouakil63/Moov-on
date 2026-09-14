@@ -4,7 +4,8 @@ Maquette interactive d'une application mobile B2B de sport solidaire : chaque m�
 
 ## Contenu
 
-- `index.html` — la maquette autonome (aucun build) : accueil, fil d'activité, défis, missions avec dons par curseur, profil, course simulée avec récolte d'énergie en direct, sélecteur de typographie.
+- `index.html` — l'app employé (aucun build) : accueil, fil d'activité, défis, missions avec dons par curseur, profil, course simulée avec récolte d'énergie en direct, sélecteur de typographie.
+- `admin.html` — l'espace administrateur (desktop) : vue d'ensemble, missions/associations (barèmes et objectifs modifiables, création de mission), défis, équipes et invitations, budget et simulateur, distribution de l'app (lien + QR code, distribution App Store non répertoriée), personnalisation marque blanche (nom, logo, couleur) publiée en direct dans l'app employé via Supabase. Accessible sur `/admin.html` — sans authentification (maquette).
 - `config.js` — configuration Supabase (vide = mode local via `localStorage`).
 - `supabase/schema.sql` — schéma et données de départ pour Supabase.
 - `explorations/` — pages comparatives des pistes de design (archives de travail).
@@ -25,7 +26,9 @@ Sans Supabase, la maquette fonctionne en local (état dans le navigateur). Avec 
 
 1. Créez un projet sur [supabase.com](https://supabase.com) (offre gratuite suffisante).
 2. Dans **SQL Editor**, collez le contenu de `supabase/schema.sql` et exécutez (Run). Le script est ré-exécutable sans risque.
-3. Dans **Settings → API**, copiez *Project URL* et la clé *anon public* dans `config.js`, puis commitez : Vercel redéploie et la maquette se synchronise.
+3. Dans **Settings → API**, copiez *Project URL* et la clé *publishable* dans `config.js`, puis commitez : Vercel redéploie et la maquette se synchronise.
+
+Après toute mise à jour de `supabase/schema.sql`, ré-exécutez-le dans le SQL Editor (il est idempotent) — notamment pour la table `settings` qui porte la personnalisation marque blanche.
 
 La clé anon est publique par conception (l'accès est contrôlé par les politiques RLS). **Attention** : les politiques du schéma sont volontairement ouvertes (lecture/écriture anonymes) pour une démo sans authentification — à durcir avant tout usage réel.
 
