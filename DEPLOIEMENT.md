@@ -20,4 +20,6 @@ Une publication Sites avait été créée auparavant pendant cette même demande
 
 Les comptes, invitations et contenus restent ceux de la maquette locale : chaque navigateur dispose de ses propres données de démonstration.
 
+Le cadre iPhone entoure aussi la connexion, la saisie du code et la connexion d’entreprise sur ordinateur. Ces formulaires défilent à l’intérieur du téléphone ; sur mobile, ils occupent tout l’écran. Les essais couvrent la visibilité du code incorrect, le parcours SSO et l’absence de débordement à 390 px et 835 px.
+
 Sur ordinateur, le bouton **Espace administrateur** apparaît dans la colonne à gauche de l’iPhone. À la demande du propriétaire, il ouvre dans un nouvel onglet l’administration récente du dépôt principal : https://moov-on-vert.vercel.app/admin.html (source vérifiée identique à `origin/main` au commit `fccbf6c`, avec missions, budget et gestion détaillée des équipes). Les liens ordinaires vers le portail utilisent cette même destination. La session de l’application reste inchangée. Le portail local historique reste accessible uniquement pour ses outils de présentation et ses données locales ; les deux hôtes utilisent des stockages distincts et ne sont pas synchronisés.

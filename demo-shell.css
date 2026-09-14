@@ -23,6 +23,10 @@
 #phone-screen-zone{position:relative;display:flex;flex-direction:column;min-height:0;flex:1;overflow:clip}
 .phone-home{height:23px;flex-shrink:0;background:#fff;display:grid;place-items:center;pointer-events:none}.phone-home i{height:5px;width:126px;background:#111115;border-radius:10px;margin-top:1px}
 .phone-shell #tenant-strip{height:49px}.phone-shell #device nav{padding-bottom:0}
+.login-layout{grid-template-columns:minmax(0,1fr) auto;gap:70px;max-width:1080px}.auth-phone-shell{justify-self:end}.phone-shell .auth-device{overflow:clip}.auth-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.auth-phone-shell .login-card{min-height:100%;padding:18px 24px 24px;border:0;border-radius:0;box-shadow:none}.auth-phone-shell .org-choice{margin:18px 0}.auth-phone-shell .login-org{margin:16px 0}.auth-phone-shell .demo-personas{margin-top:20px;padding-top:16px}.auth-phone-shell #auth-content h2{font-size:27px}.auth-phone-shell .auth-disclosure{margin-top:16px}
+@media(min-width:681px) and (max-width:940px){.login-layout{grid-template-columns:1fr;justify-items:center}.login-story{display:none}.auth-phone-shell{justify-self:center}}
+.auth-phone-shell .org-choice{overflow-x:auto}.auth-phone-shell .org-choice button{flex:1 0 auto}.auth-phone-shell .login-org>div{min-width:0;overflow-wrap:anywhere}.auth-phone-shell #auth-content p{overflow-wrap:anywhere}
+@media(max-width:680px){#auth-root{padding:0}.login-layout{max-width:none;width:100%}.login-story{display:none}.auth-phone-shell .login-card{padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom))}}
 .rail-nav .rail-admin{border:1px solid #dce4f3;background:#eaf0fc;color:var(--brand);margin:4px 0}.rail-admin div{flex:1}.rail-admin b{display:block;font-size:11px}.rail-admin small{display:block;font-size:9px;font-weight:400;color:#667b9e;margin-top:4px}
 .post.is-new-post .pcard{outline:3px solid var(--brand);outline-offset:3px;animation:published-post 1.1s ease-out}
 .post.is-new-post .when{color:var(--brand);font-weight:800}

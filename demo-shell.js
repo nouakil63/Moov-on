@@ -13,7 +13,7 @@
     {orgId:'nova',email:'alex@nova-conseil.fr',name:'Alex',role:'Salarié',initials:'AM'},
     {orgId:'nova',email:'sarah@nova-conseil.fr',name:'Sarah',role:'Administratrice',initials:'SB'}
   ];
-  function error(message){const el=$('auth-error');if(el){el.textContent=message;el.hidden=false;}else MoovApp.toast(message);}
+  function error(message){const el=$('auth-error');if(el){el.textContent=message;el.hidden=false;el.scrollIntoView({block:'nearest'});}else MoovApp.toast(message);}
   function logo(org,cls='org-mark'){
     return org.logo&&/^data:image\/(png|jpeg|webp|gif);base64,/.test(org.logo)
       ?`<span class="${cls}"><img src="${escape(org.logo)}" alt="Logo ${escape(org.name)}"></span>`
@@ -47,9 +47,21 @@
         <div class="demo-personas"><div class="minor-title">EXPLORER AVEC UN PROFIL DE DÉMONSTRATION</div><div class="persona-grid">${personas.filter(p=>p.orgId===org.id).map(p=>`<button data-persona="${p.email}" data-company="${p.orgId}"><span class="persona-avatar">${p.initials}</span><span><b>${p.name}</b><small>${p.role}</small></span><i>↗</i></button>`).join('')}</div></div>
         <div class="auth-disclosure">Connexion simulée · aucun e-mail envoyé.<br>Les modifications sont conservées dans ce navigateur.</div>
       </section></div>`;
+    frameLogin();
     $('auth-root').querySelectorAll('[data-org]').forEach(b=>b.onclick=()=>{selectedOrg=b.dataset.org;step='email';loginEmail='';renderLogin();});
     $('auth-root').querySelectorAll('[data-persona]').forEach(b=>b.onclick=()=>login(b.dataset.persona,b.dataset.company));
     renderStep();
+  }
+  function frameLogin(){
+    const card=$('auth-root').querySelector('.login-card');
+    const model=$('device').parentElement;
+    const shell=model.cloneNode(false);shell.classList.add('auth-phone-shell');
+    model.querySelectorAll(':scope > .phone-key').forEach(key=>shell.append(key.cloneNode(true)));
+    const phone=document.createElement('div');phone.className='device auth-device';
+    const scroll=document.createElement('div');scroll.className='auth-scroll';
+    card.replaceWith(shell);scroll.append(card);
+    phone.append($('device').querySelector('.phone-statusbar').cloneNode(true),scroll,$('device').querySelector('.phone-home').cloneNode(true));
+    shell.append(phone);
   }
   function renderStep(){
     const org=Demo.org(selectedOrg),content=$('auth-content');if(!content)return;
@@ -73,6 +85,7 @@
       $('sso-confirm').onclick=()=>login(loginEmail,selectedOrg);$('back-login').onclick=()=>{step='email';renderStep();};
     }
     if($('auth-error'))$('auth-error').hidden=true;
+    if(step!=='code'){const heading=content.querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}const scroll=$('auth-root').querySelector('.auth-scroll');if(scroll)scroll.scrollTop=0;}
   }
   function login(email,orgId){
     try{Demo.login({email,orgId});if(params.get('portal')&&Demo.canAdmin())location.href=ADMIN_URL;else sync();}catch(e){error(e.message);}
