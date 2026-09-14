@@ -8,3 +8,25 @@
 @media(max-width:680px){#auth-root{padding:24px 16px;align-items:start}.login-layout{display:block;max-width:440px}.login-story{padding:0 10px}.login-story .moov-wordmark{margin-bottom:24px;font-size:28px}.login-story>.eyebrow{font-size:9px}.login-story h1{font-size:38px;letter-spacing:-1.8px;margin:12px 0 15px}.login-story>p,.login-art,.login-proof,.login-foot{display:none}.login-card{padding:24px;border-radius:20px;box-shadow:none}#experience{display:block;padding:0;width:100%}#demo-rail{display:none}.stage{width:100%;gap:0}.device{width:100%;height:100dvh;min-height:100dvh;border:0;border-radius:0;box-shadow:none}.stage-note{display:none}#tenant-strip{padding-top:env(safe-area-inset-top);height:calc(54px + env(safe-area-inset-top))}.app-dialog{max-height:88dvh}.hero5 .h5-big{font-size:82px}.persona-grid small{font-size:9px}}
 
 .feed-empty{padding:24px 18px;font-size:12px;line-height:1.7;color:var(--ink-2)}
+
+/* iPhone presentation frame. The real mobile view remains edge-to-edge. */
+.phone-shell{position:relative;isolation:isolate;padding:10px;border-radius:54px;background:linear-gradient(125deg,#67676b 0%,#242427 18%,#a0a0a5 40%,#242427 66%,#78787d 100%);box-shadow:0 0 0 1px #8c8c90,0 0 0 3px #242427,0 34px 75px -18px #101a354b,0 6px 14px #14223b24;flex-shrink:0}
+.phone-shell:before{content:"";position:absolute;inset:3px;border:1px solid #a5a5aa85;border-radius:51px;pointer-events:none;z-index:1}
+.phone-shell .device{width:390px;height:clamp(590px,calc(100dvh - 94px),824px);min-height:0;border:0;border-radius:44px;background:#fff;box-shadow:0 0 0 6px #09090b;overflow:hidden}
+.phone-key{position:absolute;left:-5px;width:3px;border-radius:3px 0 0 3px;background:linear-gradient(90deg,#747478,#202024);box-shadow:-1px 0 0 #a4a4a7;pointer-events:none}
+.phone-key-action{top:104px;height:23px}.phone-key-volume-up{top:151px;height:43px}.phone-key-volume-down{top:205px;height:43px}.phone-key-power{top:176px;height:70px;left:auto;right:-5px;border-radius:0 3px 3px 0;background:linear-gradient(90deg,#202024,#747478);box-shadow:1px 0 0 #a4a4a7}
+.phone-statusbar{height:48px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:space-between;padding:2px 25px 0;color:#141418;background:#fff;pointer-events:none}
+.phone-time{font:700 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.3px;margin-left:8px}
+.phone-island{position:absolute;width:109px;height:29px;background:#08080a;border-radius:20px;left:50%;top:9px;transform:translateX(-50%);box-shadow:inset 0 1px 2px #000;display:flex;align-items:center;justify-content:flex-end;padding-right:10px}
+.phone-island i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 65% 30%,#263953,#0f1728 45%,#03040a 70%);box-shadow:0 0 0 2px #111115}
+.phone-indicators{display:flex;align-items:center;gap:5px}.phone-battery{display:block;width:23px;height:11px;border:1px solid #99999c;border-radius:3px;padding:1px;position:relative}.phone-battery:after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:4px;border-radius:0 2px 2px 0;background:#99999c}.phone-battery i{display:block;width:100%;height:100%;background:#17171b;border-radius:1px}
+#phone-screen-zone{position:relative;display:flex;flex-direction:column;min-height:0;flex:1;overflow:clip}
+.phone-home{height:23px;flex-shrink:0;background:#fff;display:grid;place-items:center;pointer-events:none}.phone-home i{height:5px;width:126px;background:#111115;border-radius:10px;margin-top:1px}
+.phone-shell #tenant-strip{height:49px}.phone-shell #device nav{padding-bottom:0}
+.post.is-new-post .pcard{outline:3px solid var(--brand);outline-offset:3px;animation:published-post 1.1s ease-out}
+.post.is-new-post .when{color:var(--brand);font-weight:800}
+.post.is-new-post:focus{outline:0}.post.is-new-post:focus-visible .pcard{outline:3px solid var(--brand)}
+.comment-list .is-new-comment{background:color-mix(in srgb,var(--brand) 8%,white);border-left:3px solid var(--brand);padding-left:10px}
+@keyframes published-post{from{box-shadow:0 0 0 12px color-mix(in srgb,var(--brand) 18%,transparent);transform:translateY(8px)}to{box-shadow:0 0 0 0 transparent;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.post.is-new-post .pcard{animation:none}}
+@media(max-width:680px){.phone-shell{padding:0;border-radius:0;background:none;box-shadow:none;width:100%}.phone-shell:before,.phone-key,.phone-statusbar,.phone-home{display:none}.phone-shell .device{width:100%;height:100dvh;min-height:100dvh;border-radius:0;box-shadow:none}.phone-shell #tenant-strip{height:calc(54px + env(safe-area-inset-top))}.phone-shell #device nav{padding-bottom:env(safe-area-inset-bottom)}}

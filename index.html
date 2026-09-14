@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&family=Big+Shoulders:opsz,wght@10..72,600;10..72,700&family=Saira:wght@400;600;700;800&family=Saira+Extra+Condensed:wght@600;700&family=Saira+Condensed:wght@600;700&family=Saira+Stencil+One&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600&family=Exo+2:ital,wght@0,400;0,600;0,700;1,800;1,900&display=swap">
-<link rel="stylesheet" href="app.css?v=3">
-<link rel="stylesheet" href="demo-shell.css?v=3">
-<link rel="stylesheet" href="stories.css?v=3">
+<link rel="stylesheet" href="app.css?v=6">
+<link rel="stylesheet" href="demo-shell.css?v=6">
+<link rel="stylesheet" href="stories.css?v=6">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#1543B7">
 </head>
@@ -18,7 +18,22 @@
 <div id="experience" hidden>
 <aside id="demo-rail"></aside>
 <div class="stage">
+  <div class="phone-shell">
+    <span class="phone-key phone-key-action" aria-hidden="true"></span>
+    <span class="phone-key phone-key-volume-up" aria-hidden="true"></span>
+    <span class="phone-key phone-key-volume-down" aria-hidden="true"></span>
+    <span class="phone-key phone-key-power" aria-hidden="true"></span>
   <div class="device" id="device">
+    <div class="phone-statusbar" aria-hidden="true">
+      <span class="phone-time">9:41</span>
+      <span class="phone-island"><i></i></span>
+      <span class="phone-indicators">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4" y="5" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/><rect x="12" width="3" height="12" rx="1"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 3a11 11 0 0 1 14 0M3.5 6a7 7 0 0 1 9 0M6 9a3 3 0 0 1 4 0"/><circle cx="8" cy="11" r=".6" fill="currentColor" stroke="none"/></svg>
+        <span class="phone-battery"><i></i></span>
+      </span>
+    </div>
+    <div id="phone-screen-zone">
 <div id="tenant-strip"></div>
 
     <div class="screens">
@@ -389,14 +404,17 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <canvas class="confetti" id="confetti"></canvas>
+    </div>
+    <div class="phone-home" aria-hidden="true"><i></i></div>
   </div>
-  <div class="stage-note">Démonstration interactive · données enregistrées sur cet appareil</div>
+  </div>
+  <div class="stage-note">Prototype interactif · bougez, publiez, partagez.</div>
 </div>
 
 </div>
-<script src="demo-store.js?v=3"></script>
-<script src="app.js?v=3"></script>
-<script src="stories.js?v=3"></script>
-<script src="demo-shell.js?v=3"></script>
+<script src="demo-store.js?v=6"></script>
+<script src="app.js?v=6"></script>
+<script src="stories.js?v=6"></script>
+<script src="demo-shell.js?v=6"></script>
 </body>
 </html>

@@ -32,6 +32,7 @@ function readData(){
   return data;
 }
 let appData=null;
+let postHighlight=null, revealFrame=null, highlightTimer=null;
 const state={corpEnergy:0,posts:[],energyBal:0,meKm:0,todaySteps:0,missions:{}};
 let missions=[];
 function hydrate(data=readData()){
@@ -45,11 +46,16 @@ function hydrate(data=readData()){
 }
 function transact(change){
   if(!ctx()){toast('Connectez-vous pour continuer.');return false;}
+  let next;
   try{
-    const next=readData(); change(next,next.profiles[ctx().user.id]);
+    next=readData(); change(next,next.profiles[ctx().user.id]);
     localStorage.setItem(appKey(),JSON.stringify(next));
-    hydrate(next);renderAll();window.dispatchEvent(new Event('moovappchange'));return true;
   }catch(e){toast(e.message||'Enregistrement impossible. Libérez du stockage et réessayez.');return false;}
+  // A rendering error must not turn an already committed activity into a failed
+  // save: retrying it would credit the same activity twice.
+  try{hydrate(next);renderAll();window.dispatchEvent(new Event('moovappchange'));}
+  catch(e){console.warn('Données enregistrées, affichage à actualiser :',e);toast('Enregistrement effectué. Actualisez la page si l’affichage ne se met pas à jour.');}
+  return true;
 }
 function relTime(time){const s=(Demo.now()-new Date(time).getTime())/1000;return s<60?'à l’instant':s<3600?`il y a ${Math.floor(s/60)} min`:s<86400?`il y a ${Math.floor(s/3600)} h`:`il y a ${Math.floor(s/86400)} j`;}
 
@@ -111,7 +117,7 @@ function postCard(p){
        <div class="pstat"><div class="v num">${esc(p.time)}</div><div class="l">durée</div></div>
        <div class="pstat"><div class="v num">${esc(p.pace)}</div><div class="l">min / km</div></div>`;
   return `
-  <article class="post" data-post="${p.id}">
+  <article class="post${postHighlight?.id===p.id&&postHighlight.orgId===ctx()?.org.id&&postHighlight.until>Date.now()?' is-new-post':''}" data-post="${p.id}">
     <div class="node"><span class="avatar" style="background:${TEAM_COLORS[p.team]||'#555'}">${esc(initials(p.n))}</span></div>
     <div class="when">${esc(p.when)}</div>
     <div class="pname">${esc(p.n)} <span>· ${esc(p.team)}</span></div>
@@ -350,7 +356,13 @@ fan.querySelectorAll('.fan-item').forEach(item=>{
     if(act==='challenge'){ $('sheet-challenge').classList.add('open'); scrim.classList.add('open'); }
   });
 });
-function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); scrim.classList.remove('open'); }
+function hidePanel(panel){
+  // Remove focus before the exit transform can carry the focused control outside
+  // the phone. Hidden-overflow ancestors can otherwise be scrolled by the browser.
+  if(panel.contains(document.activeElement))document.activeElement.blur();
+  panel.inert=true;panel.setAttribute('aria-hidden','true');panel.classList.remove('open');
+}
+function closeSheets(){ document.querySelectorAll('.sheet').forEach(hidePanel); scrim.classList.remove('open'); }
 
 /* ================= TOAST ================= */
 let toastTimer;
@@ -422,36 +434,40 @@ $('btn-finish').addEventListener('click',()=>{
   $('sum-pace').textContent = $('run-pace').textContent;
   $('sum-impact-line').textContent = `+${fmtInt(run.dist*RATE.energyPerMeter)} ⚡ récoltés`;
   $('sum-title').value = new Date().getHours() < 12 ? 'Course du matin' : (new Date().getHours() < 18 ? 'Course du midi' : 'Course du soir');
-  $('run-overlay').classList.remove('open');
+  hidePanel($('run-overlay'));
   $('sum-overlay').classList.add('open');
 });
 
 /* ================= PUBLICATION ================= */
 function recordActivity({dist,title,time,pace,publish=true,type='Course'}){
-  const c=ctx();const meters=Math.round(dist);if(!c||meters<1||meters>500000){toast('Choisissez une distance entre 1 m et 500 km.');return false;}
-  return transact((data,p)=>{
+  const c=ctx();const meters=Math.round(dist);if(!c||!Number.isFinite(meters)||meters<1||meters>500000){toast('Choisissez une distance entre 1 m et 500 km.');return false;}
+  const activityId=crypto.randomUUID(),postId=publish?'u'+crypto.randomUUID():null;
+  const saved=transact((data,p)=>{
     p.energyBal+=meters;data.corpEnergy+=meters;p.meKm+=meters/1000;
     if(type!=='Vélo')p.todaySteps+=Math.round(meters*RATE.stepsPerMeter);
     p.earnedMeters=(p.earnedMeters??(p.history||[]).reduce((n,h)=>n+h.dist,0))+meters;
-    p.history ||= [];p.history.unshift({id:crypto.randomUUID(),dist:meters,title,type,at:Demo.now(),published:publish});
+    p.history ||= [];p.history.unshift({id:activityId,dist:meters,title,type,at:Demo.now(),published:publish});
     p.history=p.history.slice(0,40);
-    if(publish)data.posts.unshift({id:'u'+crypto.randomUUID(),userId:c.user.id,n:c.user.name,team:c.user.team,title,dist:meters,time,pace,type,createdAt:Demo.now(),bravos:0,comments:0,route:'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35'});
+    if(publish)data.posts.unshift({id:postId,userId:c.user.id,n:c.user.name,team:c.user.team,title,dist:meters,time,pace,type,createdAt:Demo.now(),bravos:0,comments:0,route:'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35'});
     data.posts=data.posts.slice(0,100);
   });
+  return saved?{activityId,postId,energy:meters,published:publish}:false;
 }
 function finishActivity(publish){
   if(run.recorded)return;
   const duration=run.t*18;
-  const ok=recordActivity({dist:run.dist,title:$('sum-title').value.trim().slice(0,160)||'Ma course',time:`${String(Math.floor(duration/60)).padStart(2,'0')}:${String(Math.floor(duration%60)).padStart(2,'0')}`,pace:$('sum-pace').textContent,publish});
-  if(!ok)return;run.recorded=true;$('sum-overlay').classList.remove('open');goHome();
-  if(publish)confetti();toast(publish?'Course publiée et énergie créditée !':'Course privée enregistrée et énergie créditée !');
+  const result=recordActivity({dist:run.dist,title:$('sum-title').value.trim().slice(0,160)||'Ma course',time:`${String(Math.floor(duration/60)).padStart(2,'0')}:${String(Math.floor(duration%60)).padStart(2,'0')}`,pace:$('sum-pace').textContent,publish});
+  if(!result)return;run.recorded=true;hidePanel($('sum-overlay'));
+  if(publish){revealPost(result.postId);confetti();toast('Votre course est publiée dans le fil · +'+fmtInt(result.energy)+' ⚡ crédités.');}
+  else{goHome();toast('Course privée enregistrée · +'+fmtInt(result.energy)+' ⚡ crédités.');}
 }
 $('btn-publish').addEventListener('click',()=>finishActivity(true));
 $('btn-discard').addEventListener('click',()=>finishActivity(false));
 $('btn-res-publish').addEventListener('click',()=>{
   const km=Number($('res-dist').value);
-  if(!Number.isFinite(km)||km<=0||km>500){toast('Indiquez une distance entre 0,001 et 500 km.');return;}
-  if(recordActivity({dist:km*1000,title:$('res-title').value.trim().slice(0,160)||$('res-type').value,time:'—',pace:'—',type:$('res-type').value})){closeSheets();goHome();toast('Activité enregistrée · +'+fmtInt(km*1000)+' ⚡');}
+  if(!Number.isFinite(km)||km<0.001||km>500){toast('Indiquez une distance entre 0,001 et 500 km.');return;}
+  const result=recordActivity({dist:km*1000,title:$('res-title').value.trim().slice(0,160)||$('res-type').value,time:'—',pace:'—',type:$('res-type').value});
+  if(result){closeSheets();revealPost(result.postId);toast('Votre activité est publiée dans le fil · +'+fmtInt(result.energy)+' ⚡ crédités.');}
 });
 $('btn-ch-send').addEventListener('click',()=>{
   if(!$('ch-target').value){toast('Ajoutez une autre équipe dans le portail pour créer un duel.');return;}
@@ -465,6 +481,33 @@ function goHome(){
   const scr = $('scr-home'); scr.scrollTop = 0;
 }
 
+function clearPostHighlight(){
+  cancelAnimationFrame(revealFrame);clearTimeout(highlightTimer);postHighlight=null;
+  $('feed')?.querySelectorAll('.is-new-post').forEach(post=>post.classList.remove('is-new-post'));
+}
+function revealPost(postId){
+  const active=ctx();
+  if(!active||!appData?.posts.some(post=>post.id===postId))return false;
+  clearPostHighlight();
+  postHighlight={id:postId,orgId:active.org.id,userId:active.user.id,until:Date.now()+6000};
+  goHome();
+  revealFrame=requestAnimationFrame(()=>{
+    const current=ctx();
+    if(!current||current.org.id!==active.org.id||current.user.id!==active.user.id)return;
+    const screen=$('scr-home');
+    const post=[...$('feed').querySelectorAll('[data-post]')].find(card=>card.dataset.post===postId);
+    if(!post)return;
+    post.classList.add('is-new-post');post.setAttribute('tabindex','-1');
+    const top=Math.max(0,screen.scrollTop+post.getBoundingClientRect().top-screen.getBoundingClientRect().top-12);
+    screen.scrollTo({top,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    post.focus({preventScroll:true});
+    highlightTimer=setTimeout(()=>{
+      if(postHighlight?.id===postId&&postHighlight.orgId===active.org.id)clearPostHighlight();
+    },6000);
+  });
+  return true;
+}
+
 /* ================= BRAVOS ================= */
 $('feed').addEventListener('click',e=>{
   const article=e.target.closest('[data-post]');if(!article)return;const id=article.dataset.post;
@@ -475,12 +518,25 @@ $('feed').addEventListener('click',e=>{
     navigator.clipboard?.writeText(text).then(()=>toast('Texte de l’activité copié.')).catch(()=>toast('Copie indisponible sur ce navigateur.'));
   }
 });
+function publishComment(postId,rawText){
+  const current=ctx(),text=String(rawText||'').trim();
+  if(!current){toast('Connectez-vous pour publier un commentaire.');return false;}
+  if(!text||text.length>400){toast('Écrivez un commentaire de 1 à 400 caractères.');return false;}
+  const comment={id:crypto.randomUUID(),userId:current.user.id,name:current.user.name,text,createdAt:Demo.now()};
+  const saved=transact(data=>{
+    const seeded=['corelis','nova'].includes(current.org.id)&&BASE_FEED.some(post=>current.org.id+'-'+post.id===postId);
+    if(!seeded&&!data.posts.some(post=>post.id===postId))throw new Error('Cette publication n’est plus disponible dans votre entreprise.');
+    data.comments ||= {};data.comments[postId]||=[];data.comments[postId].push(comment);
+  });
+  return saved?comment:false;
+}
 function openComments(id){
   let dialog=$('comments-dialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='comments-dialog';dialog.className='app-dialog';document.body.append(dialog);}
-  const draw=()=>{
-    dialog.innerHTML=`<div class="dialog-top"><h2>Encouragements</h2><button type="button" data-close aria-label="Fermer">×</button></div><div class="comment-list">${(appData.comments?.[id]||[]).map(c=>`<article><b>${esc(c.name)}</b><p>${esc(c.text)}</p></article>`).join('')||'<p class="empty-note">Soyez le premier à encourager votre collègue.</p>'}</div><form><label for="comment-text">Votre message</label><textarea id="comment-text" maxlength="400" required placeholder="Bravo pour cette sortie !"></textarea><button class="shell-primary">Publier le commentaire</button></form>`;
+  const draw=(publishedId=null)=>{
+    dialog.innerHTML=`<div class="dialog-top"><h2>Encouragements</h2><button type="button" data-close aria-label="Fermer">×</button></div><div class="comment-list">${(appData.comments?.[id]||[]).map(c=>`<article${c.id===publishedId?' class="is-new-comment" tabindex="-1"':''}><b>${esc(c.name)}</b><p>${esc(c.text)}</p></article>`).join('')||'<p class="empty-note">Soyez le premier à encourager votre collègue.</p>'}</div><p class="form-feedback" role="status">${publishedId?'Votre commentaire a été publié.':''}</p><form><label for="comment-text">Votre message</label><textarea id="comment-text" maxlength="400" required placeholder="Bravo pour cette sortie !"></textarea><button class="shell-primary">Publier le commentaire</button></form>`;
     dialog.querySelector('[data-close]').onclick=()=>dialog.close();
-    dialog.querySelector('form').onsubmit=e=>{e.preventDefault();const text=dialog.querySelector('textarea').value.trim();if(!text)return;if(transact(data=>{data.comments ||= {};data.comments[id]||=[];data.comments[id].push({name:ctx().user.name,text});}))draw();};
+    dialog.querySelector('form').onsubmit=e=>{e.preventDefault();const comment=publishComment(id,dialog.querySelector('textarea').value);if(comment)draw(comment.id);else dialog.querySelector('.form-feedback').textContent='Commentaire non publié. Vérifiez votre message et l’espace de stockage disponible, puis réessayez.';};
+    if(publishedId){const list=dialog.querySelector('.comment-list');list.scrollTop=list.scrollHeight;dialog.querySelector('.is-new-comment')?.focus({preventScroll:true});}
   };draw();dialog.showModal();
 }
 
@@ -589,10 +645,11 @@ function init(){
   document.querySelector('.prof-sub .chip').textContent=ctx().user.team;
   document.querySelector('.c3-name').textContent=ctx().org.name+' · '+ctx().org.program;
   document.querySelector('#ch-target').innerHTML=ctx().org.teams.filter(t=>t!==ctx().user.team).map(t=>`<option>${esc(t)}</option>`).join('');
+  $('res-dist').min='0.001';$('res-dist').step='0.001';
   document.querySelector('#sum-overlay h2')?.replaceChildren(document.createTextNode('Belle sortie, '+ctx().user.name.split(' ')[0]));
   renderAll();renderTypoRows();applyTypo(store.get('typo','act'));syncVisibility();
 }
-window.MoovApp={init,render:renderAll,toast,goHome,stop(){run.active=false;cancelAnimationFrame(run.raf);document.querySelectorAll('.overlay,.sheet').forEach(x=>x.classList.remove('open'));closeFan();},fastForward(){if(run.active&&!run.paused){run.dist+=1000;run.t+=1000/SIM_SPEED;updateRunUI();}}};
+window.MoovApp={init,render:renderAll,toast,goHome,revealPost,stop(){run.active=false;cancelAnimationFrame(run.raf);clearPostHighlight();document.querySelectorAll('.overlay,.sheet').forEach(hidePanel);closeFan();},fastForward(){if(run.active&&!run.paused){run.dist+=1000;run.t+=1000/SIM_SPEED;updateRunUI();}}};
 window.addEventListener('storage',e=>{if(ctx()&&e.key===appKey()){hydrate();renderAll();}});
 syncVisibility();
 

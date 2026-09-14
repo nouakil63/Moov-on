@@ -26,6 +26,7 @@
   const photoOK = media => typeof media==='string' && /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(media);
   let dialog=null, action=null, modalMode='', openSession='', restoreFocus=null, restoreUser='', reader=null;
   let composer=null, readFrame=0, noticeTimer=0, subscribed=false, scheduled=false;
+  let lastPublishedId='', returnToPublished=false;
   const keyFor = current => current ? current.org.id+':'+current.user.id : '';
   const current = () => D() && D().current();
   const now = () => D() ? D().now() : Date.now();
@@ -39,7 +40,7 @@
 
   function makeDialog() {
     if(dialog)return;
-    const host=byId('device')||document.body;
+    const host=byId('phone-screen-zone')||byId('device')||document.body;
     dialog=el('dialog','st-dialog'); dialog.id='st-dialog';
     dialog.setAttribute('aria-label','Stories'); host.append(dialog);
     action=el('dialog','st-dialog st-action-dialog'); action.id='st-action-dialog'; host.append(action);
@@ -48,7 +49,11 @@
       cancelAnimationFrame(readFrame); reader=null; composer=null; modalMode=''; openSession='';
       const target=restoreFocus?.isConnected?restoreFocus:byId('stories')?.querySelector(`[data-st-user="${CSS.escape(restoreUser)}"] button`);
       restoreFocus=null;restoreUser='';
-      if(target && target.isConnected && !target.closest('[inert]')) target.focus({preventScroll:true});
+      if(target && target.isConnected && !target.closest('[inert]')){
+        target.focus({preventScroll:true});
+        if(returnToPublished)target.scrollIntoView({block:'nearest',inline:'nearest'});
+      }
+      returnToPublished=false;
     });
     action.addEventListener('close',()=>{
       if(reader){reader.actionPaused=false;reader.last=0;updatePauseButton();}
@@ -60,7 +65,10 @@
       if(event.code==='Space' && !event.target.closest('button,textarea,input,select')){event.preventDefault();togglePause();}
     });
     window.addEventListener('resize',fitDialogs);
+    window.addEventListener('scroll',fitDialogs,{capture:true,passive:true});
     window.visualViewport?.addEventListener('resize',fitDialogs);
+    window.visualViewport?.addEventListener('scroll',fitDialogs);
+    if(window.ResizeObserver)new ResizeObserver(fitDialogs).observe(host);
     document.addEventListener('visibilitychange',()=>{
       if(reader)reader.last=0;
       if(!document.hidden)render();
@@ -68,23 +76,26 @@
   }
 
   function fitDialogs() {
-    const device=byId('device'); if(!device||!dialog)return;
+    const zone=byId('phone-screen-zone'),device=zone||byId('device'); if(!device||!dialog)return;
     const rect=device.getBoundingClientRect();
     const vv=window.visualViewport;
     const topLimit=vv ? vv.offsetTop : 0;
+    const leftLimit=vv ? vv.offsetLeft : 0;
     const available=vv ? vv.height : window.innerHeight;
-    const width=Math.min(rect.width,window.innerWidth);
-    const left=Math.max(0,Math.min(rect.left,window.innerWidth-width));
-    const height=Math.min(rect.height,available);
-    const top=Math.max(topLimit,Math.min(rect.top,topLimit+available-height));
+    const availableWidth=vv ? vv.width : window.innerWidth;
+    const left=Math.max(leftLimit,rect.left),top=Math.max(topLimit,rect.top);
+    const width=Math.max(1,Math.min(rect.right,leftLimit+availableWidth)-left);
+    const height=Math.max(1,Math.min(rect.bottom,topLimit+available)-top);
+    dialog.classList.toggle('st-in-phone',!!zone);
     Object.assign(dialog.style,{width:width+'px',height:height+'px',left:left+'px',top:top+'px'});
-    Object.assign(action.style,{width:Math.max(250,width-36)+'px',left:(left+18)+'px',top:(top+Math.max(20,height*.3))+'px',maxHeight:Math.max(180,height*.65)+'px'});
+    const inset=Math.min(18,width*.05),actionTop=top+Math.min(90,height*.15);
+    Object.assign(action.style,{width:Math.max(1,width-inset*2)+'px',left:(left+inset)+'px',top:actionTop+'px',maxHeight:Math.max(1,top+height-actionTop-inset)+'px'});
   }
 
   function openModal(mode) {
     if(!current())return false;
     makeDialog();
-    cancelAnimationFrame(readFrame); reader=null;
+    cancelAnimationFrame(readFrame); reader=null;composer=null;
     if(action.open)action.close();
     if(!dialog.open){restoreFocus=document.activeElement;restoreUser=document.activeElement?.closest('[data-st-user]')?.dataset.stUser||'';}
     modalMode=mode;openSession=keyFor(current());
@@ -109,6 +120,7 @@
     if(!session)return;
     rail.style.setProperty('--st-accent',color(session.org.accent||session.org.color));
     const stories=liveStories();
+    if(!stories.some(s=>s.id===lastPublishedId))lastPublishedId='';
     const groups=new Map();
     stories.forEach(s=>{if(!groups.has(s.userId))groups.set(s.userId,[]);groups.get(s.userId).push(s);});
     const authors=[session.user.id,...[...groups.keys()].filter(id=>id!==session.user.id).sort((a,b)=>Math.max(...groups.get(b).map(s=>s.publishedAt))-Math.max(...groups.get(a).map(s=>s.publishedAt)))];
@@ -117,8 +129,21 @@
       const person=el('div','st-person');person.dataset.stUser=id;
       const button=el('button','st-person-button');button.type='button';
       button.setAttribute('aria-label',items.length?`${own?'Mes stories':'Stories de '+u.name}, ${items.length} ${items.length>1?'publications':'publication'}`:'Créer ma première story');
-      const ring=el('span','st-ring'+(!items.length?' st-no-story':items.every(s=>D().hasSeenStory(s.id))?' st-seen':''));
-      ring.append(el('span','st-avatar',initials(u.name)));button.append(ring,el('span','st-person-name',own?'Ma story':u.name.split(' ')[0]));
+      const published=own&&items.some(s=>s.id===lastPublishedId);
+      const ring=el('span','st-ring'+(!items.length?' st-no-story':published?' st-just-published':items.every(s=>D().hasSeenStory(s.id))?' st-seen':''));
+      const thumb=el('span','st-avatar',initials(u.name));
+      if(own&&items.length){
+        const latest=items.find(s=>s.id===lastPublishedId)||items.reduce((a,b)=>a.publishedAt>b.publishedAt?a:b);
+        thumb.classList.add('st-story-thumb');thumb.replaceChildren();
+        if(latest.type==='photo'&&photoOK(latest.media)){
+          const image=el('img');image.src=latest.media;image.alt='';thumb.append(image);
+        }else{
+          thumb.style.backgroundColor=color(latest.bg);thumb.style.color=inkFor(latest.bg);
+          thumb.append(el('span','st-thumb-text',latest.text||initials(u.name)));
+        }
+      }
+      ring.append(thumb);button.append(ring,el('span','st-person-name',own?'Ma story':u.name.split(' ')[0]));
+      if(published)button.append(el('span','st-person-status','Publiée ✓'));
       button.addEventListener('click',()=>items.length?openReader(id):openComposer());person.append(button);
       if(own){const add=el('button','st-add-small','+');add.type='button';add.setAttribute('aria-label','Ajouter une story');add.addEventListener('click',openComposer);person.append(add);}
       rail.append(person);
@@ -218,17 +243,21 @@
     if(!composer||composer.busy)return;
     const draft=composer;draft.busy=true;updateComposer();byId('st-compose-error').hidden=true;byId('st-publish').textContent='Publication…';
     try{
-      await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg});
+      const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg});
       if(composer!==draft)return;
-      closeModal();render();notify('Votre story est publiée. Elle reste visible pendant 24 h.');
+      lastPublishedId=published.id;returnToPublished=true;restoreFocus=null;restoreUser=published.userId;
+      render();openReader(published.userId,published.id);
     }catch(err){if(composer===draft){setError(byId('st-compose-error'),err);draft.busy=false;byId('st-publish').innerHTML=svg('send',17)+'Publier ma story';updateComposer();}}
   }
 
-  function openReader(userId){
+  function openReader(userId,storyId=null){
     if(!openModal('reader'))return;
     const items=liveStories().filter(s=>s.userId===userId).sort((a,b)=>a.publishedAt-b.publishedAt);
-    reader={ids:items.map(s=>s.id),index:0,elapsed:0,last:0,manualPaused:matchMedia('(prefers-reduced-motion:reduce)').matches,holding:false,actionPaused:false,duration:8000};
-    if(items.length){const firstNew=items.findIndex(s=>!D().hasSeenStory(s.id));reader.index=Math.max(0,firstNew);showReaderStory();}else showUnavailable();
+    reader={ids:items.map(s=>s.id),index:0,elapsed:0,last:0,manualPaused:matchMedia('(prefers-reduced-motion:reduce)').matches,holding:false,actionPaused:false,duration:8000,publishedId:storyId===lastPublishedId?storyId:''};
+    const requested=storyId===null?-1:items.findIndex(s=>s.id===storyId);
+    if(items.length&&(storyId===null||requested!==-1)){
+      const firstNew=requested!==-1?requested:items.findIndex(s=>!D().hasSeenStory(s.id));reader.index=Math.max(0,firstNew);showReaderStory();
+    }else showUnavailable();
     showModal();byId('st-reader-close')?.focus({preventScroll:true});
   }
   function timeLabel(story){
@@ -250,6 +279,11 @@
       <header class="st-reader-head"><div class="st-progress" id="st-progress" aria-hidden="true"></div><div class="st-reader-author-row"><span class="st-reader-avatar" id="st-reader-avatar"></span><div class="st-reader-meta"><span class="st-reader-author" id="st-reader-author"></span><span class="st-reader-when" id="st-reader-when"></span></div><button type="button" class="st-icon-button" id="st-reader-pause" aria-label="Mettre la story en pause">${svg('pause',16)}</button><button type="button" class="st-icon-button" id="st-reader-more" aria-label="Options de la story">${svg('more',18)}</button><button type="button" class="st-icon-button" id="st-reader-close" aria-label="Fermer la story">${svg('close',19)}</button></div></header>
       <div class="st-reader-spacer" id="st-reader-hold" aria-hidden="true"></div>
       <footer class="st-reader-bottom"><div class="st-private-line">${svg('lock',12)}<span id="st-reader-audience"></span></div><div class="st-reader-nav"><button type="button" class="st-reader-nav-button" id="st-reader-prev" aria-label="Story précédente">${svg('left',19)}</button><span class="st-reader-count" id="st-reader-count" aria-live="polite"></span><button type="button" class="st-reader-nav-button" id="st-reader-next" aria-label="Story suivante">${svg('right',19)}</button></div></footer></div>`;
+    if(story.id===reader.publishedId){
+      const confirmation=el('div','st-published-confirmation');confirmation.setAttribute('role','status');
+      confirmation.innerHTML=svg('check',16);confirmation.append(el('span','','Story publiée · visible pendant 24 h'));
+      byId('st-reader-hold').before(confirmation);
+    }
     byId('st-reader-avatar').textContent=initials(u.name);byId('st-reader-author').textContent=u.name+(u.team?' · '+u.team:'');byId('st-reader-when').textContent=timeLabel(story);
     byId('st-reader-audience').textContent=current().org.shortName||current().org.name;
     const media=byId('st-reader-media'),text=byId('st-reader-text');
