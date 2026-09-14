@@ -81,18 +81,32 @@
   function renderChrome(){
     const c=Demo.current();if(!c)return;
     $('tenant-strip').innerHTML=`<button id="mobile-account" class="tenant-identity" aria-label="Compte et espace entreprise">${logo(c.org)}<span>${escape(c.org.shortName)}<small>${escape(c.org.program)}</small></span><i>⌄</i></button><span class="live-label">DÉMO</span>`;
-    $('demo-rail').innerHTML=`<a class="moov-wordmark" href="./index.html">moov<span>’</span>on<i>↗</i></a><div class="rail-heading"><span class="eyebrow">VOTRE COLLECTIF</span><h2>On avance<br>ensemble.</h2><p>Chaque mouvement fait grandir l’impact de ${escape(c.org.shortName)}.</p></div><div class="rail-company">${logo(c.org)}<div><b>${escape(c.org.name)}</b><small>${escape(c.org.program)}</small></div></div><nav class="rail-nav" aria-label="Espaces"><a class="selected" href="./index.html"><span>◉</span> Application salarié <i>↗</i></a>${Demo.canAdmin()?'<a href="admin.html"><span>▦</span> Portail entreprise <i>↗</i></a>':''}<button data-account><span>◎</span> Mon compte <i>↗</i></button><button data-install><span>↓</span> Installer sur mon téléphone</button></nav>${controls()}<div class="rail-bottom"><span class="demo-pill"><i></i> Maquette de présentation</span><p>Stories, comptes et personnalisation<br>à explorer en direct.</p><button class="text-button" data-logout>Se déconnecter →</button></div>`;
+    $('demo-rail').innerHTML=`<a class="moov-wordmark" href="./index.html">moov<span>’</span>on<i>↗</i></a><div class="rail-heading"><span class="eyebrow">VOTRE COLLECTIF</span><h2>On avance<br>ensemble.</h2><p>Chaque mouvement fait grandir l’impact de ${escape(c.org.shortName)}.</p></div><div class="rail-company">${logo(c.org)}<div><b>${escape(c.org.name)}</b><small>${escape(c.org.program)}</small></div></div><nav class="rail-nav" aria-label="Espaces"><a class="selected" href="./index.html"><span>◉</span> Application salarié <i>↗</i></a><button class="rail-admin" data-admin><span aria-hidden="true">▦</span><div><b>Espace administrateur</b><small>${Demo.canAdmin()?'Gérer mon entreprise':'Accès démo'}</small></div><i aria-hidden="true">↗</i></button><button data-account><span>◎</span> Mon compte <i>↗</i></button><button data-install><span>↓</span> Installer sur mon téléphone</button></nav>${controls()}<div class="rail-bottom"><span class="demo-pill"><i></i> Maquette de présentation</span><p>Stories, comptes et personnalisation<br>à explorer en direct.</p><button class="text-button" data-logout>Se déconnecter →</button></div>`;
     $('profile-account').innerHTML=`<div class="account-actions"><button data-account>Mon compte et mon entreprise <span>→</span></button>${Demo.canAdmin()?'<a href="admin.html">Ouvrir le portail entreprise <span>↗</span></a>':''}<button data-install>Installer l’application <span>↓</span></button><button data-logout>Se déconnecter</button></div>`;
     $('mobile-account').onclick=openAccount;
     wireChrome($('demo-rail'));wireChrome($('profile-account'));
   }
   function wireChrome(root){
+    root.querySelectorAll('[data-admin]').forEach(b=>b.onclick=openAdmin);
     root.querySelectorAll('[data-account]').forEach(b=>b.onclick=openAccount);
     root.querySelectorAll('[data-logout]').forEach(b=>b.onclick=logout);
     root.querySelectorAll('[data-install]').forEach(b=>b.onclick=showInstall);
     root.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{const v=root.querySelector('select').value.split('|');switchProfile(...v);});
   }
   function logout(){MoovApp.stop();document.querySelectorAll('dialog[open]').forEach(d=>d.close());Demo.logout();step='email';lastContext='';sync();}
+  function openAdmin(){
+    const c=Demo.current();if(!c)return;
+    if(Demo.canAdmin()){location.href='admin.html';return;}
+    const admins=Demo.users(c.org.id).filter(u=>u.role==='admin'&&u.status==='active');
+    const enter=admin=>{try{MoovApp.stop();Demo.login({email:admin.email,orgId:c.org.id});location.href='admin.html';}catch(e){MoovApp.toast(e.message);}};
+    if(admins.length===1){enter(admins[0]);return;}
+    if(!admins.length){MoovApp.toast('Aucun profil administrateur actif dans cette entreprise.');return;}
+    const d=makeDialog('admin-access-dialog');
+    d.innerHTML=`<div class="dialog-top"><span class="eyebrow">ACCÈS DE DÉMONSTRATION</span><button data-close aria-label="Fermer">×</button></div><h2>Espace administrateur</h2><p>Choisissez le compte qui gère ${escape(c.org.name)}.</p><form><label for="admin-profile">Profil administrateur</label><select id="admin-profile">${admins.map(u=>`<option value="${escape(u.id)}">${escape(u.name)} · ${escape(u.email)}</option>`).join('')}</select><button class="shell-primary">Ouvrir l’administration →</button></form>`;
+    d.querySelector('[data-close]').onclick=()=>d.close();
+    d.querySelector('form').onsubmit=e=>{e.preventDefault();const admin=admins.find(u=>u.id===$('admin-profile').value);if(admin)enter(admin);};
+    d.showModal();
+  }
   function makeDialog(id){let d=$(id);if(!d){d=document.createElement('dialog');d.id=id;d.className='app-dialog';document.body.append(d);d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});}return d;}
   function openAccount(){
     const c=Demo.current();if(!c)return;

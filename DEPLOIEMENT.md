@@ -19,3 +19,5 @@ Vérifications de cette version : 24 tests automatiques réussis, publication d�
 Une publication Sites avait été créée auparavant pendant cette même demande. Le fichier `.openai/hosting.json` en conserve l’identifiant, mais la préférence explicite du propriétaire est Vercel. Ne pas choisir Sites par défaut pour les mises à jour.
 
 Les comptes, invitations et contenus restent ceux de la maquette locale : chaque navigateur dispose de ses propres données de démonstration.
+
+Sur ordinateur, le bouton **Espace administrateur** apparaît dans la colonne à gauche de l’iPhone. Avec un profil salarié, l’accès démo ouvre le portail avec un administrateur actif de la même entreprise (choix proposé s’il y en a plusieurs). Avec un administrateur déjà connecté, il conserve ce compte. Aucun rôle de compte n’est modifié.

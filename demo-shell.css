@@ -23,6 +23,7 @@
 #phone-screen-zone{position:relative;display:flex;flex-direction:column;min-height:0;flex:1;overflow:clip}
 .phone-home{height:23px;flex-shrink:0;background:#fff;display:grid;place-items:center;pointer-events:none}.phone-home i{height:5px;width:126px;background:#111115;border-radius:10px;margin-top:1px}
 .phone-shell #tenant-strip{height:49px}.phone-shell #device nav{padding-bottom:0}
+.rail-nav .rail-admin{border:1px solid #dce4f3;background:#eaf0fc;color:var(--brand);margin:4px 0}.rail-admin div{flex:1}.rail-admin b{display:block;font-size:11px}.rail-admin small{display:block;font-size:9px;font-weight:400;color:#667b9e;margin-top:4px}
 .post.is-new-post .pcard{outline:3px solid var(--brand);outline-offset:3px;animation:published-post 1.1s ease-out}
 .post.is-new-post .when{color:var(--brand);font-weight:800}
 .post.is-new-post:focus{outline:0}.post.is-new-post:focus-visible .pcard{outline:3px solid var(--brand)}
