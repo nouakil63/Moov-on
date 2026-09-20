@@ -1,10 +1,12 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..');
-function fixture(){
+function fixture({at}={}){
   const entries=new Map(),sessions=new Map();
   const storage={failWrites:false,get length(){return entries.size;},key:i=>[...entries.keys()][i],getItem:k=>entries.get(k)??null,setItem(k,v){if(this.failWrites)throw Error('Quota');entries.set(k,String(v));},removeItem:k=>entries.delete(k)};
-  const context={localStorage:storage,sessionStorage:{getItem:k=>sessions.get(k)??null,setItem:(k,v)=>sessions.set(k,String(v)),removeItem:k=>sessions.delete(k)},crypto,URL,console,addEventListener(){}};context.window=context;vm.createContext(context);
+  const context={localStorage:storage,sessionStorage:{getItem:k=>sessions.get(k)??null,setItem:(k,v)=>sessions.set(k,String(v)),removeItem:k=>sessions.delete(k)},crypto,URL,console,addEventListener(){}};
+  if(at!==undefined)context.Date=class extends Date{constructor(...args){super(...(args.length?args:[at]));}static now(){return at;}};
+  context.window=context;vm.createContext(context);
   for(const name of ['demo-store.js','energy.js','platform-store.js'])vm.runInContext(fs.readFileSync(path.join(root,name),'utf8'),context);
   const D=context.Demo,P=context.Platform;
   const login=(email='camille@corelis.fr',orgId='corelis')=>D.login({email,orgId});
@@ -89,4 +91,90 @@ test('zero weekly history has no invented percentage and cycling counts metres',
 });
 test('reset clears shared data and old activity storage without deleting unrelated data',()=>{
  const f=fixture();f.login();f.P.rules();f.entries.set('unrelated','keep');f.entries.set('moovon:campaign-notice:test','seen');f.D.reset();assert.equal(f.entries.has('moovon:platform:v1'),false);assert.equal(f.entries.has('moovon:campaign-notice:test'),false);assert.equal(f.entries.get('unrelated'),'keep');
+});
+
+const PLATFORM_KEY='moovon:platform:v1';
+const todaySample=a=>a.id.startsWith('sample-today-v1-');
+function legacyState(f,edit=()=>{}){
+ f.P.rules();const data=JSON.parse(f.entries.get(PLATFORM_KEY));
+ data.activities=data.activities.filter(a=>!todaySample(a));delete data.migration.todaySamplesV1;
+ edit(data);f.entries.set(PLATFORM_KEY,JSON.stringify(data));return data;
+}
+
+test('fresh samples give each of the five personas 5000 energy today, even immediately after UTC midnight',()=>{
+ const at=Date.parse('2026-09-20T00:00:00.001Z'),f=fixture({at});
+ f.P.rules();assert.equal(f.D.current(),null); // Initial read does not require login.
+ const data=JSON.parse(f.entries.get(PLATFORM_KEY)),samples=data.activities.filter(todaySample);
+ assert.equal(samples.length,5);assert.equal(data.migration.todaySamplesV1,true);
+ for(const a of samples){
+  assert.equal(a.energy,5000);assert.equal(a.durationSeconds,1800);assert.equal(a.at,at);
+  assert.equal(a.distanceMeters,{Course:5000,Marche:2500,'Vélo':10000}[a.sport]);
+  assert.equal(a.demo,true);assert.equal(a.hideRoute,true);assert.match(a.title,/démo/);
+  const email=a.userId+'@'+(a.orgId==='corelis'?'corelis.fr':'nova-conseil.fr');f.login(email,a.orgId);
+  const own=f.P.activities().filter(row=>row.userId===a.userId&&new Date(row.at).toISOString().slice(0,10)===f.date());
+  assert.equal(own.reduce((total,row)=>total+row.energy,0),5000);
+ }
+});
+
+test('one-time migration retains existing ledger and avoids duplicates across reads, reloads and clock advances',()=>{
+ const f=fixture({at:Date.parse('2026-09-20T12:00:00Z')}),old=legacyState(f);
+ f.P.rules();const migrated=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.equal(migrated.activities.length,old.activities.length+5);
+ assert.deepEqual(migrated.activities.filter(a=>!todaySample(a)),old.activities);
+ const committed=f.entries.get(PLATFORM_KEY);f.P.rules();assert.equal(f.entries.get(PLATFORM_KEY),committed);
+ vm.runInContext(fs.readFileSync(path.join(root,'platform-store.js'),'utf8'),f.context);
+ f.context.Platform.rules();assert.equal(f.entries.get(PLATFORM_KEY),committed);
+ f.login();f.D.advanceHours(24);f.context.Platform.rules();
+ assert.equal(f.entries.get(PLATFORM_KEY),committed);
+ assert.equal(f.context.Platform.activities().filter(a=>new Date(a.at).toISOString().slice(0,10)===f.date()).length,0);
+});
+
+test('migration respects a positive activity already recorded today, and fixed ids survive a missing marker',()=>{
+ const f=fixture({at:Date.parse('2026-09-20T12:00:00Z')});
+ const old=legacyState(f,data=>{const first=data.activities.find(a=>a.userId==='camille');data.activities.push({...first,id:'real-today',at:f.D.now(),demo:false,energy:1020,contributionCents:17});});
+ f.P.rules();let data=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.equal(data.activities.filter(todaySample).length,4);
+ assert.ok(!data.activities.some(a=>todaySample(a)&&a.userId==='camille'));
+ assert.deepEqual(data.activities.find(a=>a.id==='real-today'),old.activities.find(a=>a.id==='real-today'));
+ const count=data.activities.length;delete data.migration.todaySamplesV1;f.entries.set(PLATFORM_KEY,JSON.stringify(data));
+ f.login();f.D.advanceHours(24);f.P.rules();data=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.equal(data.activities.length,count+1); // Only Camille lacked a fixed sample id.
+ assert.equal(data.activities.filter(todaySample).length,5);
+});
+
+test('migration quota failure preserves every prior byte and is safely retryable',()=>{
+ const f=fixture({at:Date.parse('2026-09-20T12:00:00Z')});legacyState(f);
+ const before=f.entries.get(PLATFORM_KEY);f.storage.failWrites=true;
+ assert.throws(()=>f.P.rules(),/stockage/);assert.equal(f.entries.get(PLATFORM_KEY),before);
+ f.storage.failWrites=false;f.P.rules();const after=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.equal(after.activities.filter(todaySample).length,5);assert.equal(after.migration.todaySamplesV1,true);
+});
+
+test('migrated samples use saved sport rules and conversion ceiling without exceeding the remaining budget',()=>{
+ const f=fixture({at:Date.parse('2026-09-20T12:00:00Z')});
+ const old=legacyState(f,data=>{
+  data.rules.version=2;data.rules.sports.Course.pointsPerMeter=2;data.rules.forecast.maxEuroPerEnergy=.0001;
+  const campaign=data.campaigns.find(c=>c.orgId==='corelis');
+  campaign.budgetCents=data.activities.filter(a=>a.campaignId===campaign.id).reduce((sum,a)=>sum+a.contributionCents,0)+25;
+  data.campaigns.filter(c=>c.orgId==='nova').forEach(c=>c.status='closed');
+ });
+ f.P.rules();const data=JSON.parse(f.entries.get(PLATFORM_KEY)),samples=data.activities.filter(todaySample);
+ assert.deepEqual(data.activities.filter(a=>!todaySample(a)),old.activities);
+ for(const a of samples){assert.equal(a.energy,a.sport==='Course'?10000:5000);assert.equal(a.rulesVersion,2);assert.ok(a.ratioEuroPerEnergy<=.0001);}
+ const corelis=data.campaigns.find(c=>c.orgId==='corelis');
+ assert.equal(data.activities.filter(a=>a.campaignId===corelis.id).reduce((sum,a)=>sum+a.contributionCents,0),corelis.budgetCents);
+ for(const a of samples.filter(a=>a.orgId==='nova')){assert.equal(a.campaignId,null);assert.equal(a.contributionCents,0);}
+});
+
+test('new enterprises and invited people receive no sample activity; reset seeds the five personas again only once',()=>{
+ const f=fixture({at:Date.parse('2026-09-20T12:00:00Z')});f.operator();
+ const {org,user}=f.D.createOrg({name:'New',domain:'new.example',adminName:'New manager',adminEmail:'manager@new.example'});
+ const {user:invited,invite}=f.D.invite('corelis',{name:'Invited',email:'new@corelis.fr',team:'Marketing',role:'employee'});
+ legacyState(f);f.P.rules();let data=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.ok(!data.activities.some(a=>a.orgId===org.id||a.userId===user.id||a.userId===invited.id));
+ f.D.acceptInvite(invite.token);f.login(invited.email,'corelis');assert.equal(f.P.activities().length,0);
+ f.D.advanceHours(24);f.D.reset();f.P.rules();data=JSON.parse(f.entries.get(PLATFORM_KEY));
+ assert.equal(data.activities.filter(todaySample).length,5);
+ assert.ok(data.activities.filter(todaySample).every(a=>new Date(a.at).toISOString().slice(0,10)===f.date()));
+ const after=f.entries.get(PLATFORM_KEY);f.P.rules();assert.equal(f.entries.get(PLATFORM_KEY),after);
 });

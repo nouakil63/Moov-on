@@ -50,6 +50,7 @@
   function change(type, fn) { const data = read(), result = fn(data); save(data); emit(type); return clone(result); }
   const monthStart = n => { const d = new Date(n); return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1); };
   const route = 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35';
+  const demoPeople = [{id:'camille',org:'corelis',name:'Camille Roux',team:'Marketing'},{id:'lea',org:'corelis',name:'Léa Fontaine',team:'RH'},{id:'sofiane',org:'corelis',name:'Sofiane B.',team:'Finance'},{id:'alex',org:'nova',name:'Alex Morgan',team:'Conseil'},{id:'sarah',org:'nova',name:'Sarah Benali',team:'RH'}];
   function makeSeed() {
     const clock = now(), start = monthStart(clock);
     const data = {version:1,rules:clone(global.Energy.defaults),associations:[
@@ -66,7 +67,7 @@
       data.campaigns.push({id:'campaign-'+org.id,orgId:org.id,associationId:mission.associationId,missionId:mission.id,budgetCents:1000000,unitCostCents:mission.unitCostCents,unit:mission.unit,name:mission.name,period:'monthly',startAt:start,endAt:global.Energy.campaignEnd(start,'monthly'),createdAt:start,status:'active',demo:true});
     }
     // Consistent sample history for the fictitious presentation personas.
-    const people = [{id:'camille',org:'corelis',name:'Camille Roux',team:'Marketing'},{id:'lea',org:'corelis',name:'Léa Fontaine',team:'RH'},{id:'sofiane',org:'corelis',name:'Sofiane B.',team:'Finance'},{id:'alex',org:'nova',name:'Alex Morgan',team:'Conseil'},{id:'sarah',org:'nova',name:'Sarah Benali',team:'RH'}];
+    const people = demoPeople;
     for (let day = 35; day >= 1; day--) {
       for (let index = 0; index < people.length; index++) {
         if ((day + index) % 3 !== 0) continue;
@@ -83,6 +84,7 @@
     data.events.push({id:'event-lunch',orgId:'corelis',organizerId:'lea',organizerName:'Léa Fontaine',name:'La marche du déjeuner',description:'Un moment ensemble, à votre rythme. Toutes les allures sont bienvenues.',startPoint:'Accueil de l’entreprise',endPoint:'Jardin public',startsAt:future,distanceMeters:3000,capacity:20,visibility:'company',invitedUserIds:[],participantIds:['lea'],createdAt:clock,demo:true});
     data.events.push({id:'event-open',orgId:'nova',organizerId:'sarah',organizerName:'Sarah Benali',name:'Les 5 000 mètres solidaires',description:'Une course collective ouverte aux membres de toutes les entreprises de la démonstration.',startPoint:'Entrée du parc',endPoint:'Esplanade du parc',startsAt:clock+7*DAY,distanceMeters:5000,capacity:null,visibility:'public',invitedUserIds:[],participantIds:['sarah'],createdAt:clock,demo:true});
     migrateLegacy(data);
+    migrateTodaySamples(data);
     return data;
   }
   function migrateLegacy(data) {
@@ -112,12 +114,40 @@
     }
     data.migration.legacy=true;
   }
+  function migrateTodaySamples(data) {
+    if (data.migration?.todaySamplesV1 === true) return false;
+    const at = now(), dayStart = Math.floor(at / DAY) * DAY;
+    const orgIds = new Set(global.Demo.orgs().map(org => org.id));
+    demoPeople.forEach((person,index) => {
+      if (!orgIds.has(person.org)) return;
+      const id = 'sample-today-v1-' + person.org + '-' + person.id;
+      if (data.activities.some(a => a.id === id || a.orgId === person.org && a.userId === person.id &&
+          a.at >= dayStart && a.at <= at && a.energy > 0)) return;
+      const sport = ['Course','Marche','Vélo'][index % 3];
+      const distanceMeters = sport === 'Vélo' ? 10000 : sport === 'Marche' ? 2500 : 5000;
+      const calc = global.Energy.calculate({sport,distanceMeters,durationSeconds:1800},data.rules);
+      const campaign = activeOf(data,person.org,at);
+      // Explicit sample contribution, following the existing fictitious history.
+      // This helper also runs before login: no session or nested store read.
+      const ratio = Math.min(.012,data.rules.forecast.maxEuroPerEnergy);
+      const contributionCents = campaign ? Math.min(Math.round(calc.energy * ratio * 100),remaining(data,campaign)) : 0;
+      data.activities.push({id,userId:person.id,orgId:person.org,name:person.name,team:person.team,
+        title:sport + ' du jour · exemple démo',...calc,at,published:true,hideRoute:true,route,
+        contributionCents,ratioEuroPerEnergy:calc.energy > 0 ? contributionCents / (100 * calc.energy) : 0,
+        rulesVersion:data.rules.version,campaignId:campaign?.id||null,demo:true});
+    });
+    data.migration = {...data.migration,todaySamplesV1:true};
+    return true;
+  }
   function read() {
     let raw;
     try { raw = global.localStorage.getItem(KEY); } catch (_) { fail('Le stockage local est indisponible.'); }
     if (!raw) { const seeded = makeSeed(); save(seeded); return seeded; }
     let data; try { data = JSON.parse(raw); } catch (_) { fail('Données de présentation illisibles. Utilisez la remise à zéro du portail.'); }
     if (data.version !== 1 || !['associations','missions','campaigns','activities','events','comments'].every(key=>Array.isArray(data[key])) || !data.rules || !data.likes) fail('Données de présentation incompatibles.');
+    // Commit the additions and their marker together. A quota failure leaves the
+    // previous serialized state intact, so the next read can retry safely.
+    if (migrateTodaySamples(data)) save(data);
     return data;
   }
   function activeOf(data,orgId,at=now()) { return data.campaigns.filter(c=>c.orgId===orgId && c.status!=='closed' && c.startAt<=at && at<c.endAt).sort((a,b)=>b.createdAt-a.createdAt)[0]||null; }
