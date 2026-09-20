@@ -33,11 +33,13 @@ Choisir l’entreprise, saisir l’adresse, puis **Continuer par e-mail** et le 
 
 | Espace | Fonctions |
 |---|---|
-| Salarié | Activité simulée ou saisie en mètres et durée ; fil, encouragements et commentaires ; stories ; événements ; impact de la campagne ; profil hebdomadaire |
+| Salarié | Démarrage d’une course, marche ou sortie vélo simulée, avec calcul automatique des mètres, de la durée et de l’énergie ; fil, encouragements et commentaires ; stories ; événements ; impact de la campagne ; profil hebdomadaire |
 | Entreprise | Choix de l’association, de la mission, du budget et de la période ; suivi des contributions ; identité visuelle ; équipes, invitations et accès ; modération |
 | CRM Moov’On | Catalogue des associations et missions, coûts unitaires et objectifs en euros ; règles d’énergie et de conversion ; création et administration des entreprises |
 
 L’entreprise choisit sa campagne. Les coefficients sportifs et les paramètres de conversion sont administrés par la plateforme. L’énergie est un compteur d’activité : la contribution est enregistrée automatiquement, sans étape d’affectation par le salarié.
+
+Dans l’application, **Commencer une activité** permet de choisir le sport puis de démarrer la simulation. **Terminer** ouvre le résumé ; le salarié peut enregistrer avec ou sans publication dans le fil, et partager une story avant, pendant ou après sa sortie.
 
 Les périodes disponibles sont mensuelle, trimestrielle et annuelle. Une nouvelle campagne conserve l’historique des précédentes. Lorsqu’un remplacement est programmé dans le futur, la campagne courante contribue jusqu’au nouveau début ; ses écritures passées restent conservées.
 

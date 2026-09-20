@@ -1,5 +1,5 @@
 /* Static presentation assets only. No remote APIs or user media are cached. */
-const CACHE='moovon-presentation-v10';
+const CACHE='moovon-presentation-v11';
 const FILES=['./','index.html','admin.html','app.css','demo-shell.css','stories.css','admin.css','app.js','demo-shell.js','stories.js','admin.js','demo-store.js','energy.js','platform-store.js','icon.svg','manifest.webmanifest'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('moovon-presentation-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

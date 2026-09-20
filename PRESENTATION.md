@@ -36,17 +36,18 @@ L’objectif global de la mission, par exemple 50 000 €, reste distinct de l�
 
 Profil : **Camille Roux**, camille@corelis.fr. Application : **Accueil**, puis bouton **+**.
 
-1. Choisir **Ajouter une activité**, sport **Course**, distance **5 000 mètres**, durée **30 minutes**, et un titre.
-2. Garder le trajet masqué et enregistrer en publiant dans le fil.
-3. Montrer la nouvelle carte, les mètres, la durée, la vitesse et **5 000 points d’énergie**.
-4. Ouvrir **Impact** pour montrer la contribution monétaire ajoutée à la campagne.
-5. Revenir au portail de Léa : le montant mobilisé, l’énergie et le nombre de participants sont issus de cette même activité.
+1. Choisir **Commencer une activité**, sélectionner **Course** et garder **Cacher mon trajet lors du partage** coché. Montrer que **Marche** et **Vélo** sont également disponibles.
+2. Choisir **Démarrer l’activité simulée**. Les mètres, la durée, la vitesse et l’énergie évoluent automatiquement. Utiliser **Présentation : avancer de 1 km** pour accélérer le scénario si nécessaire.
+3. Appuyer sur **Terminer**, montrer le résumé et son bonus, puis donner un titre à la sortie.
+4. Garder le trajet masqué et choisir **Enregistrer et publier dans le fil**. Montrer la nouvelle carte et les statistiques calculées.
+5. Ouvrir **Impact** pour montrer la contribution monétaire ajoutée à la campagne.
+6. Revenir au portail de Léa : le montant mobilisé, l’énergie et le nombre de participants sont issus de cette même activité.
 
 À dire : « L’enregistrement suffit pour contribuer à la mission choisie par l’entreprise. La conversion s’adapte à son budget et à l’activité du collectif. Le montant de cette activité est ensuite conservé. »
 
-Pour montrer le bonus, préparer une seconde course de **5 000 mètres en 20 minutes** : l’énergie prévue est **5 100 points**, soit un bonus de 2 %. Les coefficients sont des hypothèses réglables, pas une équivalence physiologique. Le montant en euros dépend du ratio du moment : ne pas annoncer une valeur fixe avant l’enregistrement.
+Le résumé présente le bonus calculé selon la vitesse de la simulation. Les coefficients sont des hypothèses réglables, pas une équivalence physiologique. Le montant en euros dépend du ratio du moment : ne pas annoncer une valeur fixe avant l’enregistrement.
 
-Option confidentialité : dans l’ajout manuel, décocher **Publier les statistiques dans le fil de mon entreprise** avant d’enregistrer. Pour une activité simulée terminée, utiliser **Enregistrer sans publier**. L’activité apparaît dans le profil et contribue à la campagne, tout en restant hors du fil collectif.
+Option confidentialité : terminer une seconde activité simulée et choisir **Enregistrer sans publier**. Elle apparaît dans le profil et contribue à la campagne, tout en restant hors du fil collectif.
 
 ## 3 · Partager avant, pendant ou après l’activité
 
