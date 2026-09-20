@@ -24,6 +24,23 @@
   const color = value => /^#[a-f0-9]{6}$/i.test(value||'') ? value : '#1746ad';
   const inkFor = value => { const c=color(value).slice(1); const a=[0,2,4].map(i=>parseInt(c.slice(i,i+2),16)); return a[0]*.299+a[1]*.587+a[2]*.114>164 ? '#10213b' : '#ffffff'; };
   const photoOK = media => typeof media==='string' && /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(media);
+  const number = value => Number(value||0).toLocaleString('fr-FR',{maximumFractionDigits:1});
+  function activityCard(activity,readerMode=false){
+    const card=el('div','st-activity-card'+(readerMode?' st-activity-reader':''));
+    card.append(el('strong','',({before:'Avant de partir',during:'En plein effort',after:'Activité terminée'})[activity.phase]+' · '+activity.sport));
+    if(activity.phase==='before'){card.append(el('p','','Chaque mètre compte. À votre rythme !'));return card;}
+    const metrics=el('div','st-activity-metrics');
+    const duration=activity.durationSeconds ? Math.floor(activity.durationSeconds/60)+' min '+Math.floor(activity.durationSeconds%60)+' s' : 'Durée non renseignée';
+    for(const [value,label] of [[number(activity.distanceMeters),'mètres'],[duration,'durée'],[activity.durationSeconds?number(activity.speedKmh)+' km/h':'—','vitesse'],[number(activity.energy),'énergie']]){
+      const item=el('div');item.append(el('b','',value),el('span','',label));if(label==='énergie'){const flame=el('i');flame.innerHTML=Energy.icon;item.lastChild.prepend(flame);}metrics.append(item);
+    }
+    card.append(metrics);
+    if(!activity.hideRoute&&activity.route){
+      const map=document.createElementNS('http://www.w3.org/2000/svg','svg');map.setAttribute('viewBox','0 0 410 180');map.setAttribute('role','img');map.setAttribute('aria-label','Illustration du trajet simulé');map.classList.add('st-activity-route');
+      const path=document.createElementNS(map.namespaceURI,'path');path.setAttribute('d',activity.route);path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','5');map.append(path);card.append(map,el('small','','Trajet illustratif · simulation'));
+    }else card.append(el('small','',activity.hideRoute?'Trajet masqué · vos statistiques restent visibles':'Aucun trajet partagé'));
+    return card;
+  }
   let dialog=null, action=null, modalMode='', openSession='', restoreFocus=null, restoreUser='', reader=null;
   let composer=null, readFrame=0, noticeTimer=0, subscribed=false, scheduled=false;
   let lastPublishedId='', returnToPublished=false;
@@ -112,7 +129,7 @@
 
   function render() {
     const rail=byId('stories'); if(!rail || !D())return;
-    if(!subscribed){D().onChange(scheduleRender);subscribed=true;}
+    if(!subscribed){D().onChange(scheduleRender);window.Platform?.onChange(scheduleRender);subscribed=true;}
     const session=current();
     if(dialog?.open && openSession!==keyFor(session))closeModal();
     rail.replaceChildren();rail.classList.add('st-rail');
@@ -152,14 +169,21 @@
     if(reader && modalMode==='reader'){
       const active=stories.find(s=>s.id===reader.ids[reader.index]);
       if(!active)showUnavailable();
-      else {reader.expiresAt=Number(active.expiresAt);reader.clockOffset=now()-Date.now();}
+      else {reader.expiresAt=Number(active.expiresAt);reader.clockOffset=now()-Date.now();refreshReaderActivity(active);}
     }
   }
   function scheduleRender(){ if(scheduled)return; scheduled=true;queueMicrotask(()=>{scheduled=false;render();}); }
 
-  function openComposer() {
+  function openComposer(input={}) {
     if(!openModal('composer'))return;
-    const session=current();composer={type:'text',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0};
+    const session=current(),context=input?.activity||input;
+    const snapshot=['before','during','after'].includes(context?.phase)?{...context}:null;
+    if(snapshot&&!snapshot.activityId&&snapshot.id)snapshot.activityId=snapshot.id;
+    if(snapshot?.activityId){const source=window.Platform?.storySnapshot(snapshot.activityId);if(source)snapshot.route=source.route;}
+    const history=window.Platform?.activities().filter(a=>a.userId===session.user.id)||[];
+    composer={type:'text',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot};
+    const departure=sport=>sport==='Marche'?'Je pars marcher !':sport==='Vélo'?'Je pars pédaler !':'Je pars courir !';
+    composer.text=composer.activity.phase==='before'?departure(composer.activity.sport):composer.activity.phase==='during'?number(composer.activity.distanceMeters)+' mètres déjà parcourus !':'Activité terminée : '+number(composer.activity.distanceMeters)+' mètres.';
     dialog.setAttribute('aria-labelledby','st-compose-title');dialog.removeAttribute('aria-label');
     dialog.innerHTML=`<div class="st-layout">
       <header class="st-topbar"><div><div class="st-eyebrow">Un moment à partager</div><h2 id="st-compose-title">Votre story</h2></div><button type="button" class="st-icon-button" id="st-compose-close" aria-label="Fermer la création de story">${svg('close')}</button></header>
@@ -171,10 +195,28 @@
         <input id="st-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
         <label class="st-input-label" for="st-caption"><span id="st-caption-label">Votre message</span><span class="st-counter" id="st-counter">0 / 280</span></label>
         <textarea id="st-caption" class="st-textarea" maxlength="280" rows="3" placeholder="La sortie du midi fait du bien…"></textarea>
+        <div class="st-activity-options"><label for="st-phase">Le moment de votre story</label><select id="st-phase"><option value="before">Avant mon activité</option><option value="during">Pendant mon activité</option><option value="after">Après mon activité</option></select><label for="st-sport" id="st-sport-label">Sport</label><select id="st-sport"><option>Course</option><option>Marche</option><option>Vélo</option></select><label for="st-activity-select" id="st-activity-label">Activité enregistrée</label><select id="st-activity-select"></select><label class="st-privacy"><input type="checkbox" id="st-hide-route" checked> Cacher mon trajet</label><p id="st-privacy-note" class="st-activity-note"></p><div id="st-activity-preview"></div></div>
         <div class="st-audience">${svg('lock',16)}<span>Visible par les collègues de <strong id="st-audience-name"></strong> pendant <strong>24 heures</strong>.</span></div>
         <div id="st-compose-error" class="st-error" role="alert" hidden></div>
       </div><footer class="st-bottom-actions"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
     byId('st-audience-name').textContent=session.org.name;
+    byId('st-caption').value=composer.text;
+    byId('st-phase').value=composer.activity.phase;byId('st-sport').value=composer.activity.sport||'Course';byId('st-hide-route').checked=composer.activity.hideRoute!==false;
+    byId('st-phase').querySelector('[value="during"]').disabled=snapshot?.phase!=='during';
+    byId('st-phase').querySelector('[value="after"]').disabled=!history.length&&snapshot?.phase!=='after';
+    if(snapshot?.phase==='after'&&!history.some(a=>a.id===snapshot.activityId)){const option=el('option','','Cette sortie · '+number(snapshot.distanceMeters)+' m (à enregistrer)');option.value=snapshot.activityId||'current-snapshot';byId('st-activity-select').append(option);}
+    for(const a of history){const option=el('option','',a.title+' · '+number(a.distanceMeters)+' m');option.value=a.id;byId('st-activity-select').append(option);}
+    if(snapshot?.phase==='after')byId('st-activity-select').value=snapshot.activityId||'current-snapshot';
+    function changeActivity(){
+      const phase=byId('st-phase').value;
+      if(snapshot?.phase===phase&&(phase!=='after'||byId('st-activity-select').value===(snapshot.activityId||'current-snapshot')))composer.activity={...snapshot};
+      else if(phase==='after'){const selected=history.find(a=>a.id===byId('st-activity-select').value)||history[0],a=window.Platform?.storySnapshot(selected?.id)||selected;composer.activity={...a,activityId:a?.id,phase};}
+      else composer.activity={phase:'before',sport:byId('st-sport').value,distanceMeters:0,durationSeconds:0,energy:0,speedKmh:0,route:''};
+      composer.activity.hideRoute=byId('st-hide-route').checked;
+      if(phase==='before'&&['Je pars courir !','Je pars marcher !','Je pars pédaler !'].includes(composer.text)){composer.text=departure(composer.activity.sport);byId('st-caption').value=composer.text;}
+      updateComposer();
+    }
+    byId('st-phase').onchange=changeActivity;byId('st-sport').onchange=changeActivity;byId('st-activity-select').onchange=changeActivity;byId('st-hide-route').onchange=changeActivity;
     const colors=[color(session.org.color),'#123d35','#c34b27','#5a398c','#18263d'];
     [...new Set(colors)].forEach((bg,i)=>{
       const b=el('button','st-swatch');b.type='button';b.style.background=bg;b.setAttribute('aria-label',i===0?'Couleur de mon entreprise':['','Vert forêt','Terre cuite','Violet','Bleu nuit'][i]);b.setAttribute('aria-pressed',String(bg===composer.bg));
@@ -203,6 +245,11 @@
     copy.classList.toggle('st-long-text',composer.text.length>120);copy.hidden=photo&&!composer.media;
     byId('st-caption-label').textContent=photo?'Une légende ? (facultatif)':'Votre message';
     byId('st-counter').textContent=composer.text.length+' / 280';
+    const a=composer.activity,before=a.phase==='before';
+    byId('st-sport').hidden=byId('st-sport-label').hidden=!before;byId('st-activity-select').hidden=byId('st-activity-label').hidden=a.phase!=='after'||!composer.history.length;
+    byId('st-activity-preview').replaceChildren(activityCard(a));
+    const linkedHidden=a.activityId&&window.Platform?.activityPrivacy(a.activityId);
+    byId('st-privacy-note').textContent=linkedHidden?'Le trajet de cette activité est masqué. Vous pouvez modifier sa visibilité depuis votre profil.':before?'Votre story annonce votre départ ; aucune énergie n’est encore comptabilisée.':'Cette story partage un instantané. Elle ne crédite pas une seconde activité.';
     byId('st-publish').disabled=composer.busy||(photo?!composer.media:!composer.text.trim());
   }
 
@@ -243,7 +290,7 @@
     if(!composer||composer.busy)return;
     const draft=composer;draft.busy=true;updateComposer();byId('st-compose-error').hidden=true;byId('st-publish').textContent='Publication…';
     try{
-      const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg});
+      const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg,activity:draft.activity});
       if(composer!==draft)return;
       lastPublishedId=published.id;returnToPublished=true;restoreFocus=null;restoreUser=published.userId;
       render();openReader(published.userId,published.id);
@@ -291,6 +338,7 @@
     media.classList.toggle('st-is-photo',isPhoto);media.style.backgroundColor=color(story.bg||current().org.color);
     text.textContent=story.text||'';text.style.color=isPhoto?'#fff':inkFor(story.bg||current().org.color);text.classList.toggle('st-long-text',(story.text||'').length>130);
     if(isPhoto){const img=el('img');img.alt=story.text||'Photo partagée par '+u.name;img.src=story.media;media.prepend(img);}
+    refreshReaderActivity(story);
     reader.ids.forEach((id,i)=>{const segment=el('span'),fill=el('i');fill.style.width=i<reader.index?'100%':'0%';segment.append(fill);byId('st-progress').append(segment);});
     byId('st-reader-count').textContent=`${reader.index+1} / ${reader.ids.length}`;
     byId('st-reader-prev').disabled=reader.index===0;
@@ -304,6 +352,13 @@
     updatePauseButton();
     try{D().markStorySeen(story.id);}catch(err){/* Seen status never blocks the reader. */}
     readFrame=requestAnimationFrame(tickReader);
+  }
+  function refreshReaderActivity(story){
+    const media=byId('st-reader-media');if(!media)return;
+    const previous=byId('st-reader-activity');
+    const serialized=JSON.stringify(story.activity||null);if(previous?.dataset.snapshot===serialized)return;
+    previous?.remove();media.classList.toggle('st-with-activity',!!story.activity);
+    if(story.activity){const card=activityCard(story.activity,true);card.id='st-reader-activity';card.dataset.snapshot=serialized;media.append(card);}
   }
   function isPaused(){return !reader||reader.manualPaused||reader.holding||reader.actionPaused||document.hidden;}
   function updatePauseButton(){
@@ -336,11 +391,21 @@
 
   function openStoryAction(story){
     if(!reader||!current())return;
+    story=liveStories().find(item=>item.id===story.id)||story;
     reader.actionPaused=true;updatePauseButton();
     const own=story.userId===current().user.id;
     action.setAttribute('aria-labelledby','st-action-title');
     action.innerHTML=`<h2 id="st-action-title">${own?'Supprimer cette story ?':'Signaler cette story'}</h2><p id="st-action-desc">${own?'Elle disparaîtra immédiatement de votre espace et de celui de vos collègues.':'Votre signalement sera transmis au responsable de votre entreprise.'}</p>${own?'':'<label for="st-report-reason">Motif du signalement</label><select id="st-report-reason"><option value="">Choisir un motif</option><option>Contenu inapproprié</option><option>Harcèlement ou propos blessants</option><option>Image publiée sans accord</option><option>Autre problème</option></select>'}<div id="st-action-error" class="st-error" role="alert" hidden></div><div class="st-action-row"><button type="button" class="st-small-button" id="st-action-cancel">Annuler</button><button type="button" class="st-primary ${own?'st-danger':''}" id="st-action-confirm">${own?'Supprimer':'Envoyer'}</button></div>`;
     action.setAttribute('aria-describedby','st-action-desc');fitDialogs();action.showModal();
+    if(own&&story.activity){
+      byId('st-action-title').textContent='Options de ma story';
+      byId('st-action-desc').textContent='Vous pouvez masquer le trajet en conservant vos statistiques, ou supprimer cette story.';
+      const privacy=el('label','st-privacy'),toggle=el('input');toggle.type='checkbox';toggle.id='st-edit-hide-route';toggle.checked=story.activity.hideRoute;
+      privacy.append(toggle,document.createTextNode('Cacher mon trajet'));byId('st-action-desc').after(privacy);
+      const linkedHidden=story.activity.activityId&&window.Platform?.activityPrivacy(story.activity.activityId);
+      if(linkedHidden)privacy.after(el('p','st-activity-note','Le trajet reste aussi masqué par la confidentialité de l’activité. Celle-ci se règle depuis votre profil.'));
+      toggle.addEventListener('change',()=>{try{D().setStoryPrivacy(story.id,toggle.checked);const fresh=liveStories().find(s=>s.id===story.id);if(fresh)refreshReaderActivity(fresh);notify('Confidentialité de la story enregistrée.');}catch(err){toggle.checked=!toggle.checked;setError(byId('st-action-error'),err);}});
+    }
     byId('st-action-cancel').addEventListener('click',()=>action.close());
     byId('st-action-confirm').addEventListener('click',async()=>{
       const reason=own?'':byId('st-report-reason').value;

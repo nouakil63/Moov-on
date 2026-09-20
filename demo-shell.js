@@ -4,7 +4,7 @@
   const $=id=>document.getElementById(id);
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const params=new URLSearchParams(location.search);
-  const ADMIN_URL='https://moov-on-vert.vercel.app/admin.html';
+  const ADMIN_URL='./admin.html';
   let selectedOrg=Demo.getInvitation(params.get('invite'))?.orgId||Demo.orgs().find(o=>o.id===params.get('org'))?.id||'corelis';
   let loginEmail='',step='email',lastContext='',installPrompt;
   const personas=[
@@ -34,9 +34,9 @@
     $('auth-root').innerHTML=`<div class="login-layout">
       <section class="login-story"><a class="moov-wordmark" href="./index.html" aria-label="Moov’On accueil">moov<span>’</span>on<i>↗</i></a>
         <span class="eyebrow">LE MOUVEMENT QUI NOUS RASSEMBLE</span>
-        <h1>Chaque pas.<br>Un impact<span>.</span></h1>
+        <h1>Chaque mètre.<br>Un impact<span>.</span></h1>
         <p>Bougez ensemble. Soutenez les causes qui comptent. Faites vivre l’énergie de votre entreprise.</p>
-        <div class="login-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="energy-ticket"><small>VOTRE ÉNERGIE DEVIENT</small><strong>du concret.</strong><span>⚡ des pas → des projets solidaires</span></div><span class="floating-note">+ 5 200 ⚡<small>Une sortie. Un élan collectif.</small></span><span class="art-leaf">↗</span></div>
+        <div class="login-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="energy-ticket"><small>VOTRE ÉNERGIE DEVIENT</small><strong>du concret.</strong><span>${Energy.icon} des mètres → des projets solidaires</span></div><span class="floating-note">+ 5 000 ${Energy.icon}<small>Une sortie. Un élan collectif.</small></span><span class="art-leaf">↗</span></div>
         <div class="login-proof"><span><b>01</b> Je bouge</span><span><b>02</b> Je partage</span><span><b>03</b> Je contribue</span></div>
         <small class="login-foot">Une expérience privée, aux couleurs de votre entreprise.</small>
       </section>

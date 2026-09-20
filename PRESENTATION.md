@@ -1,134 +1,137 @@
-# Présenter Moov’On en 5 à 7 minutes
+# Présenter Moov’On — salarié, entreprise et CRM
 
-Ce parcours montre une même application aux couleurs de chaque entreprise, l’engagement des salariés et les outils du responsable. Il est prévu pour une démonstration guidée sur ordinateur, avec l’application dans son cadre mobile et le portail à côté dans le parcours.
+Ce parcours est un **guide à répéter avant la présentation**, pas un compte rendu d’essais navigateur. Prévoir environ dix minutes pour le parcours principal, puis quelques minutes pour les options.
 
-Phrase d’ouverture proposée : « Moov’On transforme les activités du quotidien en énergie à donner aux projets solidaires de l’entreprise. Je vais vous montrer le parcours d’un salarié, puis celui du responsable. Les comptes et données de cette présentation sont simulés et enregistrés dans ce navigateur. »
+Phrase d’ouverture : « Les activités des salariés font progresser une campagne solidaire financée par leur entreprise. Je vais montrer le parcours salarié, les choix du responsable et le CRM Moov’On. Les comptes, activités, partenaires et montants de cette présentation sont simulés dans ce navigateur. »
 
-## Préparer la présentation
+## Préparation
 
-1. Dans le dossier du dépôt, démarrer le serveur avec `python -m http.server 8765`, puis ouvrir [l’application](http://localhost:8765/index.html). Garder cette commande ouverte pendant la présentation.
-2. Utiliser le même navigateur et l’adresse `http://localhost:8765` pour l’application et le portail. Éviter `file://`, les fenêtres privées et l’alternance entre `localhost` et `127.0.0.1`.
-3. Préparer une photo JPG/PNG/WebP de démonstration et, si souhaité, un petit logo PNG/WebP. Une image de paysage ou d’équipement permet de montrer l’import sans utiliser de données personnelles.
-4. Choisir **Léa** sur l’écran de connexion. Ouvrir **Portail entreprise**, puis **Présentation** → **Réinitialiser la démonstration** → **Réinitialiser**. Cette action efface les essais, personnalisations et invitations des deux entreprises et revient à l’écran de connexion.
-5. Répéter le parcours entier une fois, puis refaire cette remise à zéro avant l’arrivée du client. Vérifier notamment l’import de la photo, la copie du lien d’invitation et le retour du portail vers l’application.
+1. Démarrer le site depuis le dépôt avec la commande ci-dessous, puis ouvrir [l’application](http://localhost:8765/index.html) et [le portail](http://localhost:8765/admin.html).
 
-Sur ordinateur, les changements de profil se trouvent dans **Outils de présentation** à gauche. Sur téléphone, toucher le nom de l’entreprise en haut, puis ouvrir ces mêmes outils. Choisir le profil et appuyer sur **Ouvrir ce profil**.
+       python -m http.server 8765
 
-## 0:00–0:45 · Un salarié rejoint son entreprise
+2. Garder le même navigateur, hôte et port pour les deux espaces. Un nouvel onglet peut demander sa propre connexion : utiliser Léa pour le portail et Camille pour l’application. Ne pas ouvrir le portail sur un autre domaine.
+3. Dans le portail, **Présentation** → **Réinitialiser la démonstration**, puis confirmer, si les essais existants peuvent être effacés. Cette action restaure les profils et les données fictives des deux entreprises.
+4. Préparer une petite photo JPG/PNG/WebP et, si utile, un logo. Utiliser des contenus de présentation.
+5. Répéter les étapes ci-dessous sur la version qui sera montrée. Relever les erreurs éventuelles avant le rendez-vous ; une réussite des tests Node ne remplace pas cette répétition.
 
-Écran : connexion, onglet **Corélis**.
+Les comptes utilisent le code de démonstration **123456**. Les raccourcis **Outils de présentation** permettent de changer de profil dans l’application ; sur téléphone, ils sont accessibles depuis le bandeau entreprise/compte. Les sessions sont propres à chaque onglet : changer de profil dans l’application ne change pas nécessairement celui du portail.
 
-1. Saisir `camille@corelis.fr` et choisir **Continuer par e-mail**.
-2. Saisir **123456**, puis **Rejoindre mon espace →**.
-3. Montrer le nom de l’entreprise en haut, **Bonjour Camille**, l’équipe Marketing et les points disponibles.
+## 1 · L’entreprise choisit son engagement
 
-À dire : « Le salarié retrouve directement son entreprise, ses collègues et ses missions. Un seul Moov’On, avec l’identité de son employeur. »
+Profil : **Léa Fontaine**, lea@corelis.fr. Écran du portail : **Campagnes solidaires**.
 
-Le code est affiché pour la démonstration ; aucun e-mail n’est envoyé. Si le client demande le SSO, revenir à la connexion et montrer **Se connecter avec mon entreprise** puis **Continuer avec ce compte →** : ce parcours est également simulé, sans connexion Microsoft ou autre fournisseur réel.
+1. Choisir **Nouvelle campagne**.
+2. Sélectionner **Canopée Solidaire** puis **Planter des arbres**.
+3. Saisir **10 000 €**, choisir **Mensuelle · 1 mois** et la date du jour.
+4. Montrer le coût d’un arbre, **5 €**, et la cible de **2 000 arbres** rendue possible par ce budget.
+5. Si une campagne couvre déjà la période, cocher **Confirmer la succession des campagnes**, puis **Créer la campagne**.
+6. Dans **Vue d’ensemble**, montrer la collecte initiale de cette nouvelle campagne et son nombre de participants actifs.
 
-## 0:45–1:45 · Bouger, puis choisir son impact
+À dire : « L’entreprise choisit la cause, le budget et la durée. Un collaborateur devient participant lorsqu’il enregistre une activité. Le catalogue et les règles de conversion sont gérés par Moov’On. »
 
-Écrans : bouton **+** → **Lancer une course**, puis **Missions** et **Profil**.
+L’objectif global de la mission, par exemple 50 000 €, reste distinct de l’enveloppe de cette entreprise. Les 2 000 arbres sont une **cible**, pas un résultat déjà financé. Aucun paiement n’est effectué.
 
-1. Appuyer sur **+**, puis **Lancer une course**.
-2. Montrer le chronomètre et les mètres. Utiliser **Présentation : avancer de 1 km** une fois pour accélérer le scénario.
-3. Appuyer sur **Terminer**, puis **Enregistrer sans publier**. Le résultat est privé et l’énergie est créditée.
-4. Dans **Missions**, choisir **Repas chauds** → **Donner de l’énergie**. Régler le curseur sur **500 ⚡** et choisir **Confirmer le don**.
-5. Dans **Profil**, montrer **Votre impact** et l’activité enregistrée comme privée dans **Vos dernières activités**.
+## 2 · Une activité fait progresser automatiquement la campagne
 
-À dire : « La personne peut garder sa sortie privée tout en contribuant. L’énergie est ensuite répartie librement entre les causes proposées. Ici, 500 points correspondent à un repas dans notre barème de démonstration. »
+Profil : **Camille Roux**, camille@corelis.fr. Application : **Accueil**, puis bouton **+**.
 
-La course et le tracé sont simulés. Cette action ne mesure aucun GPS réel et ne déclenche aucun versement financier.
+1. Choisir **Ajouter une activité**, sport **Course**, distance **5 000 mètres**, durée **30 minutes**, et un titre.
+2. Garder le trajet masqué et enregistrer en publiant dans le fil.
+3. Montrer la nouvelle carte, les mètres, la durée, la vitesse et **5 000 points d’énergie**.
+4. Ouvrir **Impact** pour montrer la contribution monétaire ajoutée à la campagne.
+5. Revenir au portail de Léa : le montant mobilisé, l’énergie et le nombre de participants sont issus de cette même activité.
 
-## 1:45–2:45 · Faire vivre le collectif avec les stories
+À dire : « L’enregistrement suffit pour contribuer à la mission choisie par l’entreprise. La conversion s’adapte à son budget et à l’activité du collectif. Le montant de cette activité est ensuite conservé. »
 
-Écran : **Accueil** → **Les moments de votre équipe**.
+Pour montrer le bonus, préparer une seconde course de **5 000 mètres en 20 minutes** : l’énergie prévue est **5 100 points**, soit un bonus de 2 %. Les coefficients sont des hypothèses réglables, pas une équivalence physiologique. Le montant en euros dépend du ratio du moment : ne pas annoncer une valeur fixe avant l’enregistrement.
 
-1. Toucher le petit **+** de **Ma story**.
-2. Dans **Texte**, saisir « La pause de midi fait du bien. On repart avec de l’énergie ! », choisir une couleur et montrer l’aperçu.
-3. Lire la mention **Visible par les collègues de Banque Corélis pendant 24 heures**, puis choisir **Publier ma story**.
-4. Revenir au **+** de **Ma story**, choisir **Photo** → **Choisir une photo**, sélectionner le fichier préparé et ajouter une courte légende. Attendre la fin de sa préparation avant de publier.
-5. Toucher **Ma story** pour ouvrir le lecteur. Montrer la pause, les flèches et **Terminer**. Passer ensuite au profil **Léa** avec **Outils de présentation** pour retrouver les publications de Camille.
+Option confidentialité : dans l’ajout manuel, décocher **Publier les statistiques dans le fil de mon entreprise** avant d’enregistrer. Pour une activité simulée terminée, utiliser **Enregistrer sans publier**. L’activité apparaît dans le profil et contribue à la campagne, tout en restant hors du fil collectif.
 
-À dire : « Le quotidien de l’équipe devient visible : un mot, une photo, un encouragement. L’auteur est identifié et ces moments restent dans l’espace de son entreprise. »
+## 3 · Partager avant, pendant ou après l’activité
 
-Pour une version de cinq minutes, publier seulement la story texte et montrer le choix **Photo** sans effectuer un second envoi. La vidéo n’est pas proposée dans cette version.
+Écran : **Les moments du collectif** ou **+** → **Publier une story**.
 
-## 2:45–3:35 · Personnaliser l’espace entreprise
+1. Choisir **Avant mon activité**, puis le sport. Montrer le message de départ : aucune distance ou énergie n’est inventée.
+2. Saisir un texte ou choisir une photo ; garder **Cacher mon trajet** coché, puis **Publier ma story**.
+3. Pour montrer une story après l’effort, choisir **Après mon activité** et l’activité enregistrée à l’étape précédente. Les statistiques de cette activité sont reprises.
+4. Ouvrir la story, puis passer à Léa dans l’application pour la retrouver dans le même espace entreprise.
+5. Montrer que la story demeure visible **24 heures** et qu’elle ne crée aucune deuxième contribution.
 
-Profil : **Léa**, responsable RSE de Corélis. Écran : **Portail entreprise** → **Identité visuelle**.
+Pour une story pendant l’effort : **Commencer une activité**, choisir le sport, puis utiliser **Partager ce moment en story** dans la simulation. Les statistiques de la story restent celles de cet instant. Revenir à la simulation, **Terminer**, puis enregistrer le résultat. La simulation est accélérée et n’utilise aucun GPS réel.
 
-1. Changer **Nom du programme**, par exemple en « Ensemble en mouvement ».
-2. Modifier **Couleur principale** et/ou **Couleur secondaire**. Montrer l’**Aperçu salarié** qui évolue pendant la saisie.
-3. Si le logo a été préparé, choisir **Importer un logo** et sélectionner le fichier.
-4. Choisir **Enregistrer**, puis **Voir l’application**. Montrer la nouvelle identité dans le bandeau et les couleurs de l’application.
+À dire : « On peut partager le départ, un moment d’effort ou le résultat, et conserver les chiffres sans montrer son trajet. » Le masquage peut aussi être modifié sur sa propre activité ou story. Une activité masquée impose ce masquage aux stories qui lui sont liées.
 
-À dire : « Le responsable personnalise l’espace de ses salariés sans créer une application différente. Le nom de l’application reste Moov’On. »
+## 4 · Un événement rassemble le collectif
 
-Ces réglages changent les noms, le programme, le logo et les couleurs. Le portail ne configure pas encore les barèmes des missions.
+Profil : Camille. Écran : **Événements** → **+** ou **Créer un événement**.
 
-## 3:35–4:50 · Inviter un nouveau collaborateur
+1. Créer « La marche de midi » pour une date future, avec une heure, un départ, une arrivée et une distance de **3 000 mètres**.
+2. Choisir la visibilité entreprise et une capacité, par exemple **10 participants**, puis enregistrer.
+3. Passer à Léa : retrouver l’événement et s’inscrire. Montrer la variation des places disponibles.
+4. Expliquer les autres visibilités : **Ouverts à tous** concerne les membres des entreprises de la démonstration ; **Privés** réserve l’événement à l’organisateur et aux personnes invitées.
 
-Écran : **Portail entreprise** → **Collaborateurs**.
+Le compte de l’organisateur occupe une place. Un événement n’enregistre pas automatiquement une activité sportive pour ses inscrits. Les dates/heures d’événement utilisent le fuseau du navigateur.
 
-1. Choisir **Inviter un collaborateur**.
-2. Saisir **Morgan Démo**, `morgan.demo@corelis.fr`, équipe **Marketing**, rôle **Collaborateur**.
-3. Choisir **Créer l’invitation**, puis **Copier** dans **Votre invitation est prête.** Conserver ce lien pour l’étape suivante.
-4. Fermer la fenêtre avec **Terminer**, puis coller le lien d’invitation dans la barre d’adresse du même onglet. L’application ferme la session en cours et affiche l’invitation ; il est également possible de se déconnecter avant d’ouvrir ce lien.
-5. Sur **Vous êtes invité·e.**, choisir **Accepter l’invitation**. Montrer l’accueil de Morgan et l’entreprise déjà attribuée.
+## 5 · Le profil suit les mètres et la régularité
 
-À dire : « L’entreprise invite une personne et l’affecte à son équipe. Le salarié rejoint ensuite un espace déjà préparé pour lui. »
+Profil : Camille. Écran : **Profil**.
 
-Cette invitation est réellement activable dans la maquette, mais aucun e-mail n’est envoyé. Elle dépend des données locales de ce navigateur : ne pas la présenter comme un lien utilisable sur un autre ordinateur ou téléphone. Si la copie automatique est indisponible, sélectionner le lien affiché et le copier manuellement.
+1. Montrer les mètres cumulés et l’énergie récoltée.
+2. Parcourir la semaine courante puis la précédente avec les flèches.
+3. Toucher un jour du graphique pour consulter les mètres correspondants.
+4. Montrer l’évolution par rapport à la semaine précédente et la moyenne hebdomadaire.
+5. Retrouver les activités publiques et privées ; vérifier le réglage de confidentialité du trajet.
 
-Après un essai déjà effectué, réinitialiser avant de réutiliser `morgan.demo@corelis.fr`, ou choisir une nouvelle adresse fictive : un compte existant ne doit pas être invité une seconde fois.
+Les semaines vont du lundi au dimanche, en UTC. Les exemples des profils initiaux sont fictifs. Une nouvelle entreprise sans historique affiche des zéros et aucune évolution en pourcentage lorsqu’il n’existe pas de base de comparaison.
 
-## 4:50–5:30 · Une deuxième entreprise, son propre espace
+## 6 · Moov’On prépare le catalogue et les règles
 
-Écran : application → **Outils de présentation**.
+Profil : **Équipe Moov’On**, hello@moovon.demo. Écran : portail, rubrique **CRM Moov’On**.
 
-1. Passer au profil **Alex · Salarié · Nova**, puis choisir **Ouvrir ce profil**.
-2. Montrer Nova, ses couleurs, son programme et ses stories. Les publications de Camille ne sont pas dans ce fil de stories.
-3. Pour montrer le rôle d’administration, passer à **Sarah · Administratrice · Nova** : elle peut ouvrir le portail de Nova.
+1. Ouvrir **Associations & missions**. Montrer **Nouvelle association**, son logo, sa présentation et son contact.
+2. Sous une association, **Ajouter une mission** permet de définir un nom, une unité d’impact, un coût unitaire et un objectif **en euros**.
+3. Ouvrir **Conversion & énergie** : coefficients course/marche/vélo, vitesses de référence, bonus plafonné à 10 %, hypothèses initiales et fenêtre des participants actifs de 28 jours. Montrer la comparaison illustrative de **20 ou 200 participants**, avec le même budget de **10 000 €** et **90 jours restants** ; elle n’ajoute aucune activité aux entreprises.
+4. Montrer que ces réglages sont absents du menu de Léa : ils appartiennent à la plateforme.
+5. Si une modification de règle est montrée, relever d’abord une contribution existante, enregistrer la nouvelle règle, puis vérifier que son montant historique n’a pas changé. Seules les prochaines activités utilisent le nouveau barème.
 
-À dire : « La même expérience sert plusieurs entreprises. Chaque salarié retrouve son propre collectif. »
+À dire : « Nous distinguons les paramètres de la plateforme et l’engagement de chaque entreprise. Une modification de règle ne retire pas les euros déjà mobilisés. »
 
-La séparation visible est un comportement de maquette contrôlé côté navigateur. Elle ne prouve pas une sécurité serveur ou une synchronisation entre appareils.
+Les prix du catalogue sont des exemples : arbre 5 €, repas 8 €, kit scolaire 15 €. L’impact affiché est une simulation de financement, sans preuve de versement ni de réalisation.
 
-## 5:30–6:20 · Vérifier les 24 heures
+## 7 · Le rappel apparaît à l’approche de la fin
 
-Profil : **Léa**. Écran : portail → **Présentation**.
+Le rappel automatique apparaît uniquement **dans les quinze derniers jours avant la fin de la campagne**, et présente **la progression globale de cette campagne**. La progression reste consultable volontairement depuis l’onglet Impact.
 
-1. Revenir au profil **Léa** et ouvrir le portail.
-2. Dans **Présentation**, choisir **Avancer de 24 heures**, puis confirmer avec **Avancer de 24 heures**.
-3. Aller dans **Stories & modération** : les stories publiées avant cette avance ne sont plus en ligne.
-4. Choisir **Voir l’application** et montrer leur disparition dans **Les moments de votre équipe**.
+1. Dans le portail, relever la date de fin de la campagne.
+2. Si nécessaire, utiliser **Présentation** → **Avancer de 24 heures** jusqu’à entrer dans les quinze derniers jours, sans dépasser la fin.
+3. Revenir dans l’application et ouvrir l’accueil pour montrer le rappel et les montants de la campagne.
+4. Vérifier qu’il ne s’agit ni d’un récapitulatif des quinze derniers jours, ni d’un message revenant automatiquement tous les quinze jours.
+5. L’avance de l’horloge affecte aussi les stories et événements : faire cette étape après les autres démonstrations.
 
-À dire : « Après 24 heures, ces moments quittent le flux. Pour cette démonstration, nous avançons l’horloge locale afin de voir le résultat immédiatement. »
+Si un rappel a déjà été fermé dans ce navigateur, il peut ne plus se présenter à l’identique lors de la répétition. Préparer le scénario avec une nouvelle campagne ou une remise à zéro. À la fin de la campagne, aucune nouvelle activité ne mobilise son budget.
 
-L’avance s’applique à toutes les entreprises de ce navigateur. Elle modifie aussi la date utilisée par certains compteurs de la démo. La remise à zéro est nécessaire pour retrouver l’état initial ; l’horloge système n’est pas modifiée.
+## Options à ajouter selon le rendez-vous
 
-Après la présentation, revenir dans **Présentation** → **Réinitialiser la démonstration** → **Réinitialiser**, sauf si les réglages ou créations doivent être conservés pour une seconde session.
-
-## Si le client souhaite aller plus loin
-
-| Sujet | Manipulation disponible |
+| Sujet | Parcours |
 |---|---|
-| Modération | Avec Camille, ouvrir une story de Léa, choisir les options **…**, sélectionner un motif et **Envoyer**. Avec Léa, retrouver ce signalement dans **Stories & modération**. Faire cette manipulation avant l’avance de 24 heures. |
-| Suppression personnelle | Ouvrir sa propre story, choisir les options **…**, puis **Supprimer** et confirmer. |
-| Administration Moov’On | Dans **Outils de présentation**, sélectionner **Équipe Moov’On · Administration** (`hello@moovon.demo`), puis ouvrir le portail. **Entreprises clientes** permet de **Créer une entreprise**, puis **Créer l’espace**, avec un premier administrateur immédiatement actif. Ce compte rejoint son espace avec son adresse et le code de démonstration `123456`. |
-| Installation web | Dans l’application, **Installer sur mon téléphone** sur ordinateur ou **Installer l’application** dans le profil. Le bouton affiche la proposition d’installation si le navigateur la permet, sinon des instructions. |
+| Identité entreprise | Léa → Identité visuelle → logo, couleurs, nom du programme → Enregistrer → Voir l’application |
+| Invitation | Léa → Collaborateurs → Inviter un collaborateur → Créer l’invitation ; ouvrir le lien dans ce même navigateur, puis Accepter l’invitation |
+| Modération | Signaler une story d’un autre auteur ; Léa → Stories & modération pour retrouver et traiter le signalement |
+| Expiration | Après publication d’une story, Présentation → Avancer de 24 heures ; vérifier qu’elle quitte le flux |
+| Deuxième entreprise | Alex ou Sarah chez Nova : identité, fil, stories et campagne propres à cet espace |
+| Nouvel espace | Opérateur → Entreprises clientes → Créer une entreprise → Créer l’espace ; premier administrateur actif pour la démonstration |
+| Installation web | Installer sur mon téléphone / Installer l’application ; proposition du navigateur ou instructions d’ajout à l’accueil |
 
-La présentation se termine par le choix du prochain parcours à approfondir : connexion réelle, pilote salarié, contenu des missions ou administration entreprise. L’installation web illustrée ici ne correspond pas à une publication sur l’App Store ou Google Play.
+Une invitation n’envoie aucun e-mail et ne transporte pas les données sur un autre appareil. Les événements ouverts à tous peuvent traverser les entreprises, contrairement au fil et aux stories de l’entreprise. L’installation web ne correspond pas à une publication App Store ou Google Play.
 
-## Éviter les surprises pendant les répétitions
+## Après la répétition
 
-- **Ancien écran après une modification du code** : actualiser les pages avec le serveur en marche. Si une version reste incohérente, désinscrire le service worker et supprimer ses caches pour cette origine dans les outils de développement, puis recharger. La remise à zéro de la démo ne vide pas ce cache statique.
-- **Données absentes dans le portail** : vérifier le navigateur, l’hôte et le port. La session est propre à chaque onglet ; un nouvel onglet indépendant peut demander une connexion. Pour le parcours principal, les liens application/portail dans le même onglet sont les plus simples.
-- **Photo refusée** : essayer un petit fichier JPG, PNG ou WebP. L’application compresse l’image avant enregistrement. Si le quota local est plein, supprimer les essais ou réinitialiser la démo ; ne pas multiplier les photos pendant les répétitions.
-- **Plus aucune story visible** : l’horloge a peut-être été avancée. Réinitialiser la démonstration pour retrouver les stories et dates initiales.
-- **Présentation sur un téléphone personnel** : l’adresse `localhost` de l’ordinateur n’est pas un lien partageable vers ce téléphone. Préparer une version hébergée en HTTPS pour ce cas. Son navigateur utilisera ses propres données de démonstration.
+- **Ancien écran** : recharger l’application et le portail ; en cas de fichiers incohérents, vérifier le service worker et supprimer son cache pour cette origine.
+- **Chiffres différents entre app et CRM** : vérifier le navigateur, l’origine exacte, l’entreprise sélectionnée et la campagne. Des onglets peuvent avoir des sessions différentes.
+- **Photo refusée ou quota atteint** : essayer un petit JPG/PNG/WebP ; ne pas traiter une erreur comme une publication réussie.
+- **Story ou événement absent** : vérifier l’entreprise, sa visibilité et l’horloge avancée.
+- **Plus de contribution** : vérifier les dates de la campagne active et son budget restant.
+- **Téléphone personnel** : utiliser l’URL HTTPS de la version préparée ; localhost désigne le téléphone lui-même. Son navigateur aura son propre jeu de données.
 
-Les polices peuvent être chargées depuis Google ; les contenus et comptes de démonstration restent locaux. Une fois le parcours répété et les fichiers statiques chargés, conserver une connexion réseau stable si l’apparence doit rester exactement identique.
-
-Pour les commandes, profils et l’inventaire lisible des limites, consulter [README.md](README.md). Pour vérifier les règles locales avec Node.js : `node --test tests/*.test.cjs`.
+Terminer par **Présentation** → **Réinitialiser la démonstration** si les essais doivent être effacés. Cette opération ne remet pas à zéro le cache statique. Le compte rendu de recette et la vérification du déploiement restent à établir séparément.

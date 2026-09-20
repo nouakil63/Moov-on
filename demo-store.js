@@ -115,6 +115,28 @@
     if (!['employee','admin'].includes(role)) fail('Choisissez le rôle salarié ou administrateur.');
     return role;
   }
+  function storyActivity(value) {
+    if (value == null) return null;
+    if (!['before','during','after'].includes(value.phase)) fail('Le moment de publication est invalide.');
+    if (!['Course','Marche','Vélo'].includes(value.sport)) fail('Choisissez la course, la marche ou le vélo.');
+    const result = {phase:value.phase,sport:value.sport,activityId:str(value.activityId,120),hideRoute:value.hideRoute !== false};
+    for (const key of ['distanceMeters','durationSeconds','energy','speedKmh']) {
+      const n = Number(value[key] || 0);
+      if (!Number.isFinite(n) || n < 0 || n > 1000000000) fail('Les statistiques de la story sont invalides.');
+      result[key] = value.phase === 'before' ? 0 : n;
+    }
+    result.route = value.route ? 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35' : '';
+    return result;
+  }
+  function visibleStory(story) {
+    const result = copy(story);
+    if (result.activity) {
+      const hidden = result.activity.activityId && global.Platform?.activityPrivacy(result.activity.activityId);
+      if (hidden === true) result.activity.hideRoute = true;
+      if (result.activity.hideRoute) result.activity.route = '';
+    }
+    return result;
+  }
   function image(value, allowEmpty) {
     if (allowEmpty && !value) return '';
     if (!validMedia(value)) fail('Choisissez une image PNG, JPEG, WebP ou GIF valide.');
@@ -129,6 +151,10 @@
     users(orgId) {
       const data = read(), target = access(data,orgId).orgId;
       return copy(data.users.filter(u => u.orgId === target));
+    },
+    directory() {
+      const data = read(); requireSession(data);
+      return data.users.filter(u => u.status === 'active' && u.role !== 'platform').map(u => ({id:u.id,name:u.name,orgId:u.orgId,team:u.team,orgName:data.organizations.find(o=>o.id===u.orgId)?.name||''}));
     },
     login({email,orgId} = {}) {
       const data = read();
@@ -279,7 +305,7 @@
       try {
         for (let i = 0; i < global.localStorage.length; i++) {
           const key = global.localStorage.key(i);
-          if (key && key.startsWith('moovon:app:v2:')) keys.push(key);
+          if (key && (key.startsWith('moovon:app:v2:') || key === 'moovon:platform:v1' || key.startsWith('moovon:campaign-notice:'))) keys.push(key);
         }
       } catch (_) { fail('Le stockage local est indisponible.'); }
       save(seed());
@@ -298,9 +324,9 @@
     },
     getStories(orgId, {includeExpired = false} = {}) {
       const data = read(), target = access(data,orgId,includeExpired).orgId;
-      return copy(data.stories.filter(s => s.orgId === target && s.status === 'active' && (includeExpired || s.expiresAt > clock(data))).sort((a,b) => b.publishedAt-a.publishedAt));
+      return data.stories.filter(s => s.orgId === target && s.status === 'active' && (includeExpired || s.expiresAt > clock(data))).sort((a,b) => b.publishedAt-a.publishedAt).map(visibleStory);
     },
-    createStory({type = 'text',text = '',media = '',bg = '#1543B7'} = {}) {
+    createStory({type = 'text',text = '',media = '',bg = '#1543B7',activity = null} = {}) {
       return change('story', data => {
         const {user,org} = requireSession(data);
         if (!['text','photo'].includes(type)) fail('Choisissez une story texte ou photo.');
@@ -310,7 +336,18 @@
         if (!validColor(bg)) fail('Choisissez une couleur de fond valide.');
         const publishedAt = clock(data);
         const story = {id:uid('story'),orgId:org.id,userId:user.id,type,text:caption,media:type === 'photo' ? image(media,false) : '',bg,publishedAt,expiresAt:publishedAt+DAY,status:'active'};
+        if (activity) story.activity = storyActivity(activity);
         data.stories.push(story); return story;
+      });
+    },
+    setStoryPrivacy(id,hideRoute) {
+      if (typeof hideRoute !== 'boolean') fail('Choisissez la visibilité du trajet.');
+      return change('story-privacy',data=>{
+        const {story,active}=getStory(data,id);
+        if (story.userId!==active.user.id) fail('Vous pouvez modifier uniquement vos propres stories.');
+        if (!story.activity) fail('Cette story ne contient pas de trajet.');
+        story.activity.hideRoute=hideRoute;
+        return story;
       });
     },
     deleteStory(id) {

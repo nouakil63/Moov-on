@@ -1,25 +1,79 @@
-# Hébergement de la présentation
+# Hébergement de la maquette et du CRM
 
-Le 14 septembre 2026, le propriétaire a demandé explicitement un lien **Vercel**.
-Vercel est donc la destination à utiliser pour les prochaines publications de cette maquette.
+La destination convenue pour cette présentation est **Vercel**, sur le projet et la branche existants. L’application et le portail doivent être publiés ensemble, sur la même origine, pour partager leurs données locales.
 
-- Lien public : https://moovon-presentation.vercel.app/
-- Projet : `moovon-presentation`, équipe `nouakil63s-projects`.
-- Tableau de bord : https://vercel.com/nouakil63s-projects/moovon-presentation
-- Dépôt connecté : `nouakil63/Moov-on` ; branche de production : `codex/client-demo`.
-- Source de la mise à jour iPhone et publications immédiates : commit `c113be1827f5e89810ac601500b16b893b5f4d33`.
-- Déploiement : https://vercel.com/nouakil63s-projects/moovon-presentation/BfaWEiv4NDdW4enPcNSThfLeotvK
-- Configuration : `vercel.json` exécute `node scripts/build-site.cjs` et publie uniquement les 14 fichiers statiques de `dist/`.
-- La page publique a été vérifiée en HTTP 200 et dans le navigateur avec le cadre iPhone. La première publication avait été réalisée par import ZIP.
+| Paramètre | Cible configurée |
+|---|---|
+| Projet | moovon-presentation |
+| Équipe | nouakil63s-projects |
+| Dépôt | nouakil63/Moov-on |
+| Branche de production | codex/client-demo |
+| Application | [moovon-presentation.vercel.app](https://moovon-presentation.vercel.app/) |
+| Portail et CRM | [admin.html sur la même origine](https://moovon-presentation.vercel.app/admin.html) |
+| Tableau de bord | [Projet Vercel](https://vercel.com/nouakil63s-projects/moovon-presentation) |
+| Commande de build | node scripts/build-site.cjs |
+| Répertoire publié | dist/ |
 
-Un push sur `codex/client-demo` met désormais ce lien à jour automatiquement. Le projet Vercel distinct `moov-on` conserve sa propre configuration et sa branche de production. Ne pas remplacer `main` pour publier la présentation.
+Ces adresses identifient la cible existante. **La présence de cette nouvelle version en ligne et sa recette navigateur doivent être vérifiées lors de la publication** ; cette page ne les atteste pas. Le projet Vercel distinct moov-on et la branche main ne sont pas la cible de cette maquette.
 
-Vérifications de cette version : 24 tests automatiques réussis, publication d’activité avec affichage immédiat dans le fil, commentaire, stories texte et photo ouvrant la nouvelle story, retour à la vignette publiée, affichage mobile sans débordement horizontal. Le cadre iPhone est visible sur ordinateur ; sur téléphone l’application utilise tout l’écran.
+## Fichiers publics
 
-Une publication Sites avait été créée auparavant pendant cette même demande. Le fichier `.openai/hosting.json` en conserve l’identifiant, mais la préférence explicite du propriétaire est Vercel. Ne pas choisir Sites par défaut pour les mises à jour.
+vercel.json sélectionne un site statique (framework: null). scripts/build-site.cjs copie explicitement **16 fichiers** :
 
-Les comptes, invitations et contenus restent ceux de la maquette locale : chaque navigateur dispose de ses propres données de démonstration.
+    index.html               admin.html
+    app.css                  app.js
+    demo-shell.css           demo-shell.js
+    demo-store.js            energy.js
+    platform-store.js        stories.css
+    stories.js               admin.css
+    admin.js                 manifest.webmanifest
+    sw.js                    icon.svg
 
-Le cadre iPhone entoure aussi la connexion, la saisie du code et la connexion d’entreprise sur ordinateur. Ces formulaires défilent à l’intérieur du téléphone ; sur mobile, ils occupent tout l’écran. Les essais couvrent la visibilité du code incorrect, le parcours SSO et l’absence de débordement à 390 px et 835 px.
+Le build n’embarque ni les tests, ni les documents, ni config.js, ni le schéma Supabase, ni le dépôt Git. Utiliser un répertoire de build propre pour contrôler exactement cette liste. Aucune variable Supabase, clé serveur ou API métier n’est nécessaire au fonctionnement de la maquette.
 
-Sur ordinateur, le bouton **Espace administrateur** apparaît dans la colonne à gauche de l’iPhone. À la demande du propriétaire, il ouvre dans un nouvel onglet l’administration récente du dépôt principal : https://moov-on-vert.vercel.app/admin.html (source vérifiée identique à `origin/main` au commit `fccbf6c`, avec missions, budget et gestion détaillée des équipes). Les liens ordinaires vers le portail utilisent cette même destination. La session de l’application reste inchangée. Le portail local historique reste accessible uniquement pour ses outils de présentation et ses données locales ; les deux hôtes utilisent des stockages distincts et ne sont pas synchronisés.
+Les deux pages chargent demo-store.js, puis energy.js, puis platform-store.js, avant leurs interfaces. Les liens vers le portail sont relatifs : ./admin.html. Conserver cette organisation sur une seule origine ; un portail hébergé ailleurs ne verrait pas les données de l’application.
+
+## Préparer et vérifier une version
+
+1. Contrôler la branche courante et les changements destinés à la présentation. Les modifications documentaires ou essais locaux ne déclenchent aucun déploiement à eux seuls.
+2. Exécuter les tests et préparer les fichiers :
+
+       node --test tests/*.test.cjs
+       node scripts/build-site.cjs
+
+3. Vérifier que dist/ contient les 16 fichiers attendus. Démarrer éventuellement un serveur sur ce répertoire pour vérifier le paquet destiné à Vercel :
+
+       python -m http.server 8765 --directory dist
+
+4. Réaliser le parcours de [PRESENTATION.md](PRESENTATION.md) sur cette origine. Contrôler les deux rôles d’administration, une activité privée/publique, son énergie et sa contribution, les stories et le trajet masqué, les événements et le profil.
+5. Vérifier le rappel de campagne uniquement entre endAt - 15 jours inclus et endAt exclu, avec les totaux de la campagne entière. Vérifier aussi une campagne future et une campagne terminée.
+6. Publier la révision prévue sur la branche configurée lorsque cette publication est autorisée. La liaison Git Vercel doit viser codex/client-demo ; contrôler le commit effectivement déployé dans le tableau de bord.
+7. Après publication, ouvrir l’application et admin.html sur le domaine cible, contrôler l’absence d’erreurs de chargement/console et rejouer les parcours essentiels. Les résultats et le commit vérifiés doivent être consignés dans le compte rendu de livraison.
+
+La préparation des fichiers, un test Node réussi et un lien de projet ne suffisent pas à prouver qu’une version a été publiée ou testée dans un navigateur.
+
+## Cache et données locales
+
+Le service worker met en cache les fichiers statiques de l’application et du CRM. Lors d’une évolution, mettre à jour sa version et les références de ressources concernées, puis contrôler le parcours de mise à jour depuis une visite précédente. Si les fichiers restent incohérents pendant une répétition, désinscrire le service worker et supprimer les caches de cette origine dans les outils du navigateur, puis recharger.
+
+Les comptes/stories et le registre métier sont conservés dans localStorage, séparément du cache statique. Une publication de code n’efface pas ces données. Une nouvelle origine de preview Vercel utilise un autre jeu de données. La session est propre à l’onglet ; un nouvel onglet de portail peut demander une connexion administrateur.
+
+La remise à zéro depuis **Présentation** restaure les données fictives et efface les essais métier, y compris les rappels de campagne. Elle ne purge pas le cache du service worker. Ne pas promettre que les données d’un navigateur sont sauvegardées ailleurs ou accessibles à une autre personne via le lien public.
+
+## Revenir à une version précédente
+
+Si une publication empêche la présentation, choisir dans Vercel une révision précédemment vérifiée pour ce même projet. Contrôler ensuite les ressources réellement servies et le cache du navigateur. Un retour de code ne restaure pas automatiquement l’état de localStorage ; si un schéma local est incompatible, conserver les essais utiles avant de réinitialiser la démonstration.
+
+## Portée de l’hébergement
+
+HTTPS permet d’ouvrir la maquette sur téléphone et d’utiliser les fonctions web disponibles dans le navigateur. L’installation à l’écran d’accueil n’est pas une publication App Store ou Google Play. Les activités, invitations, rôles, contributions et médias restent locaux ; aucun paiement, e-mail ou backend n’est branché par ce déploiement.
+
+Le fichier .openai/hosting.json conserve une trace d’un hébergement antérieur. La cible convenue pour cette évolution demeure Vercel ; ce fichier ne change pas la destination décrite ici.
+
+## Recette locale du 20 septembre 2026
+
+La version maquette/CRM a passé 46 tests Node (identités, règles d’énergie, calendrier, registre monétaire, confidentialité, événements, migration et stockage). La syntaxe des scripts, la préparation des 16 fichiers publics et le contrôle des différences Git passent également.
+
+Les parcours ont été exécutés avec Playwright dans Microsoft Edge, en contextes de test isolés : application à 1 440 et 390 pixels, cadre iPhone sur ordinateur, publication et commentaires, calcul 5 000/5 100, semaines, course simulée, stories avant/pendant/après, trajet masqué, invitations privées et inscription aux événements. Le parcours « story après course avant enregistrement » a été contrôlé avec et sans historique. La remise à zéro permet de revoir le rappel de fin de campagne.
+
+Côté CRM, la recette navigateur couvre la création d’association et mission, le choix filtré par association, un budget de 10 000 € donnant une cible de 2 000 arbres à 5 €, la création de campagne, la séparation entreprise/plateforme et le changement des règles. Une activité d’un autre onglet actualise le suivi ; changer le ratio conserve les euros antérieurs. Aucune erreur JavaScript n’a été relevée pendant ces parcours. Ces essais valident la démonstration locale, sans valider une authentification ou un financement de production.

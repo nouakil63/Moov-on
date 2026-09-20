@@ -1,104 +1,111 @@
-# Moov’On — maquette de présentation
+# Moov’On — maquette salarié et CRM
 
-Moov’On relie l’activité physique des salariés aux projets solidaires de leur entreprise : **1 mètre parcouru = 1 point d’énergie ⚡**, à répartir entre des missions. Cette version présente le parcours salarié, les stories de 24 heures et le portail entreprise avec deux sociétés fictives.
+Moov’On relie les activités des salariés à une campagne solidaire financée par leur entreprise. Course, marche et vélo produisent une énergie calculée à partir des mètres parcourus et d’un bonus de vitesse limité. Chaque activité enregistrée contribue automatiquement à la campagne en cours, dans la limite de son budget.
 
-Le site est statique, sans installation de dépendances ni compilation. Les connexions, rôles, invitations, activités et données d’entreprise sont **simulés dans le navigateur**. Aucun e-mail n’est envoyé et aucune synchronisation entre appareils n’est disponible.
+Cette version est une **maquette statique avec données locales** : comptes, entreprises, associations, activités et montants de départ sont fictifs. Les euros affichés représentent une simulation de financement ; aucun paiement ni versement n’est réalisé. La course et les trajets sont simulés, sans GPS réel.
 
-## Démarrer en local
+## Démarrer
 
 Depuis le dossier du dépôt, avec Python installé :
 
-```powershell
-python -m http.server 8765
-```
+    python -m http.server 8765
 
-Ouvrir [l’application salarié](http://localhost:8765/index.html). Le [portail entreprise](http://localhost:8765/admin.html) est accessible avec un profil administrateur.
+Ouvrir [l’application salarié](http://localhost:8765/index.html) et [le portail/CRM](http://localhost:8765/admin.html) dans le même navigateur. Le site ne demande aucune installation de dépendances. Node.js sert aux tests et à la préparation des fichiers d’hébergement.
 
-Conserver le même hôte et le même port pendant la démonstration. Éviter l’ouverture directe en `file://` : l’application et le portail ont besoin d’une origine HTTP commune pour partager leurs données locales. `localhost` et `127.0.0.1` constituent aussi deux origines distinctes.
+L’application et le portail utilisent **la même origine** : protocole, hôte et port identiques. localhost, 127.0.0.1, un autre port ou un autre appareil ont chacun leurs données. Éviter l’ouverture directe en file://. La session étant propre à l’onglet, le portail peut demander une nouvelle connexion.
 
-Pour un déroulé client de 5 à 7 minutes, suivre [PRESENTATION.md](PRESENTATION.md).
+Le guide [PRESENTATION.md](PRESENTATION.md) décrit un parcours guidé ; [API-DEMO.md](API-DEMO.md) décrit les modules ; [DEPLOIEMENT.md](DEPLOIEMENT.md) décrit la cible Vercel et les contrôles avant publication.
 
-## Profils de démonstration
+## Comptes de présentation
 
-| Profil | Entreprise | Adresse | Accès |
+| Profil | Entreprise | Adresse | Rôle |
 |---|---|---|---|
-| Camille Roux | Banque Corélis | `camille@corelis.fr` | Salariée |
-| Léa Fontaine | Banque Corélis | `lea@corelis.fr` | Administration de Corélis |
-| Alex Morgan | Nova Conseil | `alex@nova-conseil.fr` | Salarié |
-| Sarah Benali | Nova Conseil | `sarah@nova-conseil.fr` | Administration de Nova |
-| Équipe Moov’On | Plateforme | `hello@moovon.demo` | Administration des entreprises |
+| Camille Roux | Banque Corélis | camille@corelis.fr | Salariée |
+| Léa Fontaine | Banque Corélis | lea@corelis.fr | Administratrice entreprise |
+| Sofiane B. | Banque Corélis | sofiane@corelis.fr | Salarié |
+| Alex Morgan | Nova Conseil | alex@nova-conseil.fr | Salarié |
+| Sarah Benali | Nova Conseil | sarah@nova-conseil.fr | Administratrice entreprise |
+| Équipe Moov’On | Sélecteur d’entreprises | hello@moovon.demo | Opérateur plateforme |
 
-La page de connexion propose Corélis/Nova et des raccourcis de profils. Pour montrer le parcours complet, saisir une adresse ci-dessus, choisir **Continuer par e-mail**, puis entrer **123456**. Le bouton **Se connecter avec mon entreprise** illustre un parcours SSO ; il ne contacte aucun fournisseur d’identité.
+Choisir l’entreprise, saisir l’adresse, puis **Continuer par e-mail** et le code **123456**. Aucun message n’est envoyé. **Se connecter avec mon entreprise** illustre également une connexion simulée. **Outils de présentation** permet de changer de profil.
 
-Après connexion, **Outils de présentation** permet de changer de profil. Sur téléphone, ces outils sont aussi accessibles en touchant le nom de l’entreprise en haut de l’application. Le compte Équipe Moov’On figure dans ce sélecteur.
+## Parcours et responsabilités
 
-Dans le portail de ce compte plateforme, **Entreprises clientes** → **Créer une entreprise** → **Créer l’espace** crée une société et son premier compte administrateur de démonstration, immédiatement actif. Ce compte peut ensuite se connecter par e-mail avec le code `123456` dans l’espace correspondant.
+| Espace | Fonctions |
+|---|---|
+| Salarié | Activité simulée ou saisie en mètres et durée ; fil, encouragements et commentaires ; stories ; événements ; impact de la campagne ; profil hebdomadaire |
+| Entreprise | Choix de l’association, de la mission, du budget et de la période ; suivi des contributions ; identité visuelle ; équipes, invitations et accès ; modération |
+| CRM Moov’On | Catalogue des associations et missions, coûts unitaires et objectifs en euros ; règles d’énergie et de conversion ; création et administration des entreprises |
 
-## Parcours disponibles
+L’entreprise choisit sa campagne. Les coefficients sportifs et les paramètres de conversion sont administrés par la plateforme. L’énergie est un compteur d’activité : la contribution est enregistrée automatiquement, sans étape d’affectation par le salarié.
 
-- **Application salarié** : accueil personnalisé, fil d’activité, encouragements/commentaires, défis, missions et profil.
-- **Activités** : course accélérée avec pause et bouton d’avance de 1 km ; publication ou enregistrement privé avec crédit d’énergie ; ajout d’un résultat manuel.
-- **Missions** : choix d’une cause, curseur de don, solde débité et impact mis à jour. Les dons sont des points de démonstration, sans transaction financière.
-- **Stories** : texte sur fond coloré ou photo importée, aperçu, lecture, pause, navigation, états vus, suppression de sa story et signalement. Les stories actives sont filtrées par entreprise et expirent 24 heures après leur publication selon l’horloge locale de la démo. La vidéo n’est pas incluse.
-- **Portail entreprise** : collaborateurs, invitations locales, personnalisation du nom/programme/logo/couleurs, modération et outils de présentation. Le compte plateforme permet de gérer les entreprises.
+Les périodes disponibles sont mensuelle, trimestrielle et annuelle. Une nouvelle campagne conserve l’historique des précédentes. Lorsqu’un remplacement est programmé dans le futur, la campagne courante contribue jusqu’au nouveau début ; ses écritures passées restent conservées.
 
-Une invitation génère un lien local fonctionnel : il active le compte invité dans ce navigateur. Il peut être collé directement dans le même onglet : l’application ferme la session courante pour afficher l’acceptation de l’invitation. Ce lien ne transporte pas les données vers un autre appareil et ne constitue pas un envoi d’e-mail.
+## Règles proposées dans cette maquette
 
-## Données, horloge et remise à zéro
+Ces valeurs sont des **hypothèses de présentation ajustables dans le CRM**, à valider avec le client. Elles ne constituent pas une mesure physiologique.
 
-Les données sont conservées dans `localStorage`, par origine du site ; la session de connexion utilise `sessionStorage`, propre à l’onglet. L’application et le portail partagent les données quand ils sont ouverts dans le même navigateur sur la même origine. Un nouvel onglet indépendant peut demander une nouvelle connexion.
+    vitesse km/h = mètres / secondes × 3,6
+    énergie = arrondi(mètres × coefficientSport × (1 + bonus / 100))
 
-Les outils de **Présentation** du portail permettent d’**Avancer de 24 heures** pour montrer l’expiration des stories. Cette avance concerne les données de démonstration, pas l’heure du système. **Réinitialiser la démonstration** restaure les profils et entreprises fictifs, efface les créations/modifications de la démo et déconnecte l’onglet. Les préférences d’interface et le cache du service worker sont distincts de cette remise à zéro.
+| Sport | Coefficient initial | Vitesse de référence |
+|---|---:|---:|
+| Course | 1 point/mètre | 10 km/h |
+| Marche | 2 points/mètre | 5 km/h |
+| Vélo | 0,5 point/mètre | 20 km/h |
 
-Les photos sont redimensionnées et compressées en JPEG avant leur enregistrement local. Ce stockage reste limité : utiliser quelques petites images de démonstration et réinitialiser entre les répétitions. Une erreur de quota est affichée et ne doit pas être interprétée comme une publication réussie.
+Le bonus dépend du rapport vitesse/vitesse de référence : jusqu’à 1 → 0 % ; au-delà jusqu’à 1,5 → 2 % ; au-delà jusqu’à 2 → 5 % ; au-delà → 10 %. Le bonus total est plafonné à 10 %. **Une course de 5 000 mètres en 30 minutes produit 5 000 points ; en 20 minutes, 5 100 points.** La durée sert à calculer la vitesse ; elle ne multiplie pas une seconde fois la distance.
 
-Les contrôles d’accès et l’expiration sont exécutés côté navigateur : **ils ne constituent pas une authentification, une isolation d’entreprises ou une protection de médias utilisables en production**. Les fichiers expirés ne sont pas effacés de façon garantie après 24 heures ; la remise à zéro supprime les données locales de démonstration. Entreprises, personnes et associations de départ sont fictives.
+La conversion en euros utilise le budget restant, les participants ayant une activité dans la campagne au cours des **28 derniers jours**, la fréquence d’activité, l’énergie moyenne et le temps restant. Les comptes inscrits sans activité ne comptent pas comme participants. Sans historique, le calcul utilise une hypothèse de 1 participant, 2 activités/semaine et 5 000 points/activité ; le nombre de participants affiché reste zéro. Le plafond initial est de **0,025 €/point**, également proposé et configurable.
 
-## Limites à annoncer pendant la présentation
+Chaque contribution est **figée en centimes** avec le ratio et la version des règles appliqués. Une modification ultérieure du ratio ne revalorise pas l’historique. Le contrôle d’enregistrement limite la contribution au budget restant. Les montants acquis ne diminuent pas lorsque de nouveaux participants font évoluer le ratio.
 
-| Sujet | Ce que cette version démontre | Ce qui reste à réaliser pour la production |
-|---|---|---|
-| Connexion et rôles | Parcours e-mail/code, SSO et accès par profil simulés | Authentification réelle, fournisseur d’identité, permissions serveur |
-| Invitations | Création d’un lien et activation locale d’un compte | Envoi d’e-mails et invitations accessibles entre appareils |
-| Données | Persistance et séparation d’espaces dans un navigateur | Base serveur, synchronisation, isolation et sauvegardes |
-| Activités et dons | Course accélérée, saisie manuelle, historique privé, calcul et affectation de points | Mesure GPS/capteurs, validation d’activité et financement réel des partenaires |
-| Stories | Texte/photo, expiration locale à 24 h, suppression et signalement | Accès média privé contrôlé par serveur, purge et modération de production ; vidéo éventuelle |
-| Personnalisation | Logo, noms, couleurs et équipes de chaque espace | Configuration métier complète ; les barèmes de missions restent dans le code |
-| Distribution | Application web et parcours d’ajout à l’écran d’accueil | Publication et validation App Store/Google Play |
+L’impact distingue l’objectif de la mission, la cible financée par l’enveloppe de l’entreprise et les unités financées dans la simulation. Le catalogue initial illustre des arbres à 5 €, des repas à 8 € et des kits scolaires à 15 €. Le coût unitaire est conservé dans la campagne pour préserver son historique.
 
-## Installation web et hébergement
+## Partage, événements et profil
 
-Le dépôt contient un manifeste et un service worker. Leur utilisation nécessite un contexte adapté, **localhost pour le développement ou HTTPS pour l’hébergement**, avec un navigateur compatible. Le bouton d’installation affiche la proposition du navigateur lorsqu’elle est disponible, sinon les instructions pour ajouter la maquette à l’écran d’accueil.
+- **Activité privée ou publiée** : les deux contribuent à la campagne. Une activité privée reste hors du fil. L’auteur peut masquer son trajet tout en conservant les statistiques affichables ; les cartes montrent un tracé fictif.
+- **Stories de 24 heures** : texte ou photo, avant/pendant/après l’activité ; les statistiques sont un instantané du moment partagé. Publier une story ne crée pas une deuxième activité. L’auteur peut masquer le trajet ; les stories liées respectent également le masquage de l’activité. Suppression et signalement restent disponibles.
+- **Événements** : date, heure, départ, arrivée, distance, capacité facultative ; visibilité entreprise, ouverte aux membres des entreprises de la démonstration ou privée sur invitation ; inscription et désinscription.
+- **Profil** : distances en mètres, énergie cumulée, graphique journalier, navigation entre semaines et comparaison avec la semaine précédente. Les semaines vont du lundi au dimanche, en UTC. Sans semaine précédente renseignée, aucun pourcentage n’est inventé.
+- **Rappel de fin de campagne** : popup uniquement dans les **15 derniers jours avant la fin**, présentant la progression globale de cette campagne. Il ne s’agit pas d’un bilan glissant de quinze jours.
 
-Il s’agit d’une version web : aucune application n’est publiée sur l’App Store ou Google Play. Une adresse `localhost` ouverte sur un téléphone désigne ce téléphone, pas l’ordinateur qui héberge la démo. Pour une présentation sur plusieurs téléphones, utiliser une version hébergée en HTTPS ; chaque navigateur conservera son propre jeu de données.
+Les contenus de départ sont identifiés comme exemples fictifs. Les nouvelles entreprises commencent sans historique d’activité. Des activités de l’ancienne maquette peuvent être conservées lors de la migration locale ; elles ne reçoivent pas rétroactivement de contribution monétaire.
 
-Le service worker met en cache les fichiers statiques de la maquette, sans API distante ni médias utilisateur. Les polices Google sont des ressources externes facultatives, avec polices de secours. Une visite préalable connectée est recommandée avant une présentation avec un réseau incertain.
+## Données et remise à zéro
 
-## Organisation du dépôt
+localStorage conserve les identités/stories dans **moovon:demo:v1**, ainsi que les activités, campagnes, événements et catalogue dans **moovon:platform:v1**. sessionStorage conserve la session de chaque onglet. Les interfaces salarié et CRM lisent ces mêmes données sur une origine commune ; aucune synchronisation entre appareils n’est incluse.
+
+Le portail **Présentation** permet d’**Avancer de 24 heures** pour tester les stories et les dates de campagne. Cette action avance uniquement l’horloge de la démo, pour tous ses espaces. **Réinitialiser la démonstration** restaure les entreprises et comptes initiaux, supprime les données métier et les rappels locaux, puis déconnecte l’onglet. Les préférences d’interface et les caches statiques sont distincts.
+
+Une invitation crée un lien activable dans ce navigateur, sans envoi d’e-mail. Les petites images sont stockées localement après préparation par l’interface. Si le quota est atteint, une erreur est affichée ; l’enregistrement précédent est conservé.
+
+Ces contrôles locaux illustrent les rôles et la confidentialité. Ils ne fournissent pas une authentification réelle, une sécurité serveur ou une transaction concurrente entre appareils. L’expiration des stories retire leur visibilité à 24 heures ; elle ne garantit pas une purge sécurisée de leurs médias. Aucun backend, paiement ou application native iOS/Android n’est inclus dans cette évolution.
+
+## Modules
 
 | Fichiers | Rôle |
 |---|---|
-| `index.html`, `app.js`, `app.css` | Application salarié, activités, missions, profil et fil |
-| `demo-shell.js`, `demo-shell.css` | Connexion simulée, identité entreprise et outils de présentation |
-| `demo-store.js` | Données locales, profils, entreprises, invitations, stories et horloge |
-| `stories.js`, `stories.css` | Création et lecture des stories |
-| `admin.html`, `admin.js`, `admin.css` | Portail entreprise et administration plateforme |
-| `manifest.webmanifest`, `sw.js`, `icon.svg` | Manifeste, cache statique et icône web |
-| `tests/` | Tests Node du stockage et des règles applicatives |
-| `API-DEMO.md` | Contrat de l’API locale `Demo` |
-| `explorations/` | Archives des pistes graphiques |
-| `config.js`, `supabase/schema.sql` | Archives techniques pour préparer une future intégration serveur |
+| demo-store.js | Identité, entreprises, invitations, stories et horloge ; global Demo |
+| energy.js | Calculs purs, règles proposées, prévision, dates et flamme ; global Energy et export CommonJS |
+| platform-store.js | Catalogue, campagnes, registre des activités/contributions, événements et profil ; global Platform |
+| index.html, app.js, app.css | Application salarié |
+| stories.js, stories.css | Création et lecture des stories |
+| demo-shell.js, demo-shell.css | Connexion et identité entreprise |
+| admin.html, admin.js, admin.css | Portail entreprise et CRM plateforme |
+| manifest.webmanifest, sw.js, icon.svg | Installation web et cache des fichiers statiques |
+| scripts/build-site.cjs, vercel.json | Copie des 16 fichiers publics dans dist/, configuration Vercel |
+| tests/ | Tests Node du moteur et des comportements locaux |
 
-**La maquette actuelle ne charge pas `config.js`, ne charge pas le client Supabase et n’effectue aucun appel Supabase.** Renseigner l’ancienne configuration ne branche pas cette version à un serveur. L’ancien schéma comporte des règles de démonstration ; il devra être revu avec une authentification réelle, l’isolation des entreprises et le stockage privé des médias avant tout usage de production.
+Ordre de chargement : **Demo → Energy → Platform → interfaces**. Dans l’application, les interfaces sont app.js, stories.js, puis demo-shell.js ; dans le portail, admin.js.
 
-## Vérifier une modification
+config.js et supabase/schema.sql sont des archives techniques. La maquette actuelle ne les charge pas, ne charge pas le client Supabase et ne contacte pas cette base. explorations/ conserve des pistes graphiques hors du parcours publié.
 
-Avec Node.js installé :
+## Vérifications et hébergement
 
-```powershell
-node --test tests/*.test.cjs
-```
+    node --test tests/*.test.cjs
+    node scripts/build-site.cjs
 
-Compléter les tests automatisés par le parcours de [PRESENTATION.md](PRESENTATION.md), notamment création d’une story, changement d’entreprise, invitation et activité privée. Après une modification des fichiers, actualiser l’application et le portail ; en cas de version incohérente, vérifier le service worker et son cache dans les outils de développement du navigateur.
+Le build prépare les fichiers sans publier le site. Les essais navigateur, le contrôle des 16 ressources publiques et la vérification du déploiement sont à effectuer pour chaque version selon [DEPLOIEMENT.md](DEPLOIEMENT.md). Ce document ne constitue pas un compte rendu de recette ou de déploiement.
 
-La branche de travail de cette présentation est `codex/client-demo`. Les modifications et essais locaux n’impliquent aucun push ni déploiement distant.
+La cible de publication reste le projet Vercel **moovon-presentation**, branche **codex/client-demo**. L’installation web nécessite localhost ou HTTPS et un navigateur compatible ; elle ne correspond pas à une publication sur les stores. Le service worker cache les ressources statiques de la maquette ; les polices Google sont externes, avec des polices de secours.
