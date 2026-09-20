@@ -136,3 +136,7 @@ Une invitation n’envoie aucun e-mail et ne transporte pas les données sur un 
 - **Téléphone personnel** : utiliser l’URL HTTPS de la version préparée ; localhost désigne le téléphone lui-même. Son navigateur aura son propre jeu de données.
 
 Terminer par **Présentation** → **Réinitialiser la démonstration** si les essais doivent être effacés. Cette opération ne remet pas à zéro le cache statique. Le compte rendu de recette et la vérification du déploiement restent à établir séparément.
+
+## Défis et événements : retrouver la présentation d’origine
+
+Dans l’onglet **Défis**, montrer le défi collectif, le classement hebdomadaire par équipe, le duel et les trois mini-défis. Enregistrer une activité : les mètres de l’équipe et les objectifs individuels progressent automatiquement. Le lien **Voir les événements** descend vers la liste, ses filtres et le bouton de création. La création d’un événement depuis le menu **+** conduit à cette même page.

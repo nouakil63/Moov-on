@@ -215,3 +215,9 @@ Les semaines sont calculées en UTC, du lundi au dimanche. La moyenne hebdomadai
     node --test tests/*.test.cjs
 
 Les tests utilisent les modules réels et des contextes VM avec stockage simulé : calculs, bornes, dates, permissions, confidentialité, registre, invitations, quota et expiration. Ils ne prouvent ni un comportement navigateur complet ni une publication distante ; ces vérifications sont décrites dans [PRESENTATION.md](PRESENTATION.md) et [DEPLOIEMENT.md](DEPLOIEMENT.md).
+
+## Défis et événements
+
+**Platform.challengeStats()** renvoie les totaux hebdomadaires des équipes de l’entreprise connectée, triés par mètres décroissants : `{weekStart, weekEnd, teams:[{team,distanceMeters,me}], own:{weekDistanceMeters,weekActivities,lunchDistanceMeters}}`. La semaine commence le lundi à 00:00 UTC. Les activités futures sont exclues. Une activité privée contribue au total de son équipe sans exposer son détail. L’équipe retenue est celle enregistrée au moment de l’activité.
+
+Les trois mini-défis de la maquette suivent les activités existantes, sans ajouter de crédit : Sprint du midi (2 000 mètres), Semaine verte (50 000 mètres hebdomadaires), Assiduité (5 activités hebdomadaires). Pour le déjeuner, la distance complète d’une activité est retenue si son heure locale de fin est comprise entre 12:00 inclus et 14:00 exclu, aujourd’hui. Le défi collectif reprend la campagne et sa période définies dans le CRM. Les événements gardent leur création et leurs inscriptions, dans la section ajoutée sous les défis.

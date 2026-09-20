@@ -178,3 +178,76 @@ test('new enterprises and invited people receive no sample activity; reset seeds
  assert.ok(data.activities.filter(todaySample).every(a=>new Date(a.at).toISOString().slice(0,10)===f.date()));
  const after=f.entries.get(PLATFORM_KEY);f.P.rules();assert.equal(f.entries.get(PLATFORM_KEY),after);
 });
+
+function challengeRows(f,rows){
+ f.P.rules();const data=JSON.parse(f.entries.get(PLATFORM_KEY)),sample=data.activities.find(a=>a.userId==='camille');
+ data.activities=rows.map((row,index)=>({...sample,id:'challenge-fixture-'+index,at:f.D.now(),published:false,...row}));
+ f.entries.set(PLATFORM_KEY,JSON.stringify(data));
+}
+const plain=value=>JSON.parse(JSON.stringify(value));
+
+test('challenge totals include private distances only as team aggregates and stay in the session organization',()=>{
+ const f=fixture({at:Date.parse('2026-09-23T15:00:00Z')});
+ assert.throws(()=>f.P.challengeStats(),/Connectez-vous/);
+ challengeRows(f,[
+  {userId:'camille',team:'Marketing',distanceMeters:1200,published:true},
+  {userId:'sofiane',team:'Finance',distanceMeters:800,title:'Private finance route',route:'confidential'},
+  {userId:'lea',team:'RH',distanceMeters:2000},
+  {userId:'alex',orgId:'nova',team:'Conseil',distanceMeters:9000}
+ ]);
+ f.login();const stored=f.entries.get(PLATFORM_KEY),stats=plain(f.P.challengeStats());
+ assert.deepEqual(stats.teams,[{team:'RH',distanceMeters:2000,me:false},{team:'Marketing',distanceMeters:1200,me:true},{team:'Finance',distanceMeters:800,me:false},{team:'IT & Data',distanceMeters:0,me:false}]);
+ assert.equal(stats.own.weekDistanceMeters,1200);assert.equal(stats.own.weekActivities,1);
+ assert.deepEqual(Object.keys(stats).sort(),['own','teams','weekEnd','weekStart']);
+ assert.deepEqual(Object.keys(stats.own).sort(),['lunchDistanceMeters','weekActivities','weekDistanceMeters']);
+ assert.ok(!JSON.stringify(stats).includes('confidential'));assert.equal(f.P.feed().some(a=>a.userId==='sofiane'),false);
+ stats.teams[0].distanceMeters=99999;assert.equal(f.P.challengeStats().teams[0].distanceMeters,2000);
+ assert.equal(f.entries.get(PLATFORM_KEY),stored);
+ f.login('alex@nova-conseil.fr','nova');const nova=plain(f.P.challengeStats());
+ assert.deepEqual(nova.teams,[{team:'Conseil',distanceMeters:9000,me:true},{team:'Audit',distanceMeters:0,me:false},{team:'RH',distanceMeters:0,me:false}]);
+ assert.equal(nova.own.weekDistanceMeters,9000);
+});
+
+test('challenge week starts Monday UTC, excludes future rows and keeps configured order on ties',()=>{
+ const at=Date.parse('2026-09-23T15:00:00Z'),start=Date.parse('2026-09-21T00:00:00Z'),end=start+7*86400000,f=fixture({at});
+ challengeRows(f,[
+  {at:start,distanceMeters:100},
+  {at:start-1,distanceMeters:90000},
+  {at,distanceMeters:200},
+  {at:at+1,distanceMeters:90000},
+  {at:end,distanceMeters:90000},
+  {at,userId:'sofiane',team:'Finance',distanceMeters:300}
+ ]);
+ f.login();const stats=plain(f.P.challengeStats());
+ assert.equal(stats.weekStart,start);assert.equal(stats.weekEnd,end);
+ assert.equal(stats.own.weekDistanceMeters,300);assert.equal(stats.own.weekActivities,2);
+ assert.deepEqual(stats.teams.map(t=>[t.team,t.distanceMeters]),[['Marketing',300],['Finance',300],['RH',0],['IT & Data',0]]);
+});
+
+test('lunch challenge counts full own activities completed today in local time from noon until before 14h',()=>{
+ const local=(day,hour,minute=0,second=0,millis=0)=>new Date(2026,8,23+day,hour,minute,second,millis).getTime();
+ const f=fixture({at:local(0,15)});
+ challengeRows(f,[
+  {at:local(0,12),distanceMeters:100,durationSeconds:7200},
+  {at:local(0,13,59,59,999),distanceMeters:200},
+  {at:local(0,11,59,59,999),distanceMeters:900},
+  {at:local(0,14),distanceMeters:900},
+  {at:local(-1,12),distanceMeters:900},
+  {at:local(0,12),userId:'lea',team:'RH',distanceMeters:900},
+  {at:local(0,12),orgId:'nova',distanceMeters:900}
+ ]);
+ f.login();assert.equal(f.P.challengeStats().own.lunchDistanceMeters,300);
+});
+
+test('empty accounts start at zero and recording a private activity updates challenges without extra credits',()=>{
+ const at=new Date(2026,8,23,13,0,0).getTime(),f=fixture({at});f.operator();
+ const {org}=f.D.createOrg({name:'Challenge test',domain:'challenge.example',adminName:'Manager',adminEmail:'manager@challenge.example',teams:['Nord','Sud']});
+ f.login('manager@challenge.example',org.id);
+ const empty=plain(f.P.challengeStats());assert.deepEqual(empty.own,{weekDistanceMeters:0,weekActivities:0,lunchDistanceMeters:0});
+ assert.deepEqual(empty.teams,[{team:'Nord',distanceMeters:0,me:true},{team:'Sud',distanceMeters:0,me:false}]);
+ const recorded=f.record({id:'private-challenge',publish:false});const stored=f.entries.get(PLATFORM_KEY);
+ const after=plain(f.P.challengeStats());assert.deepEqual(after.own,{weekDistanceMeters:5000,weekActivities:1,lunchDistanceMeters:5000});
+ assert.equal(after.teams[0].distanceMeters,5000);assert.equal(f.P.feed().length,0);assert.equal(recorded.contributionCents,0);
+ assert.equal(f.entries.get(PLATFORM_KEY),stored);assert.equal(f.P.activities().length,1);
+ f.D.logout();assert.throws(()=>f.P.challengeStats(),/Connectez-vous/);
+});

@@ -245,6 +245,22 @@
       const weeks=Math.max(1,Math.ceil((clock-Math.min(clock,...all.map(a=>a.at)))/7/DAY));
       return clone({weekStart,weekEnd,distanceMeters,energy:selected.reduce((s,a)=>s+a.energy,0),previousDistanceMeters,evolutionPct:previousDistanceMeters>0?(distanceMeters-previousDistanceMeters)/previousDistanceMeters*100:null,weeklyAverageMeters:totalDistanceMeters/weeks,totalDistanceMeters,totalEnergy:all.reduce((s,a)=>s+a.energy,0),days:Array.from({length:7},(_,i)=>{const stamp=weekStart+i*DAY,activities=selected.filter(a=>a.at>=stamp&&a.at<stamp+DAY);return {date:stamp,distanceMeters:activities.reduce((s,a)=>s+a.distanceMeters,0),energy:activities.reduce((s,a)=>s+a.energy,0)};}),activities:selected.map(a=>visibleActivity(a,c))});
     },
+    challengeStats() {
+      const c=session(),clock=now(),monday=new Date(clock),today=new Date(clock);
+      monday.setUTCHours(0,0,0,0);monday.setUTCDate(monday.getUTCDate()-(monday.getUTCDay()+6)%7);
+      today.setHours(0,0,0,0);
+      const weekStart=monday.getTime(),weekEnd=weekStart+7*DAY;
+      const all=read().activities.filter(a=>a.orgId===c.org.id&&a.at<=clock);
+      const week=all.filter(a=>a.at>=weekStart&&a.at<weekEnd),own=all.filter(a=>a.userId===c.user.id);
+      const ownWeek=week.filter(a=>a.userId===c.user.id),totals=new Map(c.org.teams.map(team=>[team,0]));
+      // Private activities contribute only to team totals; no individual rows are returned.
+      for(const a of week)if(totals.has(a.team))totals.set(a.team,totals.get(a.team)+a.distanceMeters);
+      const teams=c.org.teams.map(team=>({team,distanceMeters:totals.get(team),me:team===c.user.team})).sort((a,b)=>b.distanceMeters-a.distanceMeters);
+      // Lunch uses the local day and the recorded completion time, not a reconstructed route:
+      // an activity finished from 12:00 inclusive to 14:00 exclusive counts in full.
+      const lunch=own.filter(a=>a.at>=today.getTime()&&new Date(a.at).getHours()>=12&&new Date(a.at).getHours()<14);
+      return {weekStart,weekEnd,teams,own:{weekDistanceMeters:ownWeek.reduce((s,a)=>s+a.distanceMeters,0),weekActivities:ownWeek.length,lunchDistanceMeters:lunch.reduce((s,a)=>s+a.distanceMeters,0)}};
+    },
     directory() { return global.Demo.directory(); },
     events() {const c=session();return clone(read().events.filter(e=>eventVisible(e,c)).sort((a,b)=>a.startsAt-b.startsAt));},
     createEvent(input={}) {const c=session();return change('event',d=>{
