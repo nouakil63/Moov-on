@@ -50,6 +50,17 @@
 .st-upload-placeholder svg{color:var(--brand,#0f3fa8)}
 .st-upload-placeholder strong{font-size:16px;color:var(--ink,#111)}
 .st-upload-actions{display:flex;gap:8px;margin:12px 0 0}
+.st-camera-panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#0a0a0a;color:#fff;overflow-y:auto}
+.st-camera-stage{position:relative;flex:1;min-height:180px;overflow:hidden;background:#171717}
+.st-camera-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.st-camera-mirrored{transform:scaleX(-1)}
+.st-camera-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:28px;text-align:center;background:#171717;color:#fff;font-size:13px;line-height:1.6}
+.st-camera-status .st-small-button{flex:none;background:#fff;color:#111;padding:10px 22px}
+.st-camera-controls{display:flex;align-items:center;justify-content:space-around;gap:14px;padding:19px 24px 10px;flex:none}
+.st-camera-option{display:flex;flex-direction:column;align-items:center;gap:7px;width:65px;color:#fff;background:transparent;border:0;padding:7px 0;font-size:10px!important}
+.st-camera-shutter{height:70px;width:70px;flex:none;border:3px solid #fff;border-radius:50%;background:transparent;padding:5px}
+.st-camera-shutter>span{display:block;width:100%;height:100%;background:#fff;border-radius:50%}
+.st-camera-back{align-self:center;color:#fff;background:transparent;border:0;padding:12px 18px 22px;font-size:12px!important;text-decoration:underline;text-underline-offset:4px}
 .st-small-button{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;border:1px solid var(--line,#ddd);border-radius:10px;padding:10px 8px;font-size:11px!important;font-weight:700!important;background:var(--card,#fff);color:var(--ink,#111)}
 .st-palette{display:flex;align-items:center;gap:10px;padding:14px 0 2px}
 .st-palette span{font-size:11px;font-weight:600;color:var(--ink-2,#555);margin-right:auto}

@@ -62,6 +62,7 @@
     dialog.setAttribute('aria-label','Stories'); host.append(dialog);
     action=el('dialog','st-dialog st-action-dialog'); action.id='st-action-dialog'; host.append(action);
     dialog.addEventListener('close',()=>{
+      stopCamera();
       if(action.open)action.close();
       cancelAnimationFrame(readFrame); reader=null; composer=null; modalMode=''; openSession='';
       const target=restoreFocus?.isConnected?restoreFocus:byId('stories')?.querySelector(`[data-st-user="${CSS.escape(restoreUser)}"] button`);
@@ -88,8 +89,10 @@
     if(window.ResizeObserver)new ResizeObserver(fitDialogs).observe(host);
     document.addEventListener('visibilitychange',()=>{
       if(reader)reader.last=0;
+      if(document.hidden&&composer?.cameraOpen){stopCamera();composer.cameraOpen=true;composer.cameraError='Appareil photo en pause. Appuyez sur Réessayer pour reprendre.';updateComposer();}
       if(!document.hidden)render();
     });
+    window.addEventListener('pagehide',()=>stopCamera());
   }
 
   function fitDialogs() {
@@ -112,6 +115,7 @@
   function openModal(mode) {
     if(!current())return false;
     makeDialog();
+    stopCamera();
     cancelAnimationFrame(readFrame); reader=null;composer=null;
     if(action.open)action.close();
     if(!dialog.open){restoreFocus=document.activeElement;restoreUser=document.activeElement?.closest('[data-st-user]')?.dataset.stUser||'';}
@@ -120,7 +124,7 @@
     return true;
   }
   function showModal() { if(!dialog.open)dialog.showModal(); fitDialogs(); }
-  function closeModal(){ if(dialog?.open)dialog.close(); }
+  function closeModal(){stopCamera();if(dialog?.open)dialog.close();}
   function notify(message){
     let n=byId('st-notice');
     if(!n){n=el('div','st-notice');n.id='st-notice';n.setAttribute('role','status');(byId('device')||document.body).append(n);}
@@ -181,13 +185,18 @@
     if(snapshot&&!snapshot.activityId&&snapshot.id)snapshot.activityId=snapshot.id;
     if(snapshot?.activityId){const source=window.Platform?.storySnapshot(snapshot.activityId);if(source)snapshot.route=source.route;}
     const history=window.Platform?.activities().filter(a=>a.userId===session.user.id)||[];
-    composer={type:'text',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot};
+    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot};
     const departure=sport=>sport==='Marche'?'Je pars marcher !':sport==='Vélo'?'Je pars pédaler !':'Je pars courir !';
     composer.text=composer.activity.phase==='before'?departure(composer.activity.sport):composer.activity.phase==='during'?number(composer.activity.distanceMeters)+' mètres déjà parcourus !':'Activité terminée : '+number(composer.activity.distanceMeters)+' mètres.';
     dialog.setAttribute('aria-labelledby','st-compose-title');dialog.removeAttribute('aria-label');
     dialog.innerHTML=`<div class="st-layout">
       <header class="st-topbar"><div><div class="st-eyebrow">Un moment à partager</div><h2 id="st-compose-title">Votre story</h2></div><button type="button" class="st-icon-button" id="st-compose-close" aria-label="Fermer la création de story">${svg('close')}</button></header>
-      <div class="st-compose-body">
+      <div class="st-camera-panel" id="st-camera-panel" hidden>
+        <div class="st-camera-stage"><video id="st-camera-video" autoplay muted playsinline aria-label="Aperçu de l’appareil photo"></video><div class="st-camera-status" id="st-camera-status" role="status"><span id="st-camera-message">Ouverture de l’appareil photo…</span><button type="button" class="st-small-button" id="st-camera-retry" hidden>Réessayer</button></div></div>
+        <div class="st-camera-controls"><button type="button" class="st-camera-option" id="st-camera-library" aria-label="Choisir une photo dans la galerie">${svg('photo',24)}<span>Galerie</span></button><button type="button" class="st-camera-shutter" id="st-camera-capture" aria-label="Prendre la photo" disabled><span></span></button><button type="button" class="st-camera-option" id="st-camera-switch" aria-label="Changer de caméra" disabled>${svg('camera',24)}<span>Selfie</span></button></div>
+        <button type="button" class="st-camera-back" id="st-camera-cancel">Écrire une story</button>
+      </div>
+      <div class="st-compose-body" id="st-compose-body">
         <div class="st-tabs" role="group" aria-label="Format de la story"><button type="button" class="st-tab" id="st-tab-text" aria-pressed="true">${svg('text',16)}Texte</button><button type="button" class="st-tab" id="st-tab-photo" aria-pressed="false">${svg('photo',16)}Photo</button></div>
         <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div></div>
         <div class="st-palette" id="st-palette"><span>Couleur</span></div>
@@ -198,7 +207,7 @@
         <div class="st-activity-options"><label for="st-phase">Le moment de votre story</label><select id="st-phase"><option value="before">Avant mon activité</option><option value="during">Pendant mon activité</option><option value="after">Après mon activité</option></select><label for="st-sport" id="st-sport-label">Sport</label><select id="st-sport"><option>Course</option><option>Marche</option><option>Vélo</option></select><label for="st-activity-select" id="st-activity-label">Activité enregistrée</label><select id="st-activity-select"></select><label class="st-privacy"><input type="checkbox" id="st-hide-route" checked> Cacher mon trajet</label><p id="st-privacy-note" class="st-activity-note"></p><div id="st-activity-preview"></div></div>
         <div class="st-audience">${svg('lock',16)}<span>Visible par les collègues de <strong id="st-audience-name"></strong> pendant <strong>24 heures</strong>.</span></div>
         <div id="st-compose-error" class="st-error" role="alert" hidden></div>
-      </div><footer class="st-bottom-actions"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
+      </div><footer class="st-bottom-actions" id="st-compose-footer"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
     byId('st-audience-name').textContent=session.org.name;
     byId('st-caption').value=composer.text;
     byId('st-phase').value=composer.activity.phase;byId('st-sport').value=composer.activity.sport||'Course';byId('st-hide-route').checked=composer.activity.hideRoute!==false;
@@ -223,17 +232,81 @@
       b.addEventListener('click',()=>{composer.bg=bg;byId('st-palette').querySelectorAll('button').forEach(n=>n.setAttribute('aria-pressed',String(n===b)));updateComposer();});byId('st-palette').append(b);
     });
     byId('st-compose-close').addEventListener('click',closeModal);
-    for(const kind of ['text','photo'])byId('st-tab-'+kind).addEventListener('click',()=>{composer.type=kind;updateComposer();});
+    for(const kind of ['text','photo'])byId('st-tab-'+kind).addEventListener('click',()=>{stopCamera();composer.fileVersion++;composer.busy=false;composer.type=kind;updateComposer();});
     byId('st-caption').addEventListener('input',e=>{composer.text=e.target.value;updateComposer();});
-    byId('st-photo-library').addEventListener('click',()=>{byId('st-file').removeAttribute('capture');byId('st-file').click();});
-    byId('st-photo-camera').addEventListener('click',()=>{byId('st-file').setAttribute('capture','environment');byId('st-file').click();});
+    const chooseLibrary=()=>{stopCamera();composer.type='photo';updateComposer();byId('st-file').removeAttribute('capture');byId('st-file').click();};
+    byId('st-photo-library').addEventListener('click',chooseLibrary);
+    byId('st-camera-library').addEventListener('click',chooseLibrary);
+    byId('st-photo-camera').addEventListener('click',()=>startCamera());
+    byId('st-camera-retry').addEventListener('click',()=>startCamera());
+    byId('st-camera-switch').addEventListener('click',()=>startCamera(composer.cameraFacing==='environment'?'user':'environment'));
+    byId('st-camera-capture').addEventListener('click',capturePhoto);
+    byId('st-camera-cancel').addEventListener('click',()=>{stopCamera();composer.type=composer.media?'photo':'text';updateComposer();});
     byId('st-file').addEventListener('change',loadPhoto);
     byId('st-publish').addEventListener('click',publish);
-    updateComposer();showModal();byId('st-tab-text').focus({preventScroll:true});
+    updateComposer();showModal();startCamera();
+  }
+
+  function stopCamera(draft=composer){
+    if(!draft)return;
+    draft.cameraVersion=(draft.cameraVersion||0)+1;
+    draft.cameraStream?.getTracks().forEach(track=>track.stop());draft.cameraStream=null;
+    if(draft.cameraVideo){draft.cameraVideo.pause();draft.cameraVideo.srcObject=null;draft.cameraVideo=null;}
+    draft.cameraOpen=false;draft.cameraReady=false;draft.cameraPending=false;
+  }
+  function sameCamera(draft,version){return composer===draft&&draft.cameraVersion===version&&dialog?.open&&modalMode==='composer'&&openSession===keyFor(current())&&!document.hidden;}
+  async function startCamera(facing){
+    if(!composer||composer.busy||modalMode!=='composer')return;
+    const draft=composer;stopCamera(draft);
+    const version=draft.cameraVersion;draft.cameraFacing=facing||draft.cameraFacing||'environment';draft.type='photo';draft.cameraOpen=true;draft.cameraPending=true;draft.cameraError='';
+    const video=byId('st-camera-video');draft.cameraVideo=video;video.muted=true;
+    updateComposer();
+    try{
+      if(!navigator.mediaDevices?.getUserMedia)throw Object.assign(new Error(),{name:'NotSupportedError'});
+      const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:draft.cameraFacing},width:{ideal:1280},height:{ideal:1920}}});
+      if(!sameCamera(draft,version)){stream.getTracks().forEach(track=>track.stop());return;}
+      draft.cameraStream=stream;video.srcObject=stream;
+      const actual=stream.getVideoTracks()[0]?.getSettings()?.facingMode||draft.cameraFacing;video.classList.toggle('st-camera-mirrored',actual==='user');
+      stream.getVideoTracks().forEach(track=>track.addEventListener('ended',()=>{if(sameCamera(draft,version)){stopCamera(draft);draft.cameraOpen=true;draft.cameraError='La caméra s’est arrêtée. Appuyez sur Réessayer pour reprendre.';updateComposer();}},{once:true}));
+      await video.play();
+      if(!sameCamera(draft,version)){stream.getTracks().forEach(track=>track.stop());if(draft.cameraStream===stream)stopCamera(draft);return;}
+      draft.cameraPending=false;draft.cameraReady=video.videoWidth>0&&video.videoHeight>0;
+      if(!draft.cameraReady)throw new Error('Aucune image disponible.');
+      updateComposer();
+    }catch(error){
+      if(!sameCamera(draft,version))return;
+      stopCamera(draft);draft.cameraOpen=true;
+      draft.cameraError=error.name==='NotAllowedError'||error.name==='SecurityError'?'Autorisez l’accès à l’appareil photo dans votre navigateur, puis appuyez sur Réessayer.':error.name==='NotFoundError'?'Aucun appareil photo disponible. Vous pouvez choisir une photo dans la galerie ou écrire une story.':error.name==='NotSupportedError'?'Ce navigateur ne permet pas d’ouvrir la caméra ici. Vous pouvez utiliser la galerie ou écrire une story.':'L’appareil photo est indisponible. Fermez les autres applications qui l’utilisent, puis réessayez.';
+      updateComposer();
+    }
+  }
+  async function capturePhoto(){
+    const draft=composer;if(!draft?.cameraReady||draft.busy)return;
+    const version=++draft.fileVersion,video=draft.cameraVideo;draft.busy=true;updateComposer();
+    try{
+      const canvas=document.createElement('canvas'),scale=Math.min(1,1400/Math.max(video.videoWidth,video.videoHeight));
+      canvas.width=Math.max(1,Math.round(video.videoWidth*scale));canvas.height=Math.max(1,Math.round(video.videoHeight*scale));
+      const ctx=canvas.getContext('2d');if(!ctx)throw new Error('La prise de photo a échoué. Réessayez.');
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);stopCamera(draft);updateComposer();
+      const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('La prise de photo a échoué. Réessayez.')),'image/jpeg',.9));
+      const media=await compressPhoto(blob);
+      if(composer===draft&&draft.fileVersion===version){draft.media=media;draft.type='photo';}
+    }catch(error){if(composer===draft&&draft.fileVersion===version){stopCamera(draft);setError(byId('st-compose-error'),error);}}
+    finally{if(composer===draft&&draft.fileVersion===version){draft.busy=false;updateComposer();}}
   }
 
   function updateComposer(){
     if(!composer || modalMode!=='composer')return;
+    const camera=!!composer.cameraOpen;
+    byId('st-camera-panel').hidden=!camera;byId('st-compose-body').hidden=camera;byId('st-compose-footer').hidden=camera;
+    byId('st-camera-status').hidden=!!composer.cameraReady;
+    byId('st-camera-message').textContent=composer.cameraError||'Autorisez l’appareil photo pour capturer votre moment.';
+    byId('st-camera-retry').hidden=!composer.cameraError;
+    byId('st-camera-capture').disabled=!composer.cameraReady||composer.busy;
+    byId('st-camera-switch').disabled=!composer.cameraReady||composer.busy;
+    byId('st-camera-switch').querySelector('span').textContent=composer.cameraFacing==='user'?'Arrière':'Selfie';
+    byId('st-camera-cancel').textContent=composer.media?'Revenir à l’aperçu':'Écrire une story';
+    byId('st-photo-camera').disabled=composer.busy;byId('st-photo-library').disabled=composer.busy;
     const photo=composer.type==='photo';
     byId('st-tab-text').setAttribute('aria-pressed',String(!photo));byId('st-tab-photo').setAttribute('aria-pressed',String(photo));
     const preview=byId('st-preview');preview.className='st-preview '+(photo?'st-preview-photo':'st-preview-text')+(photo&&composer.media?' st-has-photo':'');
@@ -255,6 +328,7 @@
 
   async function loadPhoto(event){
     const file=event.target.files?.[0];event.target.value='';if(!file||!composer)return;
+    stopCamera();
     const draft=composer,version=++draft.fileVersion,error=byId('st-compose-error');error.hidden=true;
     if(file.size>25*1024*1024){setError(error,'Cette photo est trop lourde. Choisissez une image de moins de 25 Mo.');return;}
     draft.busy=true;updateComposer();byId('st-photo-library').textContent='Préparation…';
