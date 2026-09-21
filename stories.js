@@ -32,11 +32,16 @@
     sceneObserver?.disconnect();
     if(!window.ResizeObserver)return;
     sceneObserver=new ResizeObserver(()=>{
-      if(modalMode==='composer')layoutLayers(byId('st-overlay-canvas'),composer?.overlays||[],true);
+      if(modalMode==='composer')fitComposerScene();
       else fitReaderScene();
     });
-    const target=modalMode==='composer'?byId('st-preview'):byId('st-reader-media');
+    const target=modalMode==='composer'?byId('st-compose-body'):byId('st-reader-media');
     if(target)sceneObserver.observe(target);
+    // The photo can shrink after the footer or the virtual keyboard changes layout.
+    if(modalMode==='composer'&&byId('st-overlay-canvas')){
+      sceneObserver.observe(byId('st-overlay-canvas'));
+      byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>sceneObserver.observe(node));
+    }
   }
   // Both editor and reader use the same 9:16 canvas and relative coordinates.
   function layoutLayers(canvas,layers,editable=false){
@@ -53,25 +58,49 @@
       const boundX=Math.min(.5,Math.max(.08,(node.offsetWidth/2+width*.02)/width));
       const boundY=Math.min(.5,Math.max(.08,(node.offsetHeight/2+height*.02)/height));
       const x=clamp(layer.x,boundX,1-boundX),y=clamp(layer.y,boundY,1-boundY);
-      if(editable){layer.x=x;layer.y=y;}
+      if(editable&&!composer?.editingLayer){layer.x=x;layer.y=y;}
       node.style.left=x*100+'%';node.style.top=y*100+'%';
     }
   }
   function drawLayers(canvas,layers,editable=false){
+    [...canvas.children].forEach(node=>sceneObserver?.unobserve(node));
     canvas.replaceChildren();
     for(const layer of layers){
-      const node=el(editable?'button':'div','st-text-layer',layer.text);node.dataset.layerId=layer.id;
+      const node=el('div','st-text-layer',layer.text);node.dataset.layerId=layer.id;
       if(editable){
-        node.type='button';node.setAttribute('aria-label','Modifier le texte : '+layer.text);node.setAttribute('aria-pressed',String(composer.selectedLayer===layer.id));
+        node.tabIndex=0;node.setAttribute('role','button');node.setAttribute('aria-label','Modifier le texte : '+layer.text);node.setAttribute('aria-pressed',String(composer.selectedLayer===layer.id));node.dataset.placeholder='Écrivez…';
         let moved=false;
-        node.addEventListener('click',()=>{selectLayer(layer.id,!moved);moved=false;});
+        node.addEventListener('click',event=>{event.stopPropagation();if(!node.isContentEditable)selectLayer(layer.id,!moved);moved=false;});
         node.addEventListener('keydown',event=>{
+          if(node.isContentEditable){
+            if(event.isComposing||event.keyCode===229)return;
+            if(event.key==='Escape'||(event.key==='Enter'&&(event.ctrlKey||event.metaKey))){event.preventDefault();event.stopPropagation();finishEditing();}
+            return;
+          }
+          if(event.key==='Enter'||event.key===' '){event.preventDefault();selectLayer(layer.id,true);return;}
           const moves={ArrowLeft:[-.015,0],ArrowRight:[.015,0],ArrowUp:[0,-.015],ArrowDown:[0,.015]},move=moves[event.key];
           if(!move)return;event.preventDefault();layer.x=clamp(layer.x+move[0],.08,.92);layer.y=clamp(layer.y+move[1],.08,.92);layoutLayers(canvas,layers,true);
         });
+        let compositionBefore=null;
+        node.addEventListener('beforeinput',event=>{
+          if(event.isComposing||!event.inputType.startsWith('insert'))return;
+          clearEmptyEditor(node);
+          const inserted=['insertParagraph','insertLineBreak'].includes(event.inputType)?'\n':event.data;
+          if(inserted==null)return;
+          const selection=window.getSelection(),range=selection.rangeCount?selection.getRangeAt(0):null;
+          const replaced=range&&node.contains(range.commonAncestorContainer)?plainText(range.toString()).length:0;
+          if(plainText(node.innerText).length-replaced+plainText(inserted).length>180){event.preventDefault();insertLayerText(node,inserted);}
+        });
+        node.addEventListener('input',event=>syncLayerText(node,!event.isComposing));
+        node.addEventListener('compositionstart',()=>{clearEmptyEditor(node);compositionBefore=plainText(node.innerText);});
+        node.addEventListener('compositionend',()=>{
+          if(compositionBefore!==null&&plainText(node.innerText).length>180){node.textContent=compositionBefore;caretAtEnd(node);}
+          compositionBefore=null;syncLayerText(node);
+        });
+        node.addEventListener('paste',event=>{if(!node.isContentEditable)return;event.preventDefault();insertLayerText(node,event.clipboardData?.getData('text/plain')||'');});
         let drag=null;
         node.addEventListener('pointerdown',event=>{
-          if(event.button!==0||composer?.busy)return;
+          if(event.button!==0||composer?.busy||composer?.editingLayer)return;
           moved=false;
           drag={pointer:event.pointerId,x:event.clientX,y:event.clientY,startX:layer.x,startY:layer.y};
           node.setPointerCapture(event.pointerId);node.classList.add('st-dragging');
@@ -85,49 +114,99 @@
           layoutLayers(canvas,layers,true);
         });
         const release=()=>{drag=null;node.classList.remove('st-dragging');};
-        node.addEventListener('pointerup',release);node.addEventListener('pointercancel',release);node.addEventListener('lostpointercapture',release);
+        node.addEventListener('pointerup',event=>{const tapped=drag&&drag.pointer===event.pointerId&&!moved;release();if(tapped){event.stopPropagation();selectLayer(layer.id,true);}});
+        node.addEventListener('pointercancel',release);node.addEventListener('lostpointercapture',release);
       }
       canvas.append(node);
+      if(editable)sceneObserver?.observe(node);
     }
     layoutLayers(canvas,layers,editable);
   }
   function selectedLayer(){return composer?.overlays.find(layer=>layer.id===composer.selectedLayer);}
+  function layerNode(id){return [...(byId('st-overlay-canvas')?.children||[])].find(node=>node.dataset.layerId===id);}
+  const plainText=value=>String(value).replace(/\r\n?/g,'\n').replace(/\u00a0/g,' ');
+  function limitText(value,max=180){
+    let text=plainText(value).slice(0,Math.max(0,max));
+    if(/[\uD800-\uDBFF]$/.test(text))text=text.slice(0,-1);
+    return text;
+  }
+  function caretAtEnd(node){const range=document.createRange();range.selectNodeContents(node);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}
+  function clearEmptyEditor(node){if(node.childNodes.length===1&&node.firstChild.nodeName==='BR'){node.replaceChildren();caretAtEnd(node);}}
+  function syncLayerText(node,enforceLimit=true){
+    const layer=composer?.overlays.find(item=>item.id===node.dataset.layerId);if(!layer)return;
+    const raw=plainText(node.innerText),text=enforceLimit?limitText(raw):raw;
+    if(enforceLimit&&raw!==text){node.textContent=text;caretAtEnd(node);}
+    layer.text=text;
+    layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);
+  }
+  function insertLayerText(node,value){
+    clearEmptyEditor(node);
+    const selection=window.getSelection();let range=selection.rangeCount?selection.getRangeAt(0):null;
+    if(!range||!node.contains(range.commonAncestorContainer)){range=document.createRange();range.selectNodeContents(node);range.collapse(false);}
+    const remaining=180-plainText(node.innerText).length+plainText(range.toString()).length;
+    const text=limitText(value,remaining);range.deleteContents();
+    const inserted=document.createTextNode(text);range.insertNode(inserted);range.setStartAfter(inserted);range.collapse(true);selection.removeAllRanges();selection.addRange(range);syncLayerText(node);
+  }
+  function finishEditing(){
+    if(!composer)return;
+    const node=layerNode(composer.editingLayer);
+    if(node){syncLayerText(node);node.contentEditable='false';node.removeAttribute('data-editing');node.setAttribute('role','button');node.removeAttribute('aria-multiline');node.setAttribute('aria-label','Modifier le texte : '+(selectedLayer()?.text||''));if(document.activeElement===node)node.blur();}
+    composer.overlays=composer.overlays.filter(layer=>{if(layer.text.trim())return true;layerNode(layer.id)?.remove();return false;});
+    composer.editingLayer=null;composer.selectedLayer=null;updateLayerTools();fitComposerScene();
+  }
   function selectLayer(id,focusInput=false){
     if(!composer||composer.busy)return;
-    composer.selectedLayer=id;composer.stickersOpen=false;updateLayerTools();
-    if(focusInput){byId('st-layer-input').focus({preventScroll:true});byId('st-layer-input').select();byId('st-layer-tools').scrollIntoView({block:'nearest',behavior:'auto'});}
+    if(composer.editingLayer&&composer.editingLayer!==id)finishEditing();
+    const node=layerNode(id);if(!node)return;
+    composer.selectedLayer=id;composer.stickersOpen=false;composer.optionsOpen=false;
+    if(focusInput){composer.editingLayer=id;node.contentEditable='plaintext-only';node.dataset.editing='true';node.setAttribute('role','textbox');node.setAttribute('aria-multiline','true');node.setAttribute('aria-label','Texte sur la photo');node.removeAttribute('aria-pressed');}
+    updateLayerTools();fitComposerScene();
+    // Focus stays inside the original tap handler so mobile browsers open the keyboard.
+    if(focusInput){node.focus({preventScroll:true});caretAtEnd(node);}
   }
-  function addLayer(text='Votre texte'){
-    if(!composer||composer.overlays.length>=6||composer.busy)return;
-    const layer={id:'layer-'+Date.now()+'-'+composer.nextLayer++,text,x:.5,y:.4+composer.overlays.length*.05,size:.08,color:'#ffffff',background:'none',font:'sans',align:'center'};
+  function addLayer(text='',position={x:.5,y:.45}){
+    if(!composer||composer.busy)return;finishEditing();
+    if(composer.overlays.length>=6){updateLayerTools();return;}
+    const layer={id:'layer-'+Date.now()+'-'+composer.nextLayer++,text,x:clamp(position.x,.08,.92),y:clamp(position.y,.08,.92),size:.08,color:'#ffffff',background:'none',font:'sans',align:'center'};
     composer.overlays.push(layer);composer.selectedLayer=layer.id;
-    drawLayers(byId('st-overlay-canvas'),composer.overlays,true);selectLayer(layer.id,text==='Votre texte');
+    drawLayers(byId('st-overlay-canvas'),composer.overlays,true);selectLayer(layer.id,!text);
   }
   function updateLayerTools(){
     if(!composer)return;
-    const layer=selectedLayer(),ready=composer.type==='photo'&&!!composer.media;
-    byId('st-photo-tools').hidden=!ready;byId('st-layer-tools').hidden=!ready||!layer;
+    const layer=selectedLayer(),ready=composer.type==='photo'&&!!composer.media&&!composer.cameraOpen,editing=!!composer.editingLayer;
+    byId('st-photo-tools').hidden=!ready||editing;byId('st-layer-tools').hidden=!ready||!editing;
     byId('st-stickers').hidden=!ready||!composer.stickersOpen;
-    byId('st-overlay-hint').hidden=!ready||!composer.overlays.length;
+    byId('st-overlay-hint').hidden=!ready||editing||composer.stickersOpen;
+    byId('st-overlay-hint').textContent=composer.overlays.length>=6?'6 éléments maximum · touchez un texte pour le modifier':'Touchez la photo pour écrire · glissez pour déplacer';
     byId('st-overlay-canvas').hidden=!ready;
+    byId('st-compose-footer').hidden=!!composer.cameraOpen||editing;
+    byId('st-story-options').hidden=ready&&!composer.optionsOpen;
+    byId('st-photo-options').setAttribute('aria-expanded',String(!!composer.optionsOpen));
+    byId('st-options-close').hidden=byId('st-photo-text').hidden=!ready;
+    byId('st-preview').classList.toggle('st-is-editing',editing);
     byId('st-add-text').disabled=composer.busy||composer.overlays.length>=6;
     byId('st-sticker-toggle').disabled=composer.busy||composer.overlays.length>=6;
     byId('st-sticker-toggle').setAttribute('aria-expanded',String(!!composer.stickersOpen));
     byId('st-layer-count').textContent=composer.overlays.length+' / 6';
-    byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>node.setAttribute('aria-pressed',String(node.dataset.layerId===composer.selectedLayer)));
+    byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>{if(!node.isContentEditable)node.setAttribute('aria-pressed',String(node.dataset.layerId===composer.selectedLayer));});
     if(!layer)return;
-    if(document.activeElement!==byId('st-layer-input'))byId('st-layer-input').value=layer.text;
     byId('st-layer-size').value=layer.size;byId('st-layer-font').value=layer.font;
-    byId('st-layer-background').textContent='Fond : '+({none:'aucun',dark:'sombre',light:'clair'})[layer.background];
-    byId('st-layer-align').textContent='Aligner : '+({left:'gauche',center:'centré',right:'droite'})[layer.align];
+    byId('st-layer-background').setAttribute('aria-label','Fond du texte : '+({none:'aucun',dark:'sombre',light:'clair'})[layer.background]);byId('st-layer-background').setAttribute('aria-pressed',String(layer.background!=='none'));
+    byId('st-layer-align').setAttribute('aria-label','Alignement : '+({left:'gauche',center:'centré',right:'droite'})[layer.align]);
     byId('st-layer-colors').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===layer.color)));
   }
   function changeLayer(values){
     const layer=selectedLayer();if(!layer||composer.busy)return;
     Object.assign(layer,values);
-    const node=[...byId('st-overlay-canvas').children].find(n=>n.dataset.layerId===layer.id);
-    node.textContent=layer.text||'…';node.setAttribute('aria-label','Modifier le texte : '+layer.text);
     layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();
+  }
+  function fitComposerScene(){
+    const body=byId('st-compose-body'),preview=byId('st-preview');if(!composer||!body||!preview)return;
+    if(body.classList.contains('st-photo-workspace')){
+      const width=Math.max(1,Math.min(body.clientWidth,body.clientHeight*9/16));
+      preview.style.width=width+'px';preview.style.height=width*16/9+'px';
+    }else{preview.style.removeProperty('width');preview.style.removeProperty('height');}
+    layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);
   }
   function activityCard(activity,readerMode=false){
     if(activity.phase==='before')return null;
@@ -215,7 +294,7 @@
     Object.assign(dialog.style,{width:width+'px',height:height+'px',left:left+'px',top:top+'px'});
     const inset=Math.min(18,width*.05),actionTop=top+Math.min(90,height*.15);
     Object.assign(action.style,{width:Math.max(1,width-inset*2)+'px',left:(left+inset)+'px',top:actionTop+'px',maxHeight:Math.max(1,top+height-actionTop-inset)+'px'});
-    if(modalMode==='reader')fitReaderScene();
+    if(modalMode==='reader')fitReaderScene();else if(modalMode==='composer')fitComposerScene();
   }
 
   function openModal(mode) {
@@ -292,7 +371,7 @@
     if(snapshot&&!snapshot.activityId&&snapshot.id)snapshot.activityId=snapshot.id;
     if(snapshot?.activityId){const source=window.Platform?.storySnapshot(snapshot.activityId);if(source)snapshot.route=source.route;}
     const history=window.Platform?.activities().filter(a=>a.userId===session.user.id)||[];
-    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot,overlays:[],nextLayer:1,selectedLayer:null,stickersOpen:false};
+    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot,overlays:[],nextLayer:1,selectedLayer:null,editingLayer:null,stickersOpen:false,optionsOpen:false};
     const departure=sport=>sport==='Marche'?'Je pars marcher !':sport==='Vélo'?'Je pars pédaler !':'Je pars courir !';
     composer.text=composer.activity.phase==='before'?departure(composer.activity.sport):composer.activity.phase==='during'?number(composer.activity.distanceMeters)+' mètres déjà parcourus !':'Activité terminée : '+number(composer.activity.distanceMeters)+' mètres.';
     dialog.setAttribute('aria-labelledby','st-compose-title');dialog.removeAttribute('aria-label');
@@ -305,18 +384,21 @@
       </div>
       <div class="st-compose-body" id="st-compose-body">
         <div class="st-tabs" role="group" aria-label="Format de la story"><button type="button" class="st-tab" id="st-tab-text" aria-pressed="true">${svg('text',16)}Texte</button><button type="button" class="st-tab" id="st-tab-photo" aria-pressed="false">${svg('photo',16)}Photo</button></div>
-        <div class="st-photo-tools" id="st-photo-tools" hidden><button type="button" class="st-small-button" id="st-add-text"><b>Aa</b> Texte</button><button type="button" class="st-small-button" id="st-sticker-toggle" aria-expanded="false" aria-controls="st-stickers">☺ Stickers</button><span id="st-layer-count" aria-live="polite">0 / 6</span></div>
-        <div id="st-stickers" class="st-stickers" aria-label="Choisir un sticker" hidden></div>
-        <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div><div class="st-overlay-canvas" id="st-overlay-canvas" aria-label="Textes sur votre photo" hidden></div></div>
-        <p class="st-overlay-hint" id="st-overlay-hint" hidden>Glissez pour déplacer · touchez pour modifier</p>
-        <fieldset class="st-layer-tools" id="st-layer-tools" hidden><legend>Votre texte sur la photo</legend><label for="st-layer-input" class="st-sr-only">Texte sur la photo</label><textarea id="st-layer-input" class="st-textarea" maxlength="180" rows="2" placeholder="Écrivez sur votre photo…"></textarea><div class="st-layer-row"><label for="st-layer-font" class="st-sr-only">Police du texte</label><select id="st-layer-font"><option value="sans">Classique</option><option value="serif">Élégant</option><option value="hand">Manuscrit</option></select><button type="button" class="st-small-button" id="st-layer-background">Fond : aucun</button></div><div class="st-layer-colors" id="st-layer-colors" role="group" aria-label="Couleur du texte"></div><label class="st-layer-size-label" for="st-layer-size">Taille <input id="st-layer-size" type="range" min="0.04" max="0.12" step="0.005" value="0.08"></label><div class="st-layer-row"><button type="button" class="st-small-button" id="st-layer-align">Aligner : centré</button><button type="button" class="st-small-button st-layer-delete" id="st-layer-delete">Supprimer</button><button type="button" class="st-small-button st-layer-done" id="st-layer-done">Terminer</button></div></fieldset>
+        <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div><div class="st-overlay-canvas" id="st-overlay-canvas" aria-label="Textes sur votre photo" hidden></div>
+          <div class="st-photo-tools" id="st-photo-tools" hidden><button type="button" class="st-small-button" id="st-add-text" aria-label="Écrire sur la photo"><b>Aa</b></button><button type="button" class="st-small-button" id="st-sticker-toggle" aria-label="Ajouter un sticker" aria-expanded="false" aria-controls="st-stickers">☺</button><span id="st-layer-count" aria-live="polite">0 / 6</span><button type="button" class="st-small-button" id="st-photo-options" aria-expanded="false" aria-controls="st-story-options">Options</button></div>
+          <div id="st-stickers" class="st-stickers" aria-label="Choisir un sticker" hidden></div>
+          <div class="st-layer-tools" id="st-layer-tools" role="group" aria-label="Style du texte sur la photo" hidden><div class="st-inline-toolbar"><label for="st-layer-font" class="st-sr-only">Police du texte</label><select id="st-layer-font"><option value="sans">Classique</option><option value="serif">Élégant</option><option value="hand">Manuscrit</option></select><button type="button" class="st-small-button" id="st-layer-background" aria-label="Fond du texte">A</button><button type="button" class="st-small-button" id="st-layer-align" aria-label="Alignement du texte">≡</button><button type="button" class="st-small-button st-layer-delete" id="st-layer-delete" aria-label="Supprimer ce texte">${svg('close',16)}</button><button type="button" class="st-small-button st-layer-done" id="st-layer-done">Terminer</button></div><div class="st-layer-colors" id="st-layer-colors" role="group" aria-label="Couleur du texte"></div><label class="st-layer-size-label" for="st-layer-size"><span aria-hidden="true">A</span><span class="st-sr-only">Taille du texte</span><input id="st-layer-size" type="range" min="0.04" max="0.12" step="0.005" value="0.08"></label></div>
+          <p class="st-overlay-hint" id="st-overlay-hint" hidden>Touchez la photo pour écrire</p>
+        </div>
         <div class="st-palette" id="st-palette"><span>Couleur</span></div>
+        <div id="st-story-options" class="st-story-options overlayoptions"><button type="button" class="st-small-button" id="st-options-close" aria-label="Fermer les options" hidden>${svg('close',16)}</button>
         <div class="st-upload-actions" id="st-upload-actions" hidden><button type="button" class="st-small-button" id="st-photo-library">${svg('photo',16)}Choisir une photo</button><button type="button" class="st-small-button" id="st-photo-camera">${svg('camera',16)}Appareil photo</button></div>
         <input id="st-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
         <label class="st-input-label" for="st-caption"><span id="st-caption-label">Votre message</span><span class="st-counter" id="st-counter">0 / 280</span></label>
         <textarea id="st-caption" class="st-textarea" maxlength="280" rows="3" placeholder="La sortie du midi fait du bien…"></textarea>
         <div class="st-activity-options"><label for="st-sport" id="st-sport-label">Sport</label><select id="st-sport"><option>Course</option><option>Marche</option><option>Vélo</option></select><label for="st-activity-select" id="st-activity-label">Activité enregistrée</label><select id="st-activity-select"></select><label class="st-privacy"><input type="checkbox" id="st-hide-route" checked> Cacher mon trajet</label><p id="st-privacy-note" class="st-activity-note"></p><div id="st-activity-preview"></div></div>
         <div class="st-audience">${svg('lock',16)}<span>Visible par les collègues de <strong id="st-audience-name"></strong> pendant <strong>24 heures</strong>.</span></div>
+        <button type="button" class="st-small-button" id="st-photo-text" hidden>Passer à une story texte</button></div>
         <div id="st-compose-error" class="st-error" role="alert" hidden></div>
       </div><footer class="st-bottom-actions" id="st-compose-footer"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
     byId('st-audience-name').textContent=session.org.name;
@@ -341,9 +423,9 @@
       b.addEventListener('click',()=>{composer.bg=bg;byId('st-palette').querySelectorAll('button').forEach(n=>n.setAttribute('aria-pressed',String(n===b)));updateComposer();});byId('st-palette').append(b);
     });
     byId('st-compose-close').addEventListener('click',closeModal);
-    for(const kind of ['text','photo'])byId('st-tab-'+kind).addEventListener('click',()=>{stopCamera();composer.fileVersion++;composer.busy=false;composer.type=kind;updateComposer();});
+    for(const kind of ['text','photo'])byId('st-tab-'+kind).addEventListener('click',()=>{finishEditing();stopCamera();composer.fileVersion++;composer.busy=false;composer.type=kind;composer.optionsOpen=false;updateComposer();});
     byId('st-caption').addEventListener('input',e=>{composer.text=e.target.value;updateComposer();});
-    const chooseLibrary=()=>{stopCamera();composer.type='photo';updateComposer();byId('st-file').removeAttribute('capture');byId('st-file').click();};
+    const chooseLibrary=()=>{finishEditing();stopCamera();composer.type='photo';composer.optionsOpen=false;updateComposer();byId('st-file').removeAttribute('capture');byId('st-file').click();};
     byId('st-photo-library').addEventListener('click',chooseLibrary);
     byId('st-camera-library').addEventListener('click',chooseLibrary);
     byId('st-photo-camera').addEventListener('click',()=>startCamera());
@@ -354,6 +436,17 @@
     byId('st-file').addEventListener('change',loadPhoto);
     byId('st-publish').addEventListener('click',publish);
     byId('st-add-text').addEventListener('click',()=>addLayer());
+    byId('st-preview').addEventListener('click',event=>{
+      if(composer?.type!=='photo'||!composer.media||composer.busy||event.target.closest('#st-photo-tools,#st-layer-tools,#st-stickers,.st-text-layer'))return;
+      if(composer.optionsOpen){composer.optionsOpen=false;updateLayerTools();return;}
+      if(composer.editingLayer){finishEditing();return;}
+      const rect=byId('st-overlay-canvas').getBoundingClientRect();
+      addLayer('',{x:(event.clientX-rect.left)/rect.width,y:(event.clientY-rect.top)/rect.height});
+    });
+    byId('st-preview').addEventListener('keydown',event=>{if(event.target===byId('st-preview')&&(event.key==='Enter'||event.key===' ')){event.preventDefault();addLayer();}});
+    byId('st-photo-options').addEventListener('click',()=>{finishEditing();composer.optionsOpen=!composer.optionsOpen;composer.stickersOpen=false;updateLayerTools();byId('st-options-close').focus({preventScroll:true});});
+    byId('st-options-close').addEventListener('click',()=>{composer.optionsOpen=false;updateLayerTools();byId('st-photo-options').focus({preventScroll:true});});
+    byId('st-photo-text').addEventListener('click',()=>byId('st-tab-text').click());
     byId('st-sticker-toggle').addEventListener('click',()=>{composer.stickersOpen=!composer.stickersOpen;updateLayerTools();});
     for(const [emoji,label] of [['🔥','Énergie'],['💪','Force'],['🏃','Course'],['🚶','Marche'],['🚴','Vélo'],['👏','Bravo'],['❤️','Cœur'],['🎉','Fête']]){
       const button=el('button','',emoji);button.type='button';button.setAttribute('aria-label',label);button.addEventListener('click',()=>addLayer(emoji));byId('st-stickers').append(button);
@@ -361,7 +454,6 @@
     for(const [value,label] of [['#ffffff','Blanc'],['#111827','Noir'],['#ffda60','Jaune'],['#ff6b8a','Rose'],['#6ccefa','Bleu'],['#8ce4bd','Vert']]){
       const button=el('button','st-swatch');button.type='button';button.dataset.color=value;button.style.backgroundColor=value;button.setAttribute('aria-label',label);button.addEventListener('click',()=>changeLayer({color:value}));byId('st-layer-colors').append(button);
     }
-    byId('st-layer-input').addEventListener('input',event=>changeLayer({text:event.target.value}));
     byId('st-layer-size').addEventListener('input',event=>changeLayer({size:Number(event.target.value)}));
     byId('st-layer-font').addEventListener('change',event=>changeLayer({font:event.target.value}));
     byId('st-layer-background').addEventListener('click',()=>{
@@ -371,8 +463,10 @@
       changeLayer({background,color:nextColor});
     });
     byId('st-layer-align').addEventListener('click',()=>{const layer=selectedLayer();if(layer)changeLayer({align:({center:'left',left:'right',right:'center'})[layer.align]});});
-    byId('st-layer-delete').addEventListener('click',()=>{composer.overlays=composer.overlays.filter(layer=>layer.id!==composer.selectedLayer);composer.selectedLayer=null;drawLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();byId('st-add-text').focus({preventScroll:true});});
-    byId('st-layer-done').addEventListener('click',()=>{composer.overlays=composer.overlays.filter(layer=>layer.text.trim());composer.selectedLayer=null;drawLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();byId('st-preview').scrollIntoView({block:'nearest',behavior:'auto'});byId('st-add-text').focus({preventScroll:true});});
+    byId('st-layer-delete').addEventListener('click',()=>{layerNode(composer.selectedLayer)?.remove();composer.overlays=composer.overlays.filter(layer=>layer.id!==composer.selectedLayer);composer.editingLayer=null;composer.selectedLayer=null;updateLayerTools();fitComposerScene();byId('st-preview').focus({preventScroll:true});});
+    byId('st-layer-done').addEventListener('click',()=>{finishEditing();byId('st-preview').focus({preventScroll:true});});
+    // Clicking style buttons keeps the active caret and the mobile keyboard in place.
+    byId('st-layer-tools').addEventListener('pointerdown',event=>{if(event.target.closest('button')&&!event.target.closest('#st-layer-done,#st-layer-delete'))event.preventDefault();});
     updateComposer();showModal();watchScene();startCamera();
   }
 
@@ -386,7 +480,7 @@
   function sameCamera(draft,version){return composer===draft&&draft.cameraVersion===version&&dialog?.open&&modalMode==='composer'&&openSession===keyFor(current())&&!document.hidden;}
   async function startCamera(facing){
     if(!composer||composer.busy||modalMode!=='composer')return;
-    const draft=composer;stopCamera(draft);
+    finishEditing();composer.optionsOpen=false;const draft=composer;stopCamera(draft);
     const version=draft.cameraVersion;draft.cameraFacing=facing||draft.cameraFacing||'environment';draft.type='photo';draft.cameraOpen=true;draft.cameraPending=true;draft.cameraError='';
     const video=byId('st-camera-video');draft.cameraVideo=video;video.muted=true;
     updateComposer();
@@ -436,16 +530,18 @@
     byId('st-camera-switch').querySelector('span').textContent=composer.cameraFacing==='user'?'Arrière':'Selfie';
     byId('st-camera-cancel').textContent=composer.media?'Revenir à l’aperçu':'Écrire une story';
     byId('st-photo-camera').disabled=composer.busy;byId('st-photo-library').disabled=composer.busy;
-    const photo=composer.type==='photo';
+    const photo=composer.type==='photo',ready=photo&&!!composer.media&&!camera;
+    byId('st-compose-body').classList.toggle('st-photo-workspace',ready);dialog.querySelector('.st-layout').classList.toggle('st-photo-layout',ready);
     byId('st-tab-text').setAttribute('aria-pressed',String(!photo));byId('st-tab-photo').setAttribute('aria-pressed',String(photo));
     const preview=byId('st-preview');preview.className='st-preview '+(photo?'st-preview-photo':'st-preview-text')+(photo&&composer.media?' st-has-photo':'');
+    if(ready){preview.tabIndex=0;preview.setAttribute('role','group');preview.setAttribute('aria-label','Photo : touchez pour écrire, ou appuyez sur Entrée');}else{preview.removeAttribute('tabindex');preview.removeAttribute('role');preview.setAttribute('aria-label','Aperçu de votre story');}
     preview.style.backgroundColor=photo ? '' : composer.bg;preview.style.color=photo ? '' : inkFor(composer.bg);
     byId('st-palette').hidden=photo;byId('st-upload-actions').hidden=!photo;
     const img=byId('st-preview-photo');img.hidden=!photo||!composer.media;if(composer.media)img.src=composer.media;
     byId('st-upload-placeholder').hidden=!photo||!!composer.media;
     const copy=byId('st-preview-copy');copy.textContent=composer.text||(photo?'':'Une pause. Un effort.\nUn peu d’énergie en plus.');
     copy.classList.toggle('st-long-text',composer.text.length>120);copy.hidden=photo;
-    updateLayerTools();layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);
+    updateLayerTools();fitComposerScene();
     byId('st-caption-label').textContent=photo?'Une légende ? (facultatif)':'Votre message';
     byId('st-counter').textContent=composer.text.length+' / 280';
     const a=composer.activity,before=a.phase==='before';
@@ -492,6 +588,7 @@
   }
   async function publish(){
     if(!composer||composer.busy)return;
+    finishEditing();
     const draft=composer;draft.busy=true;updateComposer();byId('st-compose-error').hidden=true;byId('st-publish').textContent='Publication…';
     try{
       const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg,activity:draft.activity,overlays:draft.type==='photo'?draft.overlays.filter(layer=>layer.text.trim()):[]});
