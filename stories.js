@@ -15,7 +15,9 @@
     pause:'<path d="M8 5v14M16 5v14"/>',
     play:'<path d="m8 5 11 7-11 7Z"/>',
     send:'<path d="m21 3-6 18-4-8-8-4Z"/><path d="m11 13 10-10"/>',
-    check:'<path d="m5 12 4 4L19 6"/>'
+    check:'<path d="m5 12 4 4L19 6"/>',
+    sticker:'<rect x="3" y="3" width="18" height="18" rx="6"/><path d="M13 21v-5a3 3 0 0 1 3-3h5M8 14c1 1 2 1 3 0"/><path d="M8 8h.01M15 8h.01"/>',
+    trash:'<path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/>'
   };
   const svg = (key, size=18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[key]||icons.photo}</svg>`;
   const el = (tag, cls, txt) => { const n=document.createElement(tag); if(cls)n.className=cls; if(txt!==undefined)n.textContent=txt; return n; };
@@ -37,7 +39,7 @@
     });
     const target=modalMode==='composer'?byId('st-compose-body'):byId('st-reader-media');
     if(target)sceneObserver.observe(target);
-    // The photo can shrink after the footer or the virtual keyboard changes layout.
+    // Keep text bounds current when the viewport, image or text dimensions change.
     if(modalMode==='composer'&&byId('st-overlay-canvas')){
       sceneObserver.observe(byId('st-overlay-canvas'));
       byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>sceneObserver.observe(node));
@@ -53,12 +55,25 @@
       node.style.fontSize=width*layer.size+'px';node.style.color=color(layer.color);
       node.style.textAlign=layer.align;node.dataset.background=layer.background;
       node.style.padding=width*.012+'px '+width*.025+'px';
+      node.style.maxHeight='';node.style.overflowY='';
       // Long or multiline text stays completely inside the photo.
       for(let i=0;i<3&&node.offsetHeight>height*.82;i++)node.style.fontSize=parseFloat(node.style.fontSize)*(height*.82/node.offsetHeight)*.96+'px';
       const boundX=Math.min(.5,Math.max(.08,(node.offsetWidth/2+width*.02)/width));
       const boundY=Math.min(.5,Math.max(.08,(node.offsetHeight/2+height*.02)/height));
-      const x=clamp(layer.x,boundX,1-boundX),y=clamp(layer.y,boundY,1-boundY);
+      let x=clamp(layer.x,boundX,1-boundX),y=clamp(layer.y,boundY,1-boundY);
       if(editable&&!composer?.editingLayer){layer.x=x;layer.y=y;}
+      // Typing uses the visible space above the keyboard. Saved photo coordinates stay intact.
+      if(editable&&composer?.editingLayer===layer.id){
+        node.style.fontSize=Math.max(16,parseFloat(node.style.fontSize))+'px';
+        const body=byId('st-compose-body'),tools=byId('st-text-shelf');
+        const safeTop=parseFloat(getComputedStyle(byId('st-layer-done')).top)||15;
+        const visibleTop=safeTop+44,visibleBottom=Math.max(visibleTop+36,body.clientHeight-(tools?.offsetHeight||126)-12);
+        const maxHeight=visibleBottom-visibleTop;
+        if(node.offsetHeight>maxHeight)node.style.fontSize=Math.max(16,parseFloat(node.style.fontSize)*maxHeight/node.offsetHeight)+'px';
+        // Only the temporary typing surface scrolls; long multiline text cannot slip under the tools.
+        node.style.maxHeight=maxHeight+'px';node.style.overflowY='auto';
+        x=.5;y=((visibleTop+visibleBottom)/2-(composer.sceneTop||0))/height;
+      }
       node.style.left=x*100+'%';node.style.top=y*100+'%';
     }
   }
@@ -176,21 +191,27 @@
     const layer=selectedLayer(),ready=composer.type==='photo'&&!!composer.media&&!composer.cameraOpen,editing=!!composer.editingLayer;
     byId('st-photo-tools').hidden=!ready||editing;byId('st-layer-tools').hidden=!ready||!editing;
     byId('st-stickers').hidden=!ready||!composer.stickersOpen;
-    byId('st-overlay-hint').hidden=!ready||editing||composer.stickersOpen;
+    byId('st-overlay-hint').hidden=true;
+    byId('st-caption-prompt').hidden=!ready||editing||composer.optionsOpen||composer.stickersOpen;
     byId('st-overlay-hint').textContent=composer.overlays.length>=6?'6 éléments maximum · touchez un texte pour le modifier':'Touchez la photo pour écrire · glissez pour déplacer';
     byId('st-overlay-canvas').hidden=!ready;
     byId('st-compose-footer').hidden=!!composer.cameraOpen||editing;
+    dialog.classList.toggle('st-editing-text',ready&&editing);
     byId('st-story-options').hidden=ready&&!composer.optionsOpen;
     byId('st-photo-options').setAttribute('aria-expanded',String(!!composer.optionsOpen));
     byId('st-options-close').hidden=byId('st-photo-text').hidden=!ready;
     byId('st-preview').classList.toggle('st-is-editing',editing);
+    byId('st-layer-colors').hidden=!composer.colorsOpen;
+    byId('st-font-choices').hidden=!!composer.colorsOpen;
+    byId('st-color-toggle').setAttribute('aria-pressed',String(!!composer.colorsOpen));
     byId('st-add-text').disabled=composer.busy||composer.overlays.length>=6;
     byId('st-sticker-toggle').disabled=composer.busy||composer.overlays.length>=6;
     byId('st-sticker-toggle').setAttribute('aria-expanded',String(!!composer.stickersOpen));
     byId('st-layer-count').textContent=composer.overlays.length+' / 6';
     byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>{if(!node.isContentEditable)node.setAttribute('aria-pressed',String(node.dataset.layerId===composer.selectedLayer));});
     if(!layer)return;
-    byId('st-layer-size').value=layer.size;byId('st-layer-font').value=layer.font;
+    byId('st-layer-size').value=layer.size;
+    byId('st-font-choices').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.font===layer.font)));
     byId('st-layer-background').setAttribute('aria-label','Fond du texte : '+({none:'aucun',dark:'sombre',light:'clair'})[layer.background]);byId('st-layer-background').setAttribute('aria-pressed',String(layer.background!=='none'));
     byId('st-layer-align').setAttribute('aria-label','Alignement : '+({left:'gauche',center:'centré',right:'droite'})[layer.align]);
     byId('st-layer-colors').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===layer.color)));
@@ -203,9 +224,12 @@
   function fitComposerScene(){
     const body=byId('st-compose-body'),preview=byId('st-preview');if(!composer||!body||!preview)return;
     if(body.classList.contains('st-photo-workspace')){
-      const width=Math.max(1,Math.min(body.clientWidth,body.clientHeight*9/16));
+      // Always fill the phone width, even when the keyboard reduces the visible height.
+      const width=Math.max(1,body.clientWidth);
+      if(!composer.editingLayer)composer.sceneTop=Math.max(0,(body.clientHeight-width*16/9)/2);
       preview.style.width=width+'px';preview.style.height=width*16/9+'px';
-    }else{preview.style.removeProperty('width');preview.style.removeProperty('height');}
+      preview.style.top=(composer.sceneTop||0)+'px';
+    }else{preview.style.removeProperty('width');preview.style.removeProperty('height');preview.style.removeProperty('top');}
     layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);
   }
   function activityCard(activity,readerMode=false){
@@ -227,6 +251,20 @@
   let dialog=null, action=null, modalMode='', openSession='', restoreFocus=null, restoreUser='', reader=null;
   let composer=null, readFrame=0, noticeTimer=0, subscribed=false, scheduled=false;
   let lastPublishedId='', returnToPublished=false;
+  let scrollLock=null;
+  function lockPage(){
+    if(scrollLock)return;
+    scrollLock={x:window.scrollX,y:window.scrollY,body:document.body.getAttribute('style'),root:document.documentElement.style.overflow};
+    Object.assign(document.body.style,{position:'fixed',top:-scrollLock.y+'px',left:-scrollLock.x+'px',width:'100%',overflow:'hidden'});
+    document.documentElement.style.overflow='hidden';document.documentElement.classList.add('st-modal-open');
+  }
+  function unlockPage(){
+    if(!scrollLock)return;
+    const saved=scrollLock;scrollLock=null;
+    if(saved.body===null)document.body.removeAttribute('style');else document.body.setAttribute('style',saved.body);
+    document.documentElement.style.overflow=saved.root;document.documentElement.classList.remove('st-modal-open');
+    window.scrollTo(saved.x,saved.y);
+  }
   const keyFor = current => current ? current.org.id+':'+current.user.id : '';
   const current = () => D() && D().current();
   const now = () => D() ? D().now() : Date.now();
@@ -249,6 +287,7 @@
       sceneObserver?.disconnect();
       if(action.open)action.close();
       cancelAnimationFrame(readFrame); reader=null; composer=null; modalMode=''; openSession='';
+      dialog.classList.remove('st-editing-text','st-photo-composer');unlockPage();
       const target=restoreFocus?.isConnected?restoreFocus:byId('stories')?.querySelector(`[data-st-user="${CSS.escape(restoreUser)}"] button`);
       restoreFocus=null;restoreUser='';
       if(target && target.isConnected && !target.closest('[inert]')){
@@ -287,10 +326,11 @@
     const leftLimit=vv ? vv.offsetLeft : 0;
     const available=vv ? vv.height : window.innerHeight;
     const availableWidth=vv ? vv.width : window.innerWidth;
-    const left=Math.max(leftLimit,rect.left),top=Math.max(topLimit,rect.top);
-    const width=Math.max(1,Math.min(rect.right,leftLimit+availableWidth)-left);
-    const height=Math.max(1,Math.min(rect.bottom,topLimit+available)-top);
-    dialog.classList.toggle('st-in-phone',!!zone);
+    const mobile=matchMedia('(max-width:680px)').matches;
+    const left=mobile?leftLimit:Math.max(leftLimit,rect.left),top=mobile?topLimit:Math.max(topLimit,rect.top);
+    const width=mobile?availableWidth:Math.max(1,Math.min(rect.right,leftLimit+availableWidth)-left);
+    const height=mobile?available:Math.max(1,Math.min(rect.bottom,topLimit+available)-top);
+    dialog.classList.toggle('st-in-phone',!!zone&&!mobile);
     Object.assign(dialog.style,{width:width+'px',height:height+'px',left:left+'px',top:top+'px'});
     const inset=Math.min(18,width*.05),actionTop=top+Math.min(90,height*.15);
     Object.assign(action.style,{width:Math.max(1,width-inset*2)+'px',left:(left+inset)+'px',top:actionTop+'px',maxHeight:Math.max(1,top+height-actionTop-inset)+'px'});
@@ -309,7 +349,7 @@
     dialog.replaceChildren();fitDialogs();
     return true;
   }
-  function showModal() { if(!dialog.open)dialog.showModal(); fitDialogs(); }
+  function showModal() { if(!dialog.open){lockPage();dialog.showModal();} fitDialogs(); }
   function closeModal(){stopCamera();if(dialog?.open)dialog.close();}
   function notify(message){
     let n=byId('st-notice');
@@ -371,9 +411,8 @@
     if(snapshot&&!snapshot.activityId&&snapshot.id)snapshot.activityId=snapshot.id;
     if(snapshot?.activityId){const source=window.Platform?.storySnapshot(snapshot.activityId);if(source)snapshot.route=source.route;}
     const history=window.Platform?.activities().filter(a=>a.userId===session.user.id)||[];
-    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot,overlays:[],nextLayer:1,selectedLayer:null,editingLayer:null,stickersOpen:false,optionsOpen:false};
+    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot,overlays:[],nextLayer:1,selectedLayer:null,editingLayer:null,stickersOpen:false,optionsOpen:false,colorsOpen:false,sceneTop:0};
     const departure=sport=>sport==='Marche'?'Je pars marcher !':sport==='Vélo'?'Je pars pédaler !':'Je pars courir !';
-    composer.text=composer.activity.phase==='before'?departure(composer.activity.sport):composer.activity.phase==='during'?number(composer.activity.distanceMeters)+' mètres déjà parcourus !':'Activité terminée : '+number(composer.activity.distanceMeters)+' mètres.';
     dialog.setAttribute('aria-labelledby','st-compose-title');dialog.removeAttribute('aria-label');
     dialog.innerHTML=`<div class="st-layout">
       <header class="st-topbar"><div><div class="st-eyebrow">Un moment à partager</div><h2 id="st-compose-title">Votre story</h2></div><button type="button" class="st-icon-button" id="st-compose-close" aria-label="Fermer la création de story">${svg('close')}</button></header>
@@ -385,11 +424,17 @@
       <div class="st-compose-body" id="st-compose-body">
         <div class="st-tabs" role="group" aria-label="Format de la story"><button type="button" class="st-tab" id="st-tab-text" aria-pressed="true">${svg('text',16)}Texte</button><button type="button" class="st-tab" id="st-tab-photo" aria-pressed="false">${svg('photo',16)}Photo</button></div>
         <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div><div class="st-overlay-canvas" id="st-overlay-canvas" aria-label="Textes sur votre photo" hidden></div>
-          <div class="st-photo-tools" id="st-photo-tools" hidden><button type="button" class="st-small-button" id="st-add-text" aria-label="Écrire sur la photo"><b>Aa</b></button><button type="button" class="st-small-button" id="st-sticker-toggle" aria-label="Ajouter un sticker" aria-expanded="false" aria-controls="st-stickers">☺</button><span id="st-layer-count" aria-live="polite">0 / 6</span><button type="button" class="st-small-button" id="st-photo-options" aria-expanded="false" aria-controls="st-story-options">Options</button></div>
-          <div id="st-stickers" class="st-stickers" aria-label="Choisir un sticker" hidden></div>
-          <div class="st-layer-tools" id="st-layer-tools" role="group" aria-label="Style du texte sur la photo" hidden><div class="st-inline-toolbar"><label for="st-layer-font" class="st-sr-only">Police du texte</label><select id="st-layer-font"><option value="sans">Classique</option><option value="serif">Élégant</option><option value="hand">Manuscrit</option></select><button type="button" class="st-small-button" id="st-layer-background" aria-label="Fond du texte">A</button><button type="button" class="st-small-button" id="st-layer-align" aria-label="Alignement du texte">≡</button><button type="button" class="st-small-button st-layer-delete" id="st-layer-delete" aria-label="Supprimer ce texte">${svg('close',16)}</button><button type="button" class="st-small-button st-layer-done" id="st-layer-done">Terminer</button></div><div class="st-layer-colors" id="st-layer-colors" role="group" aria-label="Couleur du texte"></div><label class="st-layer-size-label" for="st-layer-size"><span aria-hidden="true">A</span><span class="st-sr-only">Taille du texte</span><input id="st-layer-size" type="range" min="0.04" max="0.12" step="0.005" value="0.08"></label></div>
-          <p class="st-overlay-hint" id="st-overlay-hint" hidden>Touchez la photo pour écrire</p>
         </div>
+          <div class="st-photo-tools" id="st-photo-tools" hidden><button type="button" class="st-small-button" id="st-add-text" aria-label="Écrire sur la photo"><b>Aa</b></button><button type="button" class="st-small-button" id="st-sticker-toggle" aria-label="Ajouter un sticker" aria-expanded="false" aria-controls="st-stickers">${svg('sticker',25)}</button><button type="button" class="st-small-button" id="st-photo-options" aria-label="Options de la story" aria-expanded="false" aria-controls="st-story-options">${svg('more',25)}</button><span id="st-layer-count" class="st-sr-only" aria-live="polite">0 / 6</span></div>
+          <div id="st-stickers" class="st-stickers" aria-label="Choisir un sticker" hidden></div>
+          <div class="st-layer-tools" id="st-layer-tools" role="group" aria-label="Style du texte sur la photo" hidden>
+            <button type="button" class="st-layer-done" id="st-layer-done">Terminé</button>
+            <div class="st-text-shelf" id="st-text-shelf"><div id="st-font-choices" class="st-font-choices" role="group" aria-label="Police du texte"><button type="button" data-font="sans" aria-pressed="true">Classique</button><button type="button" data-font="serif" aria-pressed="false">Élégant</button><button type="button" data-font="hand" aria-pressed="false">Signature</button></div><div class="st-layer-colors" id="st-layer-colors" role="group" aria-label="Couleur du texte" hidden></div>
+            <div class="st-inline-toolbar"><button type="button" id="st-font-toggle" aria-label="Choisir une police">Aa</button><button type="button" id="st-color-toggle" aria-label="Choisir la couleur du texte" aria-pressed="false"><span class="st-color-wheel"></span></button><button type="button" id="st-layer-align" aria-label="Alignement du texte">${svg('text',24)}</button><button type="button" id="st-layer-background" aria-label="Fond du texte"><b>A</b></button><button type="button" class="st-layer-delete" id="st-layer-delete" aria-label="Supprimer ce texte">${svg('trash',21)}</button></div></div>
+            <label class="st-layer-size-label" for="st-layer-size"><span aria-hidden="true">A</span><span class="st-sr-only">Taille du texte</span><input id="st-layer-size" type="range" min="0.04" max="0.12" step="0.005" value="0.08"></label>
+          </div>
+          <button type="button" class="st-caption-prompt" id="st-caption-prompt" hidden>Ajoutez une légende…</button>
+          <p class="st-overlay-hint" id="st-overlay-hint" hidden>Touchez la photo pour écrire</p>
         <div class="st-palette" id="st-palette"><span>Couleur</span></div>
         <div id="st-story-options" class="st-story-options overlayoptions"><button type="button" class="st-small-button" id="st-options-close" aria-label="Fermer les options" hidden>${svg('close',16)}</button>
         <div class="st-upload-actions" id="st-upload-actions" hidden><button type="button" class="st-small-button" id="st-photo-library">${svg('photo',16)}Choisir une photo</button><button type="button" class="st-small-button" id="st-photo-camera">${svg('camera',16)}Appareil photo</button></div>
@@ -400,7 +445,7 @@
         <div class="st-audience">${svg('lock',16)}<span>Visible par les collègues de <strong id="st-audience-name"></strong> pendant <strong>24 heures</strong>.</span></div>
         <button type="button" class="st-small-button" id="st-photo-text" hidden>Passer à une story texte</button></div>
         <div id="st-compose-error" class="st-error" role="alert" hidden></div>
-      </div><footer class="st-bottom-actions" id="st-compose-footer"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
+      </div><footer class="st-bottom-actions" id="st-compose-footer"><button type="button" class="st-share-privacy" id="st-share-privacy" aria-label="Cacher mon trajet" aria-pressed="true">${svg('lock',17)}<span>Trajet masqué</span></button><button type="button" class="st-primary" id="st-publish" disabled><span class="st-share-avatar">${initials(session.user.name)}</span><span>Votre story</span>${svg('right',22)}</button></footer></div>`;
     byId('st-audience-name').textContent=session.org.name;
     byId('st-caption').value=composer.text;
     byId('st-sport').value=composer.activity.sport||'Course';byId('st-hide-route').checked=composer.activity.hideRoute!==false;
@@ -448,6 +493,8 @@
     byId('st-options-close').addEventListener('click',()=>{composer.optionsOpen=false;updateLayerTools();byId('st-photo-options').focus({preventScroll:true});});
     byId('st-photo-text').addEventListener('click',()=>byId('st-tab-text').click());
     byId('st-sticker-toggle').addEventListener('click',()=>{composer.stickersOpen=!composer.stickersOpen;updateLayerTools();});
+    byId('st-caption-prompt').addEventListener('click',()=>{composer.optionsOpen=true;updateLayerTools();byId('st-caption').focus({preventScroll:true});});
+    byId('st-share-privacy').addEventListener('click',()=>{const checkbox=byId('st-hide-route');if(!checkbox.disabled){checkbox.checked=!checkbox.checked;changeActivity();}});
     for(const [emoji,label] of [['🔥','Énergie'],['💪','Force'],['🏃','Course'],['🚶','Marche'],['🚴','Vélo'],['👏','Bravo'],['❤️','Cœur'],['🎉','Fête']]){
       const button=el('button','',emoji);button.type='button';button.setAttribute('aria-label',label);button.addEventListener('click',()=>addLayer(emoji));byId('st-stickers').append(button);
     }
@@ -455,7 +502,15 @@
       const button=el('button','st-swatch');button.type='button';button.dataset.color=value;button.style.backgroundColor=value;button.setAttribute('aria-label',label);button.addEventListener('click',()=>changeLayer({color:value}));byId('st-layer-colors').append(button);
     }
     byId('st-layer-size').addEventListener('input',event=>changeLayer({size:Number(event.target.value)}));
-    byId('st-layer-font').addEventListener('change',event=>changeLayer({font:event.target.value}));
+    // A pointer drag changes the range without blurring the editable photo text on iOS.
+    const sizeControl=byId('st-layer-size');let sizePointer=null;
+    const adjustSize=event=>{const rect=sizeControl.getBoundingClientRect(),value=.04+clamp(1-(event.clientY-rect.top)/rect.height,0,1)*.08;changeLayer({size:Math.round(value/.005)*.005});};
+    sizeControl.addEventListener('pointerdown',event=>{if(event.button!==0)return;event.preventDefault();sizePointer=event.pointerId;sizeControl.setPointerCapture(event.pointerId);adjustSize(event);});
+    sizeControl.addEventListener('pointermove',event=>{if(event.pointerId===sizePointer)adjustSize(event);});
+    sizeControl.addEventListener('pointerup',()=>{sizePointer=null;});sizeControl.addEventListener('pointercancel',()=>{sizePointer=null;});
+    byId('st-font-choices').addEventListener('click',event=>{const button=event.target.closest('[data-font]');if(button)changeLayer({font:button.dataset.font});});
+    byId('st-font-toggle').addEventListener('click',()=>{composer.colorsOpen=false;updateLayerTools();});
+    byId('st-color-toggle').addEventListener('click',()=>{composer.colorsOpen=!composer.colorsOpen;updateLayerTools();});
     byId('st-layer-background').addEventListener('click',()=>{
       const layer=selectedLayer();if(!layer)return;
       const background=({none:'dark',dark:'light',light:'none'})[layer.background];
@@ -465,8 +520,22 @@
     byId('st-layer-align').addEventListener('click',()=>{const layer=selectedLayer();if(layer)changeLayer({align:({center:'left',left:'right',right:'center'})[layer.align]});});
     byId('st-layer-delete').addEventListener('click',()=>{layerNode(composer.selectedLayer)?.remove();composer.overlays=composer.overlays.filter(layer=>layer.id!==composer.selectedLayer);composer.editingLayer=null;composer.selectedLayer=null;updateLayerTools();fitComposerScene();byId('st-preview').focus({preventScroll:true});});
     byId('st-layer-done').addEventListener('click',()=>{finishEditing();byId('st-preview').focus({preventScroll:true});});
-    // Clicking style buttons keeps the active caret and the mobile keyboard in place.
-    byId('st-layer-tools').addEventListener('pointerdown',event=>{if(event.target.closest('button')&&!event.target.closest('#st-layer-done,#st-layer-delete'))event.preventDefault();});
+    // WebKit suppresses compatibility clicks after preventDefault on a touch pointerdown.
+    // Activate that tap ourselves while keeping the caret; discard a duplicate native click.
+    const styleTools=byId('st-layer-tools');let styleTap=null,lastStyleTap=null;
+    styleTools.addEventListener('pointerdown',event=>{
+      const button=event.target.closest('button');
+      if(!button||button.matches('#st-layer-done,#st-layer-delete'))return;
+      event.preventDefault();
+      if(event.pointerType!=='mouse')styleTap={button,pointer:event.pointerId,x:event.clientX,y:event.clientY};
+    });
+    styleTools.addEventListener('pointerup',event=>{
+      const tap=styleTap;styleTap=null;
+      if(!tap||tap.pointer!==event.pointerId||event.target.closest('button')!==tap.button||Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>12)return;
+      event.preventDefault();lastStyleTap={button:tap.button,time:Date.now()};tap.button.click();
+    });
+    styleTools.addEventListener('pointercancel',()=>{styleTap=null;});
+    styleTools.addEventListener('click',event=>{if(event.isTrusted&&lastStyleTap?.button===event.target.closest('button')&&Date.now()-lastStyleTap.time<700){event.preventDefault();event.stopImmediatePropagation();}},true);
     updateComposer();showModal();watchScene();startCamera();
   }
 
@@ -531,7 +600,8 @@
     byId('st-camera-cancel').textContent=composer.media?'Revenir à l’aperçu':'Écrire une story';
     byId('st-photo-camera').disabled=composer.busy;byId('st-photo-library').disabled=composer.busy;
     const photo=composer.type==='photo',ready=photo&&!!composer.media&&!camera;
-    byId('st-compose-body').classList.toggle('st-photo-workspace',ready);dialog.querySelector('.st-layout').classList.toggle('st-photo-layout',ready);
+    dialog.classList.toggle('st-photo-composer',ready||camera);
+    byId('st-compose-body').classList.toggle('st-photo-workspace',ready);dialog.querySelector('.st-layout').classList.toggle('st-photo-layout',ready||camera);
     byId('st-tab-text').setAttribute('aria-pressed',String(!photo));byId('st-tab-photo').setAttribute('aria-pressed',String(photo));
     const preview=byId('st-preview');preview.className='st-preview '+(photo?'st-preview-photo':'st-preview-text')+(photo&&composer.media?' st-has-photo':'');
     if(ready){preview.tabIndex=0;preview.setAttribute('role','group');preview.setAttribute('aria-label','Photo : touchez pour écrire, ou appuyez sur Entrée');}else{preview.removeAttribute('tabindex');preview.removeAttribute('role');preview.setAttribute('aria-label','Aperçu de votre story');}
@@ -544,10 +614,16 @@
     updateLayerTools();fitComposerScene();
     byId('st-caption-label').textContent=photo?'Une légende ? (facultatif)':'Votre message';
     byId('st-counter').textContent=composer.text.length+' / 280';
+    byId('st-caption-prompt').textContent=composer.text||'Ajoutez une légende…';
     const a=composer.activity,before=a.phase==='before';
     byId('st-sport').hidden=byId('st-sport-label').hidden=!before;byId('st-activity-select').hidden=byId('st-activity-label').hidden=a.phase!=='after'||!composer.history.length;
     const card=activityCard(a);byId('st-activity-preview').replaceChildren(...(card?[card]:[]));byId('st-activity-preview').hidden=!card;
     const linkedHidden=a.activityId&&window.Platform?.activityPrivacy(a.activityId);
+    byId('st-hide-route').disabled=!!linkedHidden;
+    if(linkedHidden){a.hideRoute=true;byId('st-hide-route').checked=true;}
+    byId('st-share-privacy').hidden=!ready;byId('st-share-privacy').disabled=!!linkedHidden;
+    byId('st-share-privacy').setAttribute('aria-pressed',String(a.hideRoute!==false));
+    byId('st-share-privacy').querySelector('span').textContent=a.hideRoute!==false?'Trajet masqué':'Trajet visible';
     byId('st-privacy-note').textContent=linkedHidden?'Le trajet de cette activité est masqué. Vous pouvez modifier sa visibilité depuis votre profil.':before?'':'Cette story partage un instantané. Elle ne crédite pas une seconde activité.';byId('st-privacy-note').hidden=before&&!linkedHidden;
     byId('st-publish').disabled=composer.busy||(photo?!composer.media:!composer.text.trim());
   }
@@ -679,12 +755,9 @@
   }
   function fitReaderScene(){
     const scene=byId('st-reader-stage'),media=byId('st-reader-media');if(!scene||!media?.clientWidth||!reader)return;
-    const head=dialog.querySelector('.st-reader-head'),footer=dialog.querySelector('.st-reader-bottom'),notice=dialog.querySelector('.st-published-confirmation');
-    const top=(head?.offsetHeight||88)+(notice?.offsetHeight||0)+12,bottom=(footer?.offsetHeight||106)+12;
-    media.style.paddingTop=top+'px';media.style.paddingBottom=bottom+'px';
-    const caption=byId('st-reader-text'),card=byId('st-reader-activity');
-    const available=media.clientHeight-top-bottom-(caption?.parentElement===media?caption.offsetHeight:0)-(card?.offsetHeight||0)-(card?24:12);
-    const width=Math.max(1,Math.min(media.clientWidth-36,Math.max(1,available)*9/16));
+    const footer=dialog.querySelector('.st-reader-bottom');
+    media.style.setProperty('--st-reader-footer',(footer?.offsetHeight||106)+'px');
+    const width=Math.max(1,media.clientWidth);
     scene.style.width=width+'px';scene.style.height=width*16/9+'px';
     const story=liveStories().find(s=>s.id===reader.ids[reader.index]);
     layoutLayers(byId('st-reader-overlays'),story?.overlays||[]);
