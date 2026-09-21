@@ -187,3 +187,71 @@ test('duplicate domains, invalid client input and quota failure cannot partially
   assert.throws(()=>D.createOrg(input),/stockage local plein/);
   assert.equal(JSON.stringify([...shared.entries]),before);
 });
+
+const photoMedia='data:image/png;base64,AAAA';
+const overlay=(patch={})=>({id:'text_1',text:'Ensemble 💙\nChaque mètre compte',x:.5,y:.5,size:.07,color:'#FfAa00',background:'dark',font:'sans',align:'center',...patch});
+const plain=value=>JSON.parse(JSON.stringify(value));
+
+test('photo overlays persist canonically across reloads and returned copies cannot alter them',()=>{
+  const a=tab();login(a.D);
+  const overlays=Array.from({length:6},(_,i)=>overlay({id:'text-'+i,x:i%2?.92:.08,y:i%2?.08:.92,size:i%2?.12:.04,background:['none','dark','light'][i%3],font:['sans','serif','hand'][i%3],align:['left','center','right'][i%3],html:'<img onerror=alert(1)>',style:{position:'fixed'}}));
+  const expected=overlays.map(({html,style,...value})=>value);
+  const story=a.D.createStory({type:'photo',media:photoMedia,overlays});
+  assert.deepEqual(plain(story.overlays),expected);
+  const saved=JSON.parse(a.shared.getItem('moovon:demo:v1')).stories.find(s=>s.id===story.id);
+  assert.deepEqual(saved.overlays,expected);
+  overlays[0].text='Changed input';story.overlays[0].x=.9;
+  const visible=a.D.getStories().find(s=>s.id===story.id);visible.overlays[0].text='Changed output';
+  const b=tab(a.shared);login(b.D);
+  assert.deepEqual(plain(b.D.getStories().find(s=>s.id===story.id).overlays),expected);
+  assert.equal(saved.expiresAt-saved.publishedAt,86400000);
+});
+
+test('invalid overlay fields fail before saving or emitting any mutation',()=>{
+  const {D,shared}=tab();login(D);const before=JSON.stringify([...shared.entries]);let changes=0;D.onChange(()=>changes++);
+  const invalid=[null,{},'text',Array.from({length:7},(_,i)=>overlay({id:'text_'+i})),[null],[[]],[overlay(),overlay()],new Array(1)];
+  const badFields={id:['','two words','<script>','x'.repeat(51),12],text:[180,null,'a'.repeat(181)],x:[NaN,Infinity,-Infinity,.079999,.920001,'0.5',null],y:[NaN,.079999,.920001,'0.5'],size:[NaN,Infinity,.039999,.120001,'0.07'],color:['red','#fff','#12345678',null],background:['black',null],font:['monospace',null],align:['justify',null]};
+  for(const [key,values] of Object.entries(badFields))for(const value of values)invalid.push([overlay({[key]:value})]);
+  for(const key of Object.keys(overlay())){const missing=overlay();delete missing[key];invalid.push([missing]);}
+  for(const overlays of invalid){
+    assert.throws(()=>D.createStory({type:'photo',media:photoMedia,overlays}),/superposé|photo/);
+    assert.equal(JSON.stringify([...shared.entries]),before);
+  }
+  assert.throws(()=>D.createStory({type:'text',text:'Bonjour',overlays:[overlay()]}),/uniquement.*photo/);
+  assert.equal(JSON.stringify([...shared.entries]),before);assert.equal(changes,0);
+});
+
+test('old photo and text stories remain readable with empty overlays and old create calls still work',()=>{
+  const {D,shared}=tab();login(D);
+  const text=D.createStory({text:'Story texte'}),photo=D.createStory({type:'photo',media:photoMedia});
+  assert.deepEqual(plain(photo.overlays),[]);
+  const data=JSON.parse(shared.getItem('moovon:demo:v1'));
+  data.stories.forEach(story=>delete story.overlays);shared.setItem('moovon:demo:v1',JSON.stringify(data));
+  const before=shared.getItem('moovon:demo:v1'),reloaded=tab(shared);login(reloaded.D);
+  for(const id of [text.id,photo.id,'story-corelis-1'])assert.deepEqual(plain(reloaded.D.getStories().find(s=>s.id===id).overlays),[]);
+  assert.equal(shared.getItem('moovon:demo:v1'),before);
+  assert.doesNotThrow(()=>D.createStory({text:'Sans superposition',overlays:[]}));
+  const exact=D.createStory({type:'photo',media:photoMedia,overlays:[overlay({id:'x'.repeat(50),text:'a'.repeat(178)+'💙'})]});
+  assert.equal(exact.overlays[0].text.length,180);
+});
+
+test('overlay retrieval stays scoped to the company and sanitizes extra stored attributes',()=>{
+  const a=tab();login(a.D);
+  const story=a.D.createStory({type:'photo',media:photoMedia,overlays:[overlay()]});
+  const data=JSON.parse(a.shared.getItem('moovon:demo:v1'));
+  data.stories.find(s=>s.id===story.id).overlays[0].unsafe='not rendered';
+  a.shared.setItem('moovon:demo:v1',JSON.stringify(data));
+  assert.deepEqual(plain(a.D.getStories().find(s=>s.id===story.id).overlays),[overlay()]);
+  const other=tab(a.shared);login(other.D,'alex','nova');
+  assert.ok(!other.D.getStories().some(s=>s.id===story.id));
+  assert.throws(()=>other.D.getStories('corelis'),/autre entreprise/);
+  assert.throws(()=>other.D.deleteStory(story.id),/autre entreprise/);
+  login(other.D,'lea');assert.deepEqual(plain(other.D.getStories().find(s=>s.id===story.id).overlays),[overlay()]);
+});
+
+test('overlay creation also rolls back completely when image storage exceeds the quota',()=>{
+  const {D,shared}=tab();login(D);const before=shared.getItem('moovon:demo:v1');let changes=0;D.onChange(()=>changes++);
+  shared.failWrites=true;
+  assert.throws(()=>D.createStory({type:'photo',media:photoMedia,overlays:[overlay()]}),/stockage local plein/);
+  assert.equal(shared.getItem('moovon:demo:v1'),before);assert.equal(changes,0);
+});

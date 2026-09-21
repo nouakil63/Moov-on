@@ -54,7 +54,8 @@ Option confidentialité : terminer une seconde activité simulée et choisir **E
 Écran : **Les moments du collectif** ou **+** → **Publier une story**.
 
 1. Appuyer sur **Publier une story** : l’appareil photo s’ouvre directement. Autoriser la caméra si le navigateur le demande, puis prendre une photo ; le bouton **Selfie** change de caméra. **Galerie** permet de choisir une photo et **Écrire une story** de passer au texte.
-2. Dans l’aperçu, modifier la légende si souhaité. Garder **Cacher mon trajet** coché, puis **Publier ma story**. Aucune publication n’est effectuée lors de la prise de photo.
+2. Dans l’aperçu photo, **Aa Texte** ajoute un texte superposé ; choisir sa couleur, sa police, sa taille, son fond et son alignement. Glisser le texte sur la photo pour le déplacer, ou le sélectionner et utiliser les flèches du clavier. **Stickers** ajoute un emoji. Jusqu’à six éléments peuvent être modifiés ou supprimés avant publication. **Terminer** ferme les outils du texte sélectionné.
+   Modifier la légende si souhaité. Garder **Cacher mon trajet** coché, puis **Publier ma story**. Aucune publication n’est effectuée lors de la prise de photo. La disposition des textes et stickers est conservée à la lecture et après rechargement.
 3. Pour montrer une story après l’effort, utiliser **Partager en story** depuis une activité du profil, ou depuis le résumé de la sortie. Les statistiques sont reprises automatiquement, sans sélection du moment de la story.
 4. Ouvrir la story, puis passer à Léa dans l’application pour la retrouver dans le même espace entreprise.
 5. Montrer que la story demeure visible **24 heures** et qu’elle ne crée aucune deuxième contribution.
@@ -102,11 +103,11 @@ Les prix du catalogue sont des exemples : arbre 5 €, repas 8 €, kit scolaire
 
 ## 7 · Le rappel apparaît à l’approche de la fin
 
-Le rappel automatique apparaît uniquement **dans les quinze derniers jours avant la fin de la campagne**, et présente **la progression globale de cette campagne**. La progression reste consultable volontairement depuis l’onglet Impact.
+Un petit bandeau apparaît dans l’accueil uniquement **dans les quinze derniers jours avant la fin de la campagne** : jours restants, pourcentage atteint et **Voir le défi**. Il ne bloque pas la navigation. La croix le masque pour la journée et le rappel n’est présenté qu’une fois par jour, profil et campagne. La progression détaillée reste consultable volontairement depuis l’onglet Impact.
 
 1. Dans le portail, relever la date de fin de la campagne.
 2. Si nécessaire, utiliser **Présentation** → **Avancer de 24 heures** jusqu’à entrer dans les quinze derniers jours, sans dépasser la fin.
-3. Revenir dans l’application et ouvrir l’accueil pour montrer le rappel et les montants de la campagne.
+3. Revenir dans l’application et ouvrir l’accueil pour montrer le bandeau. **Voir le défi** mène au défi collectif ; la croix ferme le rappel sans changer d’écran.
 4. Vérifier qu’il ne s’agit ni d’un récapitulatif des quinze derniers jours, ni d’un message revenant automatiquement tous les quinze jours.
 5. L’avance de l’horloge affecte aussi les stories et événements : faire cette étape après les autres démonstrations.
 

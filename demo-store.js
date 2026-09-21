@@ -128,8 +128,29 @@
     result.route = value.route ? 'M40 150 C 110 120, 90 70, 170 80 S 260 120, 310 70 S 370 40, 375 35' : '';
     return result;
   }
+  function storyOverlays(value, type) {
+    if (!Array.isArray(value)) fail('Les textes superposés doivent être une liste.');
+    if (value.length > 6) fail('Une photo peut contenir au maximum 6 textes superposés.');
+    if (type !== 'photo' && value.length) fail('Les textes superposés sont disponibles uniquement sur les stories photo.');
+    const ids = new Set(), result = [];
+    for (const item of value) {
+      if (!item || typeof item !== 'object' || Array.isArray(item)) fail('Chaque texte superposé doit être un objet valide.');
+      if (typeof item.id !== 'string' || !/^[a-z0-9_-]{1,50}$/i.test(item.id) || ids.has(item.id)) fail('Chaque texte superposé doit avoir un identifiant unique de 1 à 50 lettres, chiffres, tirets ou underscores.');
+      if (typeof item.text !== 'string' || item.text.length > 180) fail('Un texte superposé doit être un texte de 180 caractères maximum.');
+      if (!Number.isFinite(item.x) || item.x < .08 || item.x > .92 || !Number.isFinite(item.y) || item.y < .08 || item.y > .92) fail('La position d’un texte superposé doit être comprise entre 0,08 et 0,92.');
+      if (!Number.isFinite(item.size) || item.size < .04 || item.size > .12) fail('La taille d’un texte superposé doit être comprise entre 0,04 et 0,12.');
+      if (!validColor(item.color)) fail('La couleur d’un texte superposé doit être au format #RRGGBB.');
+      if (!['none','dark','light'].includes(item.background)) fail('Choisissez un fond sans couleur, sombre ou clair pour le texte superposé.');
+      if (!['sans','serif','hand'].includes(item.font)) fail('Choisissez une police sans, serif ou hand pour le texte superposé.');
+      if (!['left','center','right'].includes(item.align)) fail('Choisissez un alignement left, center ou right pour le texte superposé.');
+      ids.add(item.id);
+      result.push({id:item.id,text:item.text,x:item.x,y:item.y,size:item.size,color:item.color,background:item.background,font:item.font,align:item.align});
+    }
+    return result;
+  }
   function visibleStory(story) {
     const result = copy(story);
+    result.overlays = storyOverlays(result.overlays === undefined ? [] : result.overlays, result.type);
     if (result.activity) {
       const hidden = result.activity.activityId && global.Platform?.activityPrivacy(result.activity.activityId);
       if (hidden === true) result.activity.hideRoute = true;
@@ -326,7 +347,7 @@
       const data = read(), target = access(data,orgId,includeExpired).orgId;
       return data.stories.filter(s => s.orgId === target && s.status === 'active' && (includeExpired || s.expiresAt > clock(data))).sort((a,b) => b.publishedAt-a.publishedAt).map(visibleStory);
     },
-    createStory({type = 'text',text = '',media = '',bg = '#1543B7',activity = null} = {}) {
+    createStory({type = 'text',text = '',media = '',bg = '#1543B7',activity = null,overlays = []} = {}) {
       return change('story', data => {
         const {user,org} = requireSession(data);
         if (!['text','photo'].includes(type)) fail('Choisissez une story texte ou photo.');
@@ -334,8 +355,10 @@
         if (caption.length > 1000) fail('Une story peut contenir au maximum 1 000 caractères.');
         if (type === 'text' && !caption) fail('Écrivez un message pour votre story.');
         if (!validColor(bg)) fail('Choisissez une couleur de fond valide.');
+        const layers = storyOverlays(overlays,type);
         const publishedAt = clock(data);
         const story = {id:uid('story'),orgId:org.id,userId:user.id,type,text:caption,media:type === 'photo' ? image(media,false) : '',bg,publishedAt,expiresAt:publishedAt+DAY,status:'active'};
+        if (type === 'photo') story.overlays = layers;
         if (activity) story.activity = storyActivity(activity);
         data.stories.push(story); return story;
       });

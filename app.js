@@ -17,8 +17,8 @@
   const initials=name=>String(name||'?').split(/\s+/).slice(0,2).map(v=>v[0]).join('');
   const ROUTE='M35 150 C70 135 85 55 145 75 C205 95 220 155 275 110 C320 75 345 55 370 35';
   let activeScreen='scr-home',weekOffset=0,eventFilter='all',toastTimer,dialog=null,dialogRestore=null,identity='',renderQueued=false;
-  const popupSeen=new Set();
-  let popupTimer=0,dialogRefresh=null,run={active:false,paused:false,id:null,recorded:null,raf:0};
+  const campaignNoticesSeen=new Set();
+  let campaignNoticeKey='',dialogRefresh=null,run={active:false,paused:false,id:null,recorded:null,raf:0};
   function toast(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4500);}
   function report(error){toast(error?.message||'Cette action n’a pas pu être enregistrée.');}
   function routeHTML(route,hidden=false){
@@ -34,7 +34,7 @@
     closeFan();if(!$(id))return;activeScreen=id;
     document.querySelectorAll('.screen').forEach(s=>{const selected=s.id===id;s.classList.toggle('active',selected);s.inert=!selected;s.setAttribute('aria-hidden',String(!selected));});
     document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',b.dataset.nav===id);b.setAttribute('aria-current',b.dataset.nav===id?'page':'false');});
-    if(current()&&id==='scr-profile')renderProfile();if(current()&&id==='scr-challenges'){renderChallenges();renderEvents();}
+    if(current()&&id==='scr-home')renderHome();if(current()&&id==='scr-profile')renderProfile();if(current()&&id==='scr-challenges'){renderChallenges();renderEvents();}
   }
   function goHome(){showScreen('scr-home');}
   function revealActivity(id){goHome();requestAnimationFrame(()=>{const card=[...$('feed').querySelectorAll('[data-activity]')].find(el=>el.dataset.activity===id);if(!card)return;card.tabIndex=-1;card.classList.add('activity-just-published','is-new-post');card.focus({preventScroll:true});const pane=$('scr-home');pane.scrollTo({top:Math.max(0,pane.scrollTop+card.getBoundingClientRect().top-pane.getBoundingClientRect().top-16),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});}
@@ -75,7 +75,7 @@
     const campaign=s?`<button class="defi3" id="go-challenges" data-challenges aria-label="Voir le défi collectif"><div class="d3-row"><span class="d3-em">${flame()}</span><div><h3>${esc(s.campaign.name||s.mission?.name)}</h3><p>${challengeLabel(s.campaign)} · encore ${Math.ceil(s.remainingDays)} jours</p></div></div><div class="d3-bar"><i style="width:${percent}%"></i><span class="d3-dot" style="left:${Math.max(4,Math.min(96,percent))}%">${icon('<path d="m5 12 4 4L19 6"/>',11)}</span></div><div class="d3-cap num"><span>${n(s.financedImpact)} / ${n(s.targetImpact)} ${esc(unit)}</span><span>${Math.round(percent)} %</span></div></button>`:`<button class="defi3" id="go-challenges" data-challenges><div class="d3-row"><span class="d3-em">${flame()}</span><div><h3>Notre prochaine mission arrive</h3><p>Votre entreprise prépare sa campagne.</p></div></div></button>`;
     const {own,other}=duel;
     const meeting=other?`<button class="duel4" id="go-duel" aria-label="Voir le duel de la semaine"><div class="d4-k">Duel de la semaine · ${own.distanceMeters===other.distanceMeters?'les équipes sont à égalité':own.distanceMeters>other.distanceMeters?'votre équipe mène':'à vous de jouer !'}</div><div class="d4-track"><div class="d4-a"><span class="d4-t">${esc(own.team)}</span><span class="d4-s num">${n(own.distanceMeters)} m</span></div><div class="d4-b"><span class="d4-t">${esc(other.team)}</span><span class="d4-s num">${n(other.distanceMeters)} m</span></div><span class="d4-vs">VS</span></div><div class="d4-foot">Chaque mètre fait avancer votre équipe.</div></button>`:'';
-    return corp+campaign+meeting;
+    return campaignNotice(s)+corp+campaign+meeting;
   }
 
   function campaignCard(stats){
@@ -93,6 +93,7 @@
     $('greet-date').textContent=date(Demo.now(),{weekday:'long'})+' · '+c.user.team;$('hello-name').textContent='Bonjour '+c.user.name.split(' ')[0];
     $('today-meters').textContent=n(day.reduce((t,a)=>t+a.distanceMeters,0));$('today-energy').textContent=n(day.reduce((t,a)=>t+a.energy,0));$('today-duration').textContent=n(day.reduce((t,a)=>t+(a.durationSeconds||0),0)/60);$('streak-count').textContent=streak+' J';$('today-streak').textContent=streak+' j';
     $('home-campaign').innerHTML=homeCampaign(activeStats());$('home-campaign').querySelectorAll('[data-impact]').forEach(b=>b.onclick=()=>showScreen('scr-missions'));$('go-challenges').onclick=()=>scrollChallengesTo('challenge-hero');$('go-duel')?.addEventListener('click',()=>scrollChallengesTo('challenge-duel'));
+    $('campaign-notice-close')?.addEventListener('click',dismissCampaignNotice);$('campaign-notice-view')?.addEventListener('click',()=>{dismissCampaignNotice();scrollChallengesTo('challenge-hero');});
     const feed=P().feed();$('feed').innerHTML=feed.length?feed.map(a=>{
       const likes=P().likes(a.id),comments=P().comments(a.id),hidden=a.hideRoute||!a.route;
       return `<article class="post activity-card" data-activity="${esc(a.id)}"><div class="node"><span class="avatar" style="background:var(--brand)">${esc(initials(a.name))}</span></div><div class="when">${date(a.at)} à ${time(a.at)} UTC · ${esc(a.sport)}</div><div class="pname">${esc(a.name||'Collaborateur')} <span>· ${esc(a.team||'')}</span></div><div class="pcard"><div class="pmap ${hidden?'pmap-private':''}">${routeHTML(a.route,a.hideRoute)}<div class="grad"></div><div class="pstats activity-metrics num"><div class="pstat"><div class="v">${n(a.distanceMeters)} m</div><div class="l">distance</div></div><div class="pstat"><div class="v">${a.durationSeconds?clock(a.durationSeconds):'—'}</div><div class="l">durée</div></div><div class="pstat"><div class="v">${a.durationSeconds?decimal(a.speedKmh):'—'}</div><div class="l">vitesse · km/h</div></div></div></div><div class="pbody"><h3 class="ptitle">${esc(a.title)}</h3><span class="pimpact num">${flame()} +${n(a.energy)} énergie récoltée</span></div><div class="post-actions"><button class="pact bravo ${likes.liked?'bravoed':''}" data-like="${esc(a.id)}" aria-pressed="${likes.liked}">${icon('<path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>')}Bravo · <span class="num">${likes.count}</span></button><button class="pact" data-comments="${esc(a.id)}" aria-label="Commentaires">${icon('<path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12Z"/>')}<span class="num">${comments.length}</span></button><button class="pact share" data-share="${esc(a.id)}" aria-label="Partager cette activité">${icon('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>')}</button></div>${a.userId===c.user.id?`<button class="activity-privacy" data-privacy="${esc(a.id)}" data-hidden="${a.hideRoute}">Trajet ${a.hideRoute?'masqué':'visible'} · modifier</button>`:''}</div></article>`;
@@ -201,15 +202,22 @@
   function showCampaignPopup(stats=activeStats()){
     if(!stats)return;openDialog(stats.endingSoon?'Dernière ligne droite !':'Notre progression collective',`<div class="campaign-popup-icon">${flame()}</div><p>${stats.endingSoon?'Il reste '+Math.ceil(stats.remainingDays)+' jours pour faire avancer notre mission.':'Chaque activité ajoute sa contribution à la campagne.'}</p>${campaignCard(stats)}<button class="btn impact block" id="popup-continue">Continuer à bouger</button>`);$('popup-continue').onclick=()=>dialog.close();
   }
-  function maybeCampaignPopup(){
-    clearTimeout(popupTimer);if(!current())return;const s=activeStats();if(!s?.endingSoon)return;const key='moovon:campaign-notice:'+current().user.id+':'+s.campaign.id+':'+dateKey(Demo.now());
-    let shown=popupSeen.has(key);try{shown ||= localStorage.getItem(key)==='shown';}catch{}if(shown)return;
-    popupTimer=setTimeout(()=>{if(!current()||document.querySelector('dialog[open],.overlay.open'))return;popupSeen.add(key);try{localStorage.setItem(key,'shown');}catch{}showCampaignPopup(s);},600);
+  function campaignNotice(stats){
+    const c=current();if(!c||!stats?.endingSoon){campaignNoticeKey='';return '';}
+    const key='moovon:campaign-notice:'+c.user.id+':'+stats.campaign.id+':'+dateKey(Demo.now());
+    if(campaignNoticeKey!==key){
+      campaignNoticeKey='';if(activeScreen!=='scr-home')return '';
+      let seen=campaignNoticesSeen.has(key);try{seen ||= localStorage.getItem(key)==='shown';}catch{}if(seen)return '';
+      campaignNoticeKey=key;campaignNoticesSeen.add(key);try{localStorage.setItem(key,'shown');}catch{}
+    }
+    const days=Math.ceil(stats.remainingDays),progress=Math.max(0,Math.min(100,stats.progressPct));
+    return `<aside class="campaign-notice" id="campaign-notice" aria-label="Rappel de fin du défi"><div class="campaign-notice-copy"><strong>Défi · encore ${days} jour${days>1?'s':''}</strong><span class="num">${Math.round(progress)} % de l’objectif atteint</span></div><button class="campaign-notice-view" id="campaign-notice-view">Voir le défi ${arrowIcon()}</button><button class="campaign-notice-close" id="campaign-notice-close" aria-label="Masquer le rappel pour aujourd’hui">${icon('<path d="m6 6 12 12M6 18 18 6"/>',13)}</button><div class="campaign-notice-progress" aria-hidden="true"><i style="width:${progress}%"></i></div></aside>`;
   }
+  function dismissCampaignNotice(){campaignNoticeKey='';$('campaign-notice')?.remove();}
   function render(){if(!current()||!P())return;try{renderHome();renderProfile();renderChallenges();renderEvents();renderImpact();paintFlames();dialogRefresh?.();window.MoovStories?.render();}catch(e){report(e);}}
   function scheduleRender(){if(renderQueued)return;renderQueued=true;queueMicrotask(()=>{renderQueued=false;render();});}
-  function init(){if(!current())return;const key=current().org.id+':'+current().user.id;if(identity!==key){if(identity)stop();run={active:false,paused:false,id:null,recorded:null,raf:0};identity=key;weekOffset=0;eventFilter='all';activeScreen='scr-home';}render();showScreen(activeScreen);maybeCampaignPopup();}
-  function stop(){run.active=false;cancelAnimationFrame(run.raf);clearTimeout(popupTimer);overlay('run-overlay',false);overlay('sum-overlay',false);closeFan();if(dialog?.open)dialog.close();}
+  function init(){if(!current())return;const key=current().org.id+':'+current().user.id;if(identity!==key){if(identity)stop();run={active:false,paused:false,id:null,recorded:null,raf:0};identity=key;weekOffset=0;eventFilter='all';activeScreen='scr-home';}render();showScreen(activeScreen);}
+  function stop(){run.active=false;cancelAnimationFrame(run.raf);dismissCampaignNotice();overlay('run-overlay',false);overlay('sum-overlay',false);closeFan();if(dialog?.open)dialog.close();}
 const TYPOS = {
   act:{label:'Actuelle', sub:'Anton · Barlow Condensed · Archivo', disp:'"Anton"', hero:'"Archivo"', num:'"Barlow Condensed"', body:'"Archivo"', wDisp:400, wHero:900, wNum:700, sBig:'96px', sName:'33px', it:false},
   A:{label:'A — Le stadier', sub:'Oswald · Source Sans', disp:'"Oswald"', hero:'"Oswald"', num:'"Oswald"', body:'"Source Sans 3"', wDisp:700, wHero:700, wNum:600, sBig:'82px', sName:'30px', it:false},
@@ -258,6 +266,6 @@ function renderTypoRows(){
   $('summary-story').onclick=()=>runStory('after');$('btn-publish').onclick=()=>saveRun(true);$('btn-discard').onclick=()=>saveRun(false);
   document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]'))return;const modal=document.querySelector('.overlay.open');if(e.key==='Escape'){if(modal?.id==='run-overlay'){if(!run.paused)$('btn-pause').click();toast('Activité en pause. Terminez-la pour l’enregistrer.');}else if(!modal)closeFan();}if(e.key==='Tab'&&modal){const nodes=[...modal.querySelectorAll('button,input,select,textarea')].filter(n=>!n.disabled&&!n.hidden),first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}});
   document.addEventListener('visibilitychange',()=>{run.last=0;});window.addEventListener('resize',fitDialog);window.visualViewport?.addEventListener('resize',fitDialog);window.visualViewport?.addEventListener('scroll',fitDialog);window.addEventListener('scroll',fitDialog,{capture:true,passive:true});
-  Demo.onChange(event=>{if(event.type==='reset'){popupSeen.clear();identity='';}});
-  P()?.onChange(scheduleRender);setInterval(()=>{if(current()){render();maybeCampaignPopup();}},60000);paintFlames();showScreen('scr-home');
+  Demo.onChange(event=>{if(event.type==='reset'){campaignNoticesSeen.clear();campaignNoticeKey='';identity='';}});
+  P()?.onChange(scheduleRender);setInterval(()=>{if(current())render();},60000);paintFlames();showScreen('scr-home');
 })();

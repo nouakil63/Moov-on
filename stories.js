@@ -25,6 +25,110 @@
   const inkFor = value => { const c=color(value).slice(1); const a=[0,2,4].map(i=>parseInt(c.slice(i,i+2),16)); return a[0]*.299+a[1]*.587+a[2]*.114>164 ? '#10213b' : '#ffffff'; };
   const photoOK = media => typeof media==='string' && /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(media);
   const number = value => Number(value||0).toLocaleString('fr-FR',{maximumFractionDigits:1});
+  const layerFonts={sans:'Arial, sans-serif',serif:'Georgia, serif',hand:'"Comic Sans MS", cursive'};
+  const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+  let sceneObserver=null;
+  function watchScene(){
+    sceneObserver?.disconnect();
+    if(!window.ResizeObserver)return;
+    sceneObserver=new ResizeObserver(()=>{
+      if(modalMode==='composer')layoutLayers(byId('st-overlay-canvas'),composer?.overlays||[],true);
+      else fitReaderScene();
+    });
+    const target=modalMode==='composer'?byId('st-preview'):byId('st-reader-media');
+    if(target)sceneObserver.observe(target);
+  }
+  // Both editor and reader use the same 9:16 canvas and relative coordinates.
+  function layoutLayers(canvas,layers,editable=false){
+    if(!canvas?.clientWidth||!canvas.clientHeight)return;
+    const width=canvas.clientWidth,height=canvas.clientHeight;
+    for(const layer of layers){
+      const node=[...canvas.children].find(n=>n.dataset.layerId===layer.id);if(!node)continue;
+      node.style.fontFamily=layerFonts[layer.font]||layerFonts.sans;
+      node.style.fontSize=width*layer.size+'px';node.style.color=color(layer.color);
+      node.style.textAlign=layer.align;node.dataset.background=layer.background;
+      node.style.padding=width*.012+'px '+width*.025+'px';
+      // Long or multiline text stays completely inside the photo.
+      for(let i=0;i<3&&node.offsetHeight>height*.82;i++)node.style.fontSize=parseFloat(node.style.fontSize)*(height*.82/node.offsetHeight)*.96+'px';
+      const boundX=Math.min(.5,Math.max(.08,(node.offsetWidth/2+width*.02)/width));
+      const boundY=Math.min(.5,Math.max(.08,(node.offsetHeight/2+height*.02)/height));
+      const x=clamp(layer.x,boundX,1-boundX),y=clamp(layer.y,boundY,1-boundY);
+      if(editable){layer.x=x;layer.y=y;}
+      node.style.left=x*100+'%';node.style.top=y*100+'%';
+    }
+  }
+  function drawLayers(canvas,layers,editable=false){
+    canvas.replaceChildren();
+    for(const layer of layers){
+      const node=el(editable?'button':'div','st-text-layer',layer.text);node.dataset.layerId=layer.id;
+      if(editable){
+        node.type='button';node.setAttribute('aria-label','Modifier le texte : '+layer.text);node.setAttribute('aria-pressed',String(composer.selectedLayer===layer.id));
+        let moved=false;
+        node.addEventListener('click',()=>{selectLayer(layer.id,!moved);moved=false;});
+        node.addEventListener('keydown',event=>{
+          const moves={ArrowLeft:[-.015,0],ArrowRight:[.015,0],ArrowUp:[0,-.015],ArrowDown:[0,.015]},move=moves[event.key];
+          if(!move)return;event.preventDefault();layer.x=clamp(layer.x+move[0],.08,.92);layer.y=clamp(layer.y+move[1],.08,.92);layoutLayers(canvas,layers,true);
+        });
+        let drag=null;
+        node.addEventListener('pointerdown',event=>{
+          if(event.button!==0||composer?.busy)return;
+          moved=false;
+          drag={pointer:event.pointerId,x:event.clientX,y:event.clientY,startX:layer.x,startY:layer.y};
+          node.setPointerCapture(event.pointerId);node.classList.add('st-dragging');
+        });
+        node.addEventListener('pointermove',event=>{
+          if(!drag||drag.pointer!==event.pointerId)return;
+          if(Math.hypot(event.clientX-drag.x,event.clientY-drag.y)>5)moved=true;
+          const rect=canvas.getBoundingClientRect();
+          layer.x=clamp(drag.startX+(event.clientX-drag.x)/rect.width,.08,.92);
+          layer.y=clamp(drag.startY+(event.clientY-drag.y)/rect.height,.08,.92);
+          layoutLayers(canvas,layers,true);
+        });
+        const release=()=>{drag=null;node.classList.remove('st-dragging');};
+        node.addEventListener('pointerup',release);node.addEventListener('pointercancel',release);node.addEventListener('lostpointercapture',release);
+      }
+      canvas.append(node);
+    }
+    layoutLayers(canvas,layers,editable);
+  }
+  function selectedLayer(){return composer?.overlays.find(layer=>layer.id===composer.selectedLayer);}
+  function selectLayer(id,focusInput=false){
+    if(!composer||composer.busy)return;
+    composer.selectedLayer=id;composer.stickersOpen=false;updateLayerTools();
+    if(focusInput){byId('st-layer-input').focus({preventScroll:true});byId('st-layer-input').select();byId('st-layer-tools').scrollIntoView({block:'nearest',behavior:'auto'});}
+  }
+  function addLayer(text='Votre texte'){
+    if(!composer||composer.overlays.length>=6||composer.busy)return;
+    const layer={id:'layer-'+Date.now()+'-'+composer.nextLayer++,text,x:.5,y:.4+composer.overlays.length*.05,size:.08,color:'#ffffff',background:'none',font:'sans',align:'center'};
+    composer.overlays.push(layer);composer.selectedLayer=layer.id;
+    drawLayers(byId('st-overlay-canvas'),composer.overlays,true);selectLayer(layer.id,text==='Votre texte');
+  }
+  function updateLayerTools(){
+    if(!composer)return;
+    const layer=selectedLayer(),ready=composer.type==='photo'&&!!composer.media;
+    byId('st-photo-tools').hidden=!ready;byId('st-layer-tools').hidden=!ready||!layer;
+    byId('st-stickers').hidden=!ready||!composer.stickersOpen;
+    byId('st-overlay-hint').hidden=!ready||!composer.overlays.length;
+    byId('st-overlay-canvas').hidden=!ready;
+    byId('st-add-text').disabled=composer.busy||composer.overlays.length>=6;
+    byId('st-sticker-toggle').disabled=composer.busy||composer.overlays.length>=6;
+    byId('st-sticker-toggle').setAttribute('aria-expanded',String(!!composer.stickersOpen));
+    byId('st-layer-count').textContent=composer.overlays.length+' / 6';
+    byId('st-overlay-canvas').querySelectorAll('.st-text-layer').forEach(node=>node.setAttribute('aria-pressed',String(node.dataset.layerId===composer.selectedLayer)));
+    if(!layer)return;
+    if(document.activeElement!==byId('st-layer-input'))byId('st-layer-input').value=layer.text;
+    byId('st-layer-size').value=layer.size;byId('st-layer-font').value=layer.font;
+    byId('st-layer-background').textContent='Fond : '+({none:'aucun',dark:'sombre',light:'clair'})[layer.background];
+    byId('st-layer-align').textContent='Aligner : '+({left:'gauche',center:'centré',right:'droite'})[layer.align];
+    byId('st-layer-colors').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.color===layer.color)));
+  }
+  function changeLayer(values){
+    const layer=selectedLayer();if(!layer||composer.busy)return;
+    Object.assign(layer,values);
+    const node=[...byId('st-overlay-canvas').children].find(n=>n.dataset.layerId===layer.id);
+    node.textContent=layer.text||'…';node.setAttribute('aria-label','Modifier le texte : '+layer.text);
+    layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();
+  }
   function activityCard(activity,readerMode=false){
     if(activity.phase==='before')return null;
     const card=el('div','st-activity-card'+(readerMode?' st-activity-reader':''));
@@ -63,6 +167,7 @@
     action=el('dialog','st-dialog st-action-dialog'); action.id='st-action-dialog'; host.append(action);
     dialog.addEventListener('close',()=>{
       stopCamera();
+      sceneObserver?.disconnect();
       if(action.open)action.close();
       cancelAnimationFrame(readFrame); reader=null; composer=null; modalMode=''; openSession='';
       const target=restoreFocus?.isConnected?restoreFocus:byId('stories')?.querySelector(`[data-st-user="${CSS.escape(restoreUser)}"] button`);
@@ -110,11 +215,13 @@
     Object.assign(dialog.style,{width:width+'px',height:height+'px',left:left+'px',top:top+'px'});
     const inset=Math.min(18,width*.05),actionTop=top+Math.min(90,height*.15);
     Object.assign(action.style,{width:Math.max(1,width-inset*2)+'px',left:(left+inset)+'px',top:actionTop+'px',maxHeight:Math.max(1,top+height-actionTop-inset)+'px'});
+    if(modalMode==='reader')fitReaderScene();
   }
 
   function openModal(mode) {
     if(!current())return false;
     makeDialog();
+    sceneObserver?.disconnect();
     stopCamera();
     cancelAnimationFrame(readFrame); reader=null;composer=null;
     if(action.open)action.close();
@@ -185,7 +292,7 @@
     if(snapshot&&!snapshot.activityId&&snapshot.id)snapshot.activityId=snapshot.id;
     if(snapshot?.activityId){const source=window.Platform?.storySnapshot(snapshot.activityId);if(source)snapshot.route=source.route;}
     const history=window.Platform?.activities().filter(a=>a.userId===session.user.id)||[];
-    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot};
+    composer={type:'photo',text:'',media:'',bg:color(session.org.color),busy:false,fileVersion:0,cameraVersion:0,cameraOpen:false,cameraFacing:'environment',activity:snapshot||{phase:'before',sport:'Course',hideRoute:true},history,snapshot,overlays:[],nextLayer:1,selectedLayer:null,stickersOpen:false};
     const departure=sport=>sport==='Marche'?'Je pars marcher !':sport==='Vélo'?'Je pars pédaler !':'Je pars courir !';
     composer.text=composer.activity.phase==='before'?departure(composer.activity.sport):composer.activity.phase==='during'?number(composer.activity.distanceMeters)+' mètres déjà parcourus !':'Activité terminée : '+number(composer.activity.distanceMeters)+' mètres.';
     dialog.setAttribute('aria-labelledby','st-compose-title');dialog.removeAttribute('aria-label');
@@ -198,7 +305,11 @@
       </div>
       <div class="st-compose-body" id="st-compose-body">
         <div class="st-tabs" role="group" aria-label="Format de la story"><button type="button" class="st-tab" id="st-tab-text" aria-pressed="true">${svg('text',16)}Texte</button><button type="button" class="st-tab" id="st-tab-photo" aria-pressed="false">${svg('photo',16)}Photo</button></div>
-        <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div></div>
+        <div class="st-photo-tools" id="st-photo-tools" hidden><button type="button" class="st-small-button" id="st-add-text"><b>Aa</b> Texte</button><button type="button" class="st-small-button" id="st-sticker-toggle" aria-expanded="false" aria-controls="st-stickers">☺ Stickers</button><span id="st-layer-count" aria-live="polite">0 / 6</span></div>
+        <div id="st-stickers" class="st-stickers" aria-label="Choisir un sticker" hidden></div>
+        <div id="st-preview" class="st-preview st-preview-text" aria-label="Aperçu de votre story"><img id="st-preview-photo" alt="Photo choisie pour la story" hidden><div class="st-upload-placeholder" id="st-upload-placeholder" hidden>${svg('photo',34)}<strong>Votre journée, en image.</strong><span>Choisissez une photo ou capturez le moment.</span></div><div class="st-preview-copy" id="st-preview-copy">Une pause. Un effort.\nUn peu d’énergie en plus.</div><div class="st-overlay-canvas" id="st-overlay-canvas" aria-label="Textes sur votre photo" hidden></div></div>
+        <p class="st-overlay-hint" id="st-overlay-hint" hidden>Glissez pour déplacer · touchez pour modifier</p>
+        <fieldset class="st-layer-tools" id="st-layer-tools" hidden><legend>Votre texte sur la photo</legend><label for="st-layer-input" class="st-sr-only">Texte sur la photo</label><textarea id="st-layer-input" class="st-textarea" maxlength="180" rows="2" placeholder="Écrivez sur votre photo…"></textarea><div class="st-layer-row"><label for="st-layer-font" class="st-sr-only">Police du texte</label><select id="st-layer-font"><option value="sans">Classique</option><option value="serif">Élégant</option><option value="hand">Manuscrit</option></select><button type="button" class="st-small-button" id="st-layer-background">Fond : aucun</button></div><div class="st-layer-colors" id="st-layer-colors" role="group" aria-label="Couleur du texte"></div><label class="st-layer-size-label" for="st-layer-size">Taille <input id="st-layer-size" type="range" min="0.04" max="0.12" step="0.005" value="0.08"></label><div class="st-layer-row"><button type="button" class="st-small-button" id="st-layer-align">Aligner : centré</button><button type="button" class="st-small-button st-layer-delete" id="st-layer-delete">Supprimer</button><button type="button" class="st-small-button st-layer-done" id="st-layer-done">Terminer</button></div></fieldset>
         <div class="st-palette" id="st-palette"><span>Couleur</span></div>
         <div class="st-upload-actions" id="st-upload-actions" hidden><button type="button" class="st-small-button" id="st-photo-library">${svg('photo',16)}Choisir une photo</button><button type="button" class="st-small-button" id="st-photo-camera">${svg('camera',16)}Appareil photo</button></div>
         <input id="st-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
@@ -242,7 +353,27 @@
     byId('st-camera-cancel').addEventListener('click',()=>{stopCamera();composer.type=composer.media?'photo':'text';updateComposer();});
     byId('st-file').addEventListener('change',loadPhoto);
     byId('st-publish').addEventListener('click',publish);
-    updateComposer();showModal();startCamera();
+    byId('st-add-text').addEventListener('click',()=>addLayer());
+    byId('st-sticker-toggle').addEventListener('click',()=>{composer.stickersOpen=!composer.stickersOpen;updateLayerTools();});
+    for(const [emoji,label] of [['🔥','Énergie'],['💪','Force'],['🏃','Course'],['🚶','Marche'],['🚴','Vélo'],['👏','Bravo'],['❤️','Cœur'],['🎉','Fête']]){
+      const button=el('button','',emoji);button.type='button';button.setAttribute('aria-label',label);button.addEventListener('click',()=>addLayer(emoji));byId('st-stickers').append(button);
+    }
+    for(const [value,label] of [['#ffffff','Blanc'],['#111827','Noir'],['#ffda60','Jaune'],['#ff6b8a','Rose'],['#6ccefa','Bleu'],['#8ce4bd','Vert']]){
+      const button=el('button','st-swatch');button.type='button';button.dataset.color=value;button.style.backgroundColor=value;button.setAttribute('aria-label',label);button.addEventListener('click',()=>changeLayer({color:value}));byId('st-layer-colors').append(button);
+    }
+    byId('st-layer-input').addEventListener('input',event=>changeLayer({text:event.target.value}));
+    byId('st-layer-size').addEventListener('input',event=>changeLayer({size:Number(event.target.value)}));
+    byId('st-layer-font').addEventListener('change',event=>changeLayer({font:event.target.value}));
+    byId('st-layer-background').addEventListener('click',()=>{
+      const layer=selectedLayer();if(!layer)return;
+      const background=({none:'dark',dark:'light',light:'none'})[layer.background];
+      const nextColor=background==='light'&&layer.color==='#ffffff'?'#111827':background==='dark'&&layer.color==='#111827'?'#ffffff':layer.color;
+      changeLayer({background,color:nextColor});
+    });
+    byId('st-layer-align').addEventListener('click',()=>{const layer=selectedLayer();if(layer)changeLayer({align:({center:'left',left:'right',right:'center'})[layer.align]});});
+    byId('st-layer-delete').addEventListener('click',()=>{composer.overlays=composer.overlays.filter(layer=>layer.id!==composer.selectedLayer);composer.selectedLayer=null;drawLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();byId('st-add-text').focus({preventScroll:true});});
+    byId('st-layer-done').addEventListener('click',()=>{composer.overlays=composer.overlays.filter(layer=>layer.text.trim());composer.selectedLayer=null;drawLayers(byId('st-overlay-canvas'),composer.overlays,true);updateLayerTools();byId('st-preview').scrollIntoView({block:'nearest',behavior:'auto'});byId('st-add-text').focus({preventScroll:true});});
+    updateComposer();showModal();watchScene();startCamera();
   }
 
   function stopCamera(draft=composer){
@@ -313,7 +444,8 @@
     const img=byId('st-preview-photo');img.hidden=!photo||!composer.media;if(composer.media)img.src=composer.media;
     byId('st-upload-placeholder').hidden=!photo||!!composer.media;
     const copy=byId('st-preview-copy');copy.textContent=composer.text||(photo?'':'Une pause. Un effort.\nUn peu d’énergie en plus.');
-    copy.classList.toggle('st-long-text',composer.text.length>120);copy.hidden=photo&&!composer.media;
+    copy.classList.toggle('st-long-text',composer.text.length>120);copy.hidden=photo;
+    updateLayerTools();layoutLayers(byId('st-overlay-canvas'),composer.overlays,true);
     byId('st-caption-label').textContent=photo?'Une légende ? (facultatif)':'Votre message';
     byId('st-counter').textContent=composer.text.length+' / 280';
     const a=composer.activity,before=a.phase==='before';
@@ -362,7 +494,7 @@
     if(!composer||composer.busy)return;
     const draft=composer;draft.busy=true;updateComposer();byId('st-compose-error').hidden=true;byId('st-publish').textContent='Publication…';
     try{
-      const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg,activity:draft.activity});
+      const published=await D().createStory({type:draft.type,text:draft.text.trim(),media:draft.type==='photo'?draft.media:'',bg:draft.bg,activity:draft.activity,overlays:draft.type==='photo'?draft.overlays.filter(layer=>layer.text.trim()):[]});
       if(composer!==draft)return;
       lastPublishedId=published.id;returnToPublished=true;restoreFocus=null;restoreUser=published.userId;
       render();openReader(published.userId,published.id);
@@ -377,7 +509,7 @@
     if(items.length&&(storyId===null||requested!==-1)){
       const firstNew=requested!==-1?requested:items.findIndex(s=>!D().hasSeenStory(s.id));reader.index=Math.max(0,firstNew);showReaderStory();
     }else showUnavailable();
-    showModal();byId('st-reader-close')?.focus({preventScroll:true});
+    showModal();watchScene();fitReaderScene();byId('st-reader-close')?.focus({preventScroll:true});
   }
   function timeLabel(story){
     const mins=Math.max(1,Math.ceil((story.expiresAt-now())/60000));
@@ -391,7 +523,7 @@
     if(!story){showUnavailable();return;}
     cancelAnimationFrame(readFrame);reader.elapsed=0;reader.last=0;reader.holding=false;
     reader.expiresAt=Number(story.expiresAt);reader.clockOffset=now()-Date.now();
-    reader.duration=Math.max(7000,Math.min(16000,4000+String(story.text||'').length*60));
+    reader.duration=Math.max(7000,Math.min(20000,4000+(String(story.text||'').length+(story.overlays||[]).reduce((sum,layer)=>sum+layer.text.length,0))*60));
     const u=userFor(story.userId)||{name:'Collègue',team:''};
     dialog.setAttribute('aria-label','Story de '+u.name);dialog.removeAttribute('aria-labelledby');
     dialog.innerHTML=`<div class="st-layout st-reader"><div class="st-reader-media" id="st-reader-media"><div class="st-reader-text" id="st-reader-text"></div></div>
@@ -409,7 +541,15 @@
     const isPhoto=story.type==='photo'&&photoOK(story.media);
     media.classList.toggle('st-is-photo',isPhoto);media.style.backgroundColor=color(story.bg||current().org.color);
     text.textContent=story.text||'';text.style.color=isPhoto?'#fff':inkFor(story.bg||current().org.color);text.classList.toggle('st-long-text',(story.text||'').length>130);
-    if(isPhoto){const img=el('img');img.alt=story.text||'Photo partagée par '+u.name;img.src=story.media;media.prepend(img);}
+    if(isPhoto){
+      const scene=el('div','st-photo-scene');scene.id='st-reader-stage';
+      const img=el('img');img.alt='Photo partagée par '+u.name;img.src=story.media;
+      const canvas=el('div','st-overlay-canvas');canvas.id='st-reader-overlays';
+      scene.append(img,canvas);media.prepend(scene);drawLayers(canvas,story.overlays||[]);
+      // Keep captions in the foreground so long messages can be scrolled.
+      text.classList.add('st-photo-caption');text.tabIndex=0;
+      dialog.querySelector('.st-reader-bottom').prepend(text);
+    }
     refreshReaderActivity(story);
     reader.ids.forEach((id,i)=>{const segment=el('span'),fill=el('i');fill.style.width=i<reader.index?'100%':'0%';segment.append(fill);byId('st-progress').append(segment);});
     byId('st-reader-count').textContent=`${reader.index+1} / ${reader.ids.length}`;
@@ -421,8 +561,14 @@
     hold.addEventListener('pointerdown',event=>{reader.holding=true;hold.setPointerCapture(event.pointerId);updatePauseButton();});
     const release=()=>{if(reader){reader.holding=false;reader.last=0;updatePauseButton();}};
     hold.addEventListener('pointerup',release);hold.addEventListener('pointercancel',release);
+    if(isPhoto){
+      text.addEventListener('pointerdown',()=>{reader.holding=true;updatePauseButton();});
+      text.addEventListener('pointerup',release);text.addEventListener('pointercancel',release);text.addEventListener('pointerleave',release);
+      text.addEventListener('focus',()=>{reader.holding=true;updatePauseButton();});text.addEventListener('blur',release);
+    }
     updatePauseButton();
     try{D().markStorySeen(story.id);}catch(err){/* Seen status never blocks the reader. */}
+    watchScene();fitReaderScene();
     readFrame=requestAnimationFrame(tickReader);
   }
   function refreshReaderActivity(story){
@@ -432,6 +578,19 @@
     const card=story.activity?activityCard(story.activity,true):null;
     previous?.remove();media.classList.toggle('st-with-activity',!!card);
     if(card){card.id='st-reader-activity';card.dataset.snapshot=serialized;media.append(card);}
+    fitReaderScene();
+  }
+  function fitReaderScene(){
+    const scene=byId('st-reader-stage'),media=byId('st-reader-media');if(!scene||!media?.clientWidth||!reader)return;
+    const head=dialog.querySelector('.st-reader-head'),footer=dialog.querySelector('.st-reader-bottom'),notice=dialog.querySelector('.st-published-confirmation');
+    const top=(head?.offsetHeight||88)+(notice?.offsetHeight||0)+12,bottom=(footer?.offsetHeight||106)+12;
+    media.style.paddingTop=top+'px';media.style.paddingBottom=bottom+'px';
+    const caption=byId('st-reader-text'),card=byId('st-reader-activity');
+    const available=media.clientHeight-top-bottom-(caption?.parentElement===media?caption.offsetHeight:0)-(card?.offsetHeight||0)-(card?24:12);
+    const width=Math.max(1,Math.min(media.clientWidth-36,Math.max(1,available)*9/16));
+    scene.style.width=width+'px';scene.style.height=width*16/9+'px';
+    const story=liveStories().find(s=>s.id===reader.ids[reader.index]);
+    layoutLayers(byId('st-reader-overlays'),story?.overlays||[]);
   }
   function isPaused(){return !reader||reader.manualPaused||reader.holding||reader.actionPaused||document.hidden;}
   function updatePauseButton(){
