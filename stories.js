@@ -26,9 +26,9 @@
   const photoOK = media => typeof media==='string' && /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(media);
   const number = value => Number(value||0).toLocaleString('fr-FR',{maximumFractionDigits:1});
   function activityCard(activity,readerMode=false){
+    if(activity.phase==='before')return null;
     const card=el('div','st-activity-card'+(readerMode?' st-activity-reader':''));
-    card.append(el('strong','',({before:'Avant de partir',during:'En plein effort',after:'Activité terminée'})[activity.phase]+' · '+activity.sport));
-    if(activity.phase==='before'){card.append(el('p','','Chaque mètre compte. À votre rythme !'));return card;}
+    card.append(el('strong','',({during:'En plein effort',after:'Activité terminée'})[activity.phase]+' · '+activity.sport));
     const metrics=el('div','st-activity-metrics');
     const duration=activity.durationSeconds ? Math.floor(activity.durationSeconds/60)+' min '+Math.floor(activity.durationSeconds%60)+' s' : 'Durée non renseignée';
     for(const [value,label] of [[number(activity.distanceMeters),'mètres'],[duration,'durée'],[activity.durationSeconds?number(activity.speedKmh)+' km/h':'—','vitesse'],[number(activity.energy),'énergie']]){
@@ -204,20 +204,18 @@
         <input id="st-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
         <label class="st-input-label" for="st-caption"><span id="st-caption-label">Votre message</span><span class="st-counter" id="st-counter">0 / 280</span></label>
         <textarea id="st-caption" class="st-textarea" maxlength="280" rows="3" placeholder="La sortie du midi fait du bien…"></textarea>
-        <div class="st-activity-options"><label for="st-phase">Le moment de votre story</label><select id="st-phase"><option value="before">Avant mon activité</option><option value="during">Pendant mon activité</option><option value="after">Après mon activité</option></select><label for="st-sport" id="st-sport-label">Sport</label><select id="st-sport"><option>Course</option><option>Marche</option><option>Vélo</option></select><label for="st-activity-select" id="st-activity-label">Activité enregistrée</label><select id="st-activity-select"></select><label class="st-privacy"><input type="checkbox" id="st-hide-route" checked> Cacher mon trajet</label><p id="st-privacy-note" class="st-activity-note"></p><div id="st-activity-preview"></div></div>
+        <div class="st-activity-options"><label for="st-sport" id="st-sport-label">Sport</label><select id="st-sport"><option>Course</option><option>Marche</option><option>Vélo</option></select><label for="st-activity-select" id="st-activity-label">Activité enregistrée</label><select id="st-activity-select"></select><label class="st-privacy"><input type="checkbox" id="st-hide-route" checked> Cacher mon trajet</label><p id="st-privacy-note" class="st-activity-note"></p><div id="st-activity-preview"></div></div>
         <div class="st-audience">${svg('lock',16)}<span>Visible par les collègues de <strong id="st-audience-name"></strong> pendant <strong>24 heures</strong>.</span></div>
         <div id="st-compose-error" class="st-error" role="alert" hidden></div>
       </div><footer class="st-bottom-actions" id="st-compose-footer"><button type="button" class="st-primary" id="st-publish" disabled>${svg('send',17)}Publier ma story</button></footer></div>`;
     byId('st-audience-name').textContent=session.org.name;
     byId('st-caption').value=composer.text;
-    byId('st-phase').value=composer.activity.phase;byId('st-sport').value=composer.activity.sport||'Course';byId('st-hide-route').checked=composer.activity.hideRoute!==false;
-    byId('st-phase').querySelector('[value="during"]').disabled=snapshot?.phase!=='during';
-    byId('st-phase').querySelector('[value="after"]').disabled=!history.length&&snapshot?.phase!=='after';
+    byId('st-sport').value=composer.activity.sport||'Course';byId('st-hide-route').checked=composer.activity.hideRoute!==false;
     if(snapshot?.phase==='after'&&!history.some(a=>a.id===snapshot.activityId)){const option=el('option','','Cette sortie · '+number(snapshot.distanceMeters)+' m (à enregistrer)');option.value=snapshot.activityId||'current-snapshot';byId('st-activity-select').append(option);}
     for(const a of history){const option=el('option','',a.title+' · '+number(a.distanceMeters)+' m');option.value=a.id;byId('st-activity-select').append(option);}
     if(snapshot?.phase==='after')byId('st-activity-select').value=snapshot.activityId||'current-snapshot';
     function changeActivity(){
-      const phase=byId('st-phase').value;
+      const phase=snapshot?.phase||composer.activity.phase;
       if(snapshot?.phase===phase&&(phase!=='after'||byId('st-activity-select').value===(snapshot.activityId||'current-snapshot')))composer.activity={...snapshot};
       else if(phase==='after'){const selected=history.find(a=>a.id===byId('st-activity-select').value)||history[0],a=window.Platform?.storySnapshot(selected?.id)||selected;composer.activity={...a,activityId:a?.id,phase};}
       else composer.activity={phase:'before',sport:byId('st-sport').value,distanceMeters:0,durationSeconds:0,energy:0,speedKmh:0,route:''};
@@ -225,7 +223,7 @@
       if(phase==='before'&&['Je pars courir !','Je pars marcher !','Je pars pédaler !'].includes(composer.text)){composer.text=departure(composer.activity.sport);byId('st-caption').value=composer.text;}
       updateComposer();
     }
-    byId('st-phase').onchange=changeActivity;byId('st-sport').onchange=changeActivity;byId('st-activity-select').onchange=changeActivity;byId('st-hide-route').onchange=changeActivity;
+    byId('st-sport').onchange=changeActivity;byId('st-activity-select').onchange=changeActivity;byId('st-hide-route').onchange=changeActivity;
     const colors=[color(session.org.color),'#123d35','#c34b27','#5a398c','#18263d'];
     [...new Set(colors)].forEach((bg,i)=>{
       const b=el('button','st-swatch');b.type='button';b.style.background=bg;b.setAttribute('aria-label',i===0?'Couleur de mon entreprise':['','Vert forêt','Terre cuite','Violet','Bleu nuit'][i]);b.setAttribute('aria-pressed',String(bg===composer.bg));
@@ -320,9 +318,9 @@
     byId('st-counter').textContent=composer.text.length+' / 280';
     const a=composer.activity,before=a.phase==='before';
     byId('st-sport').hidden=byId('st-sport-label').hidden=!before;byId('st-activity-select').hidden=byId('st-activity-label').hidden=a.phase!=='after'||!composer.history.length;
-    byId('st-activity-preview').replaceChildren(activityCard(a));
+    const card=activityCard(a);byId('st-activity-preview').replaceChildren(...(card?[card]:[]));byId('st-activity-preview').hidden=!card;
     const linkedHidden=a.activityId&&window.Platform?.activityPrivacy(a.activityId);
-    byId('st-privacy-note').textContent=linkedHidden?'Le trajet de cette activité est masqué. Vous pouvez modifier sa visibilité depuis votre profil.':before?'Votre story annonce votre départ ; aucune énergie n’est encore comptabilisée.':'Cette story partage un instantané. Elle ne crédite pas une seconde activité.';
+    byId('st-privacy-note').textContent=linkedHidden?'Le trajet de cette activité est masqué. Vous pouvez modifier sa visibilité depuis votre profil.':before?'':'Cette story partage un instantané. Elle ne crédite pas une seconde activité.';byId('st-privacy-note').hidden=before&&!linkedHidden;
     byId('st-publish').disabled=composer.busy||(photo?!composer.media:!composer.text.trim());
   }
 
@@ -431,8 +429,9 @@
     const media=byId('st-reader-media');if(!media)return;
     const previous=byId('st-reader-activity');
     const serialized=JSON.stringify(story.activity||null);if(previous?.dataset.snapshot===serialized)return;
-    previous?.remove();media.classList.toggle('st-with-activity',!!story.activity);
-    if(story.activity){const card=activityCard(story.activity,true);card.id='st-reader-activity';card.dataset.snapshot=serialized;media.append(card);}
+    const card=story.activity?activityCard(story.activity,true):null;
+    previous?.remove();media.classList.toggle('st-with-activity',!!card);
+    if(card){card.id='st-reader-activity';card.dataset.snapshot=serialized;media.append(card);}
   }
   function isPaused(){return !reader||reader.manualPaused||reader.holding||reader.actionPaused||document.hidden;}
   function updatePauseButton(){

@@ -54,8 +54,8 @@ Option confidentialité : terminer une seconde activité simulée et choisir **E
 Écran : **Les moments du collectif** ou **+** → **Publier une story**.
 
 1. Appuyer sur **Publier une story** : l’appareil photo s’ouvre directement. Autoriser la caméra si le navigateur le demande, puis prendre une photo ; le bouton **Selfie** change de caméra. **Galerie** permet de choisir une photo et **Écrire une story** de passer au texte.
-2. Dans l’aperçu, choisir **Avant mon activité**, puis le sport, et modifier la légende si souhaité. Garder **Cacher mon trajet** coché, puis **Publier ma story**. Aucune publication n’est effectuée lors de la prise de photo.
-3. Pour montrer une story après l’effort, choisir **Après mon activité** et l’activité enregistrée à l’étape précédente. Les statistiques de cette activité sont reprises.
+2. Dans l’aperçu, modifier la légende si souhaité. Garder **Cacher mon trajet** coché, puis **Publier ma story**. Aucune publication n’est effectuée lors de la prise de photo.
+3. Pour montrer une story après l’effort, utiliser **Partager en story** depuis une activité du profil, ou depuis le résumé de la sortie. Les statistiques sont reprises automatiquement, sans sélection du moment de la story.
 4. Ouvrir la story, puis passer à Léa dans l’application pour la retrouver dans le même espace entreprise.
 5. Montrer que la story demeure visible **24 heures** et qu’elle ne crée aucune deuxième contribution.
 
