@@ -105,6 +105,9 @@
     root.querySelectorAll('[data-account]').forEach(b=>b.onclick=openAccount);
     root.querySelectorAll('[data-logout]').forEach(b=>b.onclick=logout);
     root.querySelectorAll('[data-install]').forEach(b=>b.onclick=showInstall);
+    root.querySelectorAll('.presenter-controls').forEach(controls=>{
+      const button=document.createElement('button');button.type='button';button.className='text-button';button.textContent='Typographie de la maquette';button.onclick=()=>$('typo-btn').click();controls.append(button);
+    });
     root.querySelectorAll('[data-switch]').forEach(b=>b.onclick=()=>{const v=root.querySelector('select').value.split('|');switchProfile(...v);});
   }
   function logout(){MoovApp.stop();document.querySelectorAll('dialog[open]').forEach(d=>d.close());Demo.logout();step='email';lastContext='';sync();}

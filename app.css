@@ -100,10 +100,10 @@ svg{display:block}
 }
 
 /* ================= SCREENS ================= */
-.screens{position:relative;flex:1;overflow:hidden}
+.screens{position:relative;flex:1;min-height:0;overflow:hidden;margin-bottom:var(--nav-total-h,var(--nav-h))}
 .screen{
   position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
-  padding-bottom:calc(var(--nav-h) + 28px);
+  padding-bottom:44px;scroll-padding-bottom:44px;
   opacity:0;transform:translateX(14px);pointer-events:none;
   transition:opacity .22s ease,transform .22s ease;
   scrollbar-width:none;
@@ -321,20 +321,21 @@ svg{display:block}
 .badge.locked .bic{background:var(--sunken);color:var(--ink-3)}
 
 /* ================= BOTTOM NAV + FAB ================= */
-.navwrap{position:absolute;left:0;right:0;bottom:0;z-index:40;pointer-events:none}
+.navwrap{position:absolute;left:0;right:0;bottom:0;z-index:40;pointer-events:none;background:var(--surface)}
 .bottomnav{
-  pointer-events:auto;display:flex;align-items:stretch;height:var(--nav-h);
-  background:color-mix(in srgb,var(--surface) 94%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  pointer-events:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;height:var(--nav-h);
+  background:var(--surface);
   border-top:1px solid var(--line);padding-bottom:10px;
 }
-.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.navbtn{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:11px 2px 4px;color:var(--ink-3);font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;touch-action:manipulation}
+.navbtn .nic{height:22px;display:grid;place-items:center}
+.nav-label{display:flex;align-items:center;justify-content:center;min-height:24px;line-height:12px;text-align:center}
 .navbtn.active{color:var(--ink)}
 .navbtn.active .nic{color:var(--brand)}
 .navbtn .nic{color:inherit}
 .fab-slot{flex:1;position:relative}
 .fab{
-  pointer-events:auto;position:absolute;left:50%;top:-24px;transform:translateX(-50%);
+  pointer-events:auto;position:absolute;left:50%;top:-20px;transform:translateX(-50%);
   width:58px;height:58px;border-radius:14px;background:var(--brand);color:var(--brand-ink);
   display:grid;place-items:center;box-shadow:0 10px 24px -8px color-mix(in srgb,var(--brand) 65%,transparent);
   transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-radius .25s ease;z-index:60;
@@ -344,9 +345,9 @@ svg{display:block}
 .fab[aria-expanded="true"] svg{transform:rotate(135deg)}
 .scrim{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 45%,transparent);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:45}
 .scrim.open{opacity:1;pointer-events:auto}
-.fanmenu{position:absolute;left:0;right:0;bottom:calc(var(--nav-h) + 26px);z-index:50;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.fanmenu{position:absolute;left:0;right:0;bottom:calc(var(--nav-total-h,var(--nav-h)) + 26px);z-index:50;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;max-height:calc(100% - var(--nav-total-h,var(--nav-h)) - 50px);overflow-y:auto;overscroll-behavior:contain;padding:4px 12px;scrollbar-width:thin}
 .fan-item{
-  pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--card);
+  pointer-events:auto;flex-shrink:0;display:flex;align-items:center;gap:12px;background:var(--card);
   border:1px solid var(--line);border-radius:var(--r-ui);padding:10px 18px 10px 10px;
   box-shadow:0 12px 30px -12px rgba(0,0,0,.35);font-weight:700;font-size:14px;min-width:250px;
   opacity:0;transform:translateY(16px) scale(.94);

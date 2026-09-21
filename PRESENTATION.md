@@ -140,4 +140,6 @@ Terminer par **Présentation** → **Réinitialiser la démonstration** si les e
 
 ## Défis et événements : retrouver la présentation d’origine
 
+Sur téléphone, la navigation reste en bas pendant le défilement, avec une zone opaque réservée à l’indicateur d’accueil de l’iPhone. Le bouton de typographie est accessible depuis **Mon compte → Outils de présentation → Typographie de la maquette** ; le bouton flottant **Aa** reste uniquement dans la présentation sur ordinateur.
+
 Dans l’onglet **Défis**, montrer le défi collectif, le classement hebdomadaire par équipe, le duel et les trois mini-défis. Enregistrer une activité : les mètres de l’équipe et les objectifs individuels progressent automatiquement. Le lien **Voir les événements** descend vers la liste, ses filtres et le bouton de création. La création d’un événement depuis le menu **+** conduit à cette même page.

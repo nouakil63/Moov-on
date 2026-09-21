@@ -326,7 +326,7 @@
     const leftLimit=vv ? vv.offsetLeft : 0;
     const available=vv ? vv.height : window.innerHeight;
     const availableWidth=vv ? vv.width : window.innerWidth;
-    const mobile=matchMedia('(max-width:680px)').matches;
+    const mobile=matchMedia('(max-width:680px), (max-height:500px) and (pointer:coarse)').matches;
     const left=mobile?leftLimit:Math.max(leftLimit,rect.left),top=mobile?topLimit:Math.max(topLimit,rect.top);
     const width=mobile?availableWidth:Math.max(1,Math.min(rect.right,leftLimit+availableWidth)-left);
     const height=mobile?available:Math.max(1,Math.min(rect.bottom,topLimit+available)-top);
